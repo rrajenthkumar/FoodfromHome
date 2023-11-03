@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.OrderControllerTest do
     date: ~U[2023-11-02 10:32:00Z],
     delivery_address: %{},
     invoice_link: "some updated invoice_link",
-    status: :created
+    status: :confirmed
   }
   @invalid_attrs %{date: nil, delivery_address: nil, invoice_link: nil, status: nil}
 
@@ -66,7 +66,7 @@ defmodule FoodFromHomeWeb.OrderControllerTest do
                "date" => "2023-11-02T10:32:00Z",
                "delivery_address" => %{},
                "invoice_link" => "some updated invoice_link",
-               "status" => "created"
+               "status" => "confirmed"
              } = json_response(conn, 200)["data"]
     end
 

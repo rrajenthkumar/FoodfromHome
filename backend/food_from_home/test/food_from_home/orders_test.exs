@@ -36,13 +36,13 @@ defmodule FoodFromHome.OrdersTest do
 
     test "update_order/2 with valid data updates the order" do
       order = order_fixture()
-      update_attrs = %{date: ~U[2023-10-31 14:37:00Z], delivery_address: %{}, invoice_link: "some updated invoice_link", status: :created}
+      update_attrs = %{date: ~U[2023-10-31 14:37:00Z], delivery_address: %{}, invoice_link: "some updated invoice_link", status: :confirmed}
 
       assert {:ok, %Order{} = order} = Orders.update_order(order, update_attrs)
       assert order.date == ~U[2023-10-31 14:37:00Z]
       assert order.delivery_address == %{}
       assert order.invoice_link == "some updated invoice_link"
-      assert order.status == :created
+      assert order.status == :confirmed
     end
 
     test "update_order/2 with invalid data returns error changeset" do

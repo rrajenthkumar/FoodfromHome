@@ -9,7 +9,7 @@ defmodule FoodFromHome.Users.User do
     field :gender, Ecto.Enum, values: [:male, :female]
     field :last_name, :string
     field :profile_image, :binary
-    field :user_type, Ecto.Enum, values: [:buyer, :seller]
+    field :user_type, Ecto.Enum, values: [:buyer, :seller, :deliverer]
 
     timestamps()
   end

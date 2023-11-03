@@ -6,7 +6,7 @@ defmodule FoodFromHome.Orders.Order do
     field :date, :utc_datetime
     field :delivery_address, :map
     field :invoice_link, :string
-    field :status, Ecto.Enum, values: [:open, :created, :ready_for_delivery, :on_the_way, :delivered, :cancelled, :archived]
+    field :status, Ecto.Enum, values: [:open, :confirmed, :ready_for_pickup, :on_the_way, :delivered, :cancelled, :archived]
     field :seller_id, :id
     field :buyer_id, :id
 
