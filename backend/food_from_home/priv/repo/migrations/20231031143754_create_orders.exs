@@ -8,13 +8,13 @@ defmodule FoodFromHome.Repo.Migrations.CreateOrders do
       add :status, :string
       add :invoice_link, :string
       add :seller_id, references(:sellers, on_delete: :nothing)
-      add :buyer_id, references(:users, on_delete: :nothing)
+      add :buyer_user_id, references(:users, on_delete: :nothing)
 
       timestamps()
     end
 
     create index(:orders, [:seller_id])
-    create index(:orders, [:buyer_id])
+    create index(:orders, [:buyer_user_id])
     create unique_index(:orders, [:invoice_link])
   end
 end
