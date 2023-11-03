@@ -2,10 +2,13 @@ defmodule FoodFromHome.Reviews.Review do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias FoodFromHome.Orders.Order
+
   schema "reviews" do
-    field :note, :string
     field :stars, Ecto.Enum, values: [:"1", :"2", :"3", :"4", :"5"]
-    field :order_id, :id
+    field :note, :string
+
+    belongs_to :order, Order
 
     timestamps()
   end
@@ -14,6 +17,7 @@ defmodule FoodFromHome.Reviews.Review do
   def changeset(review, attrs) do
     review
     |> cast(attrs, [:stars, :note])
-    |> validate_required([:stars, :note])
+    |> validate_required([:stars])
+    |> unique_constraint(:order_id)
   end
 end

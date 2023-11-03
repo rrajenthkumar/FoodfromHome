@@ -10,6 +10,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateReviews do
       timestamps()
     end
 
-    create index(:reviews, [:order_id])
+    create unique_index(:reviews, [:order_id])
   end
 end

@@ -2,17 +2,22 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias FoodFromHome.CartItems.CartItem
+  alias FoodFromHome.Sellers.Seller
+
   schema "food_menus" do
-    field :allergens, Ecto.Enum, values: [:lactose, :gluten]
-    field :description, :string
-    field :ingredients, Ecto.Enum, values: [:egg, :sugar]
-    field :menu_illustration, :binary
     field :name, :string
-    field :preparation_time_in_minutes, :integer
+    field :description, :string
+    field :menu_illustration, :binary
+    field :ingredients, Ecto.Enum, values: [:egg, :sugar]
+    field :allergens, Ecto.Enum, values: [:lactose, :gluten]
     field :price, :decimal
     field :rebate, :map
     field :valid_until, :utc_datetime
-    field :seller_id, :id
+    field :preparation_time_in_minutes, :integer
+
+    belongs_to :seller, Seller
+    has_many :cart_items, CartItem
 
     timestamps()
   end
@@ -22,5 +27,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     food_menu
     |> cast(attrs, [:name, :description, :ingredients, :allergens, :price, :rebate, :menu_illustration, :preparation_time_in_minutes, :valid_until])
     |> validate_required([:name, :description, :ingredients, :allergens, :price, :menu_illustration, :preparation_time_in_minutes, :valid_until])
+    |> unique_constraint(:seller_id_name_valid_until_constraint, name: :seller_id_name_valid_until_index)
   end
 end

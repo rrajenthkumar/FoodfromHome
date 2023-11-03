@@ -15,5 +15,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateOrders do
 
     create index(:orders, [:seller_id])
     create index(:orders, [:buyer_id])
+    create unique_index(:orders, [:invoice_link])
   end
 end

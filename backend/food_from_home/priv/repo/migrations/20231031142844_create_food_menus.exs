@@ -18,5 +18,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateFoodMenus do
     end
 
     create index(:food_menus, [:seller_id])
+    create unique_index(:food_menus, [:seller_id, :name, :valid_until], name: :seller_id_name_valid_until_index)
   end
 end
