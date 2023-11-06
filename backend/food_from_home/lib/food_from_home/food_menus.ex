@@ -1,104 +1,27 @@
 defmodule FoodFromHome.FoodMenus do
   @moduledoc """
-  The FoodMenus context.
+  The FoodMenus context which is the interface for other contexts.
   """
+  alias FoodFromHome.FoodMenus.Services
+  alias FoodFromHome.FoodMenus.FoodMenuRepo
 
-  import Ecto.Query, warn: false
-  alias FoodFromHome.Repo
-
-  alias FoodFromHome.FoodMenus.FoodMenu
-
-  @doc """
-  Returns the list of food_menus.
-
-  ## Examples
-
-      iex> list_food_menus()
-      [%FoodMenu{}, ...]
-
-  """
-  def list_food_menus do
-    Repo.all(FoodMenu)
+  def get_menu_details_and_produce_menu_viewed_topic(menu_id) do
+    Services.GetMenuDetailsAndProduceMenuViewedTopic.call(menu_id)
   end
 
-  @doc """
-  Gets a single food_menu.
-
-  Raises `Ecto.NoResultsError` if the Food menu does not exist.
-
-  ## Examples
-
-      iex> get_food_menu!(123)
-      %FoodMenu{}
-
-      iex> get_food_menu!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_food_menu!(id), do: Repo.get!(FoodMenu, id)
-
-  @doc """
-  Creates a food_menu.
-
-  ## Examples
-
-      iex> create_food_menu(%{field: value})
-      {:ok, %FoodMenu{}}
-
-      iex> create_food_menu(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_food_menu(attrs \\ %{}) do
-    %FoodMenu{}
-    |> FoodMenu.changeset(attrs)
-    |> Repo.insert()
+  def list_active_food_menus_from_seller(seller_id) do
+    defdelegate list_active_food_menus_from_seller(seller_id), to: FoodMenuRepo
   end
 
-  @doc """
-  Updates a food_menu.
-
-  ## Examples
-
-      iex> update_food_menu(food_menu, %{field: new_value})
-      {:ok, %FoodMenu{}}
-
-      iex> update_food_menu(food_menu, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_food_menu(%FoodMenu{} = food_menu, attrs) do
-    food_menu
-    |> FoodMenu.changeset(attrs)
-    |> Repo.update()
+  def create_food_menu(attrs) do
+    defdelegate create_food_menu(attrs), to: FoodMenuRepo
   end
 
-  @doc """
-  Deletes a food_menu.
-
-  ## Examples
-
-      iex> delete_food_menu(food_menu)
-      {:ok, %FoodMenu{}}
-
-      iex> delete_food_menu(food_menu)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_food_menu(%FoodMenu{} = food_menu) do
-    Repo.delete(food_menu)
+  def update_food_menu(menu_id, attrs) do
+    defdelegate update_food_menu(menu_id, attrs), to: FoodMenuRepo
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking food_menu changes.
-
-  ## Examples
-
-      iex> change_food_menu(food_menu)
-      %Ecto.Changeset{data: %FoodMenu{}}
-
-  """
-  def change_food_menu(%FoodMenu{} = food_menu, attrs \\ %{}) do
-    FoodMenu.changeset(food_menu, attrs)
+  def delete_food_menu(menu_id) do
+    defdelegate delete_food_menu(menu_id), to: FoodMenuRepo
   end
 end

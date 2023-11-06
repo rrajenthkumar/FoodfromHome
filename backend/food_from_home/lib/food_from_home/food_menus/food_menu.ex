@@ -9,8 +9,8 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     field :name, :string
     field :description, :string
     field :menu_illustration, :binary
-    field :ingredients, Ecto.Enum, values: [:egg, :sugar]
-    field :allergens, Ecto.Enum, values: [:lactose, :gluten]
+    field :ingredients, {:array, inner_type}
+    field :allergens, {:array, inner_type}
     field :price, :decimal
     field :rebate, :map
     field :valid_until, :utc_datetime

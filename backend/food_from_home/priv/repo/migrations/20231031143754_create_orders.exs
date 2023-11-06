@@ -5,7 +5,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateOrders do
     create table(:orders) do
       add :date, :utc_datetime
       add :delivery_address, :map
-      add :status, :string
+      add :status, :string, default: "open"
       add :invoice_link, :string
       add :seller_id, references(:sellers, on_delete: :nothing)
       add :buyer_user_id, references(:users, on_delete: :nothing)
