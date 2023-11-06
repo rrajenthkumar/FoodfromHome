@@ -7,13 +7,15 @@ defmodule FoodFromHome.Repo.Migrations.CreateUsers do
       add :last_name, :string
       add :email_id, :string
       add :address, :map
+      add :phone_number, :string
       add :gender, :string
-      add :profile_image, :binary
+      add :profile_image, :binary, default: nil
       add :user_type, :string
+      add :deleted, :boolean, default: false
 
       timestamps()
     end
 
-    create unique_index(:users, [:email_id])
+    create unique_index(:users, [:email_id], where: "deleted is false", name: :index_for_uniqueness_of_email_id_of_active_users)
   end
 end

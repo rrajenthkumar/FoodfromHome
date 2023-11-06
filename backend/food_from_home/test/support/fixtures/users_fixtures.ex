@@ -17,6 +17,7 @@ defmodule FoodFromHome.UsersFixtures do
       attrs
       |> Enum.into(%{
         address: %{},
+        phone_number: "+4912345678991",
         email_id: unique_user_email_id(),
         first_name: "some first_name",
         gender: :male,

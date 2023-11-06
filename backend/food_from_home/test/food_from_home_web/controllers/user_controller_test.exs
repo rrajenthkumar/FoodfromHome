@@ -7,23 +7,25 @@ defmodule FoodFromHomeWeb.UserControllerTest do
 
   @create_attrs %{
     address: %{},
+    phone_number: "+4912345678956",
     email_id: "some email_id",
     first_name: "some first_name",
     gender: :male,
     last_name: "some last_name",
-    profile_image: "some profile_image",
     user_type: :buyer
   }
   @update_attrs %{
     address: %{},
+    phone_number: "+4912345678978",
     email_id: "some updated email_id",
     first_name: "some updated first_name",
     gender: :female,
     last_name: "some updated last_name",
     profile_image: "some updated profile_image",
-    user_type: :seller
+    user_type: :seller,
+    deleted: true
   }
-  @invalid_attrs %{address: nil, email_id: nil, first_name: nil, gender: nil, last_name: nil, profile_image: nil, user_type: nil}
+  @invalid_attrs %{address: nil, phone_number: nil, email_id: nil, first_name: nil, gender: nil, last_name: nil, user_type: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -46,12 +48,14 @@ defmodule FoodFromHomeWeb.UserControllerTest do
       assert %{
                "id" => ^id,
                "address" => %{},
+               "phone_number" => "+4912345678956",
                "email_id" => "some email_id",
                "first_name" => "some first_name",
                "gender" => "male",
                "last_name" => "some last_name",
-               "profile_image" => "some profile_image",
-               "user_type" => "buyer"
+               "profile_image" => nil,
+               "user_type" => "buyer",
+               "deleted" => false
              } = json_response(conn, 200)["data"]
     end
 
@@ -73,12 +77,14 @@ defmodule FoodFromHomeWeb.UserControllerTest do
       assert %{
                "id" => ^id,
                "address" => %{},
+               "phone_number" => "+49123456789578",
                "email_id" => "some updated email_id",
                "first_name" => "some updated first_name",
                "gender" => "female",
                "last_name" => "some updated last_name",
                "profile_image" => "some updated profile_image",
-               "user_type" => "seller"
+               "user_type" => "seller",
+               "deleted" => true
              } = json_response(conn, 200)["data"]
     end
 
