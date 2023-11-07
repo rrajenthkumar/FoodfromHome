@@ -13,7 +13,8 @@ defmodule FoodFromHome.FoodMenusFixtures do
       |> Enum.into(%{
         allergens: :lactose,
         description: "some description",
-        ingredients: :egg,
+        ingredients: ["egg", "butter"],
+        allergens: ["lactose"],
         menu_illustration: "some menu_illustration",
         name: "some name",
         preparation_time_in_minutes: 42,

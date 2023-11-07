@@ -10,6 +10,9 @@ import Config
 config :food_from_home,
   ecto_repos: [FoodFromHome.Repo]
 
+config :food_from_home, FoodFromHome.Repo,
+  types: FoodFromHome.PostgresTypes
+
 # Configures the endpoint
 config :food_from_home, FoodFromHomeWeb.Endpoint,
   url: [host: "localhost"],
@@ -37,11 +40,18 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :kaffe,
-  producer: [
-    endpoints: [localhost: 9092],
-    topics: ["sellers searched", "seller viewed", "food menu viewed", "order confirmed", "payment failed", "payment cancelled", "delivery_started", "delivery_completed", "order cancelled"]
-  ]
+# Configures Kaffe, the Elixir wrapper around brod: the Erlang Kafka client
+# config :kaffe,
+#   producer: [
+#     endpoints: [localhost: 9092],
+#     topics: ["sellers searched", "seller viewed", "order confirmed", "payment failed", "payment cancelled", "delivery_started", "delivery_completed", "order cancelled"] # the topic(s) that will be produced
+#   ],
+#   consumer: [
+#     endpoints: [localhost: 9092],
+#     topics: ["sellers searched", "seller viewed", "order confirmed", "payment failed", "payment cancelled", "delivery_started", "delivery_completed", "order cancelled"], # the topic(s) that will be consumed
+#     consumer_group: "food-from-home-consumer-group", # the consumer group for tracking offsets in Kafka
+#     message_handler: FoodFromHome.KafkaAgent.Consumers
+#   ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

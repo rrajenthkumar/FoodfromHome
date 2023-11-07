@@ -9,10 +9,10 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     field :name, :string
     field :description, :string
     field :menu_illustration, :binary
-    field :ingredients, {:array, inner_type}
-    field :allergens, {:array, inner_type}
+    field :ingredients, {:array, :string}
+    field :allergens, {:array, :string}, default: []
     field :price, :decimal
-    field :rebate, :map
+    field :rebate, :map, default: nil
     field :valid_until, :utc_datetime
     field :preparation_time_in_minutes, :integer
 
@@ -26,7 +26,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   def changeset(food_menu, attrs) do
     food_menu
     |> cast(attrs, [:name, :description, :ingredients, :allergens, :price, :rebate, :menu_illustration, :preparation_time_in_minutes, :valid_until])
-    |> validate_required([:name, :description, :ingredients, :allergens, :price, :menu_illustration, :preparation_time_in_minutes, :valid_until])
+    |> validate_required([:name, :description, :ingredients, :price, :menu_illustration, :preparation_time_in_minutes, :valid_until])
     |> unique_constraint(:seller_id_name_valid_until_constraint, name: :seller_id_name_valid_until_index)
   end
 end

@@ -10,11 +10,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoTest do
 
     @invalid_attrs %{description: nil, ingredients: nil, menu_illustration: nil, name: nil, preparation_time_in_minutes: nil, price: nil, valid_until: nil}
 
-    test "list_food_menus/0 returns all food_menus" do
-      food_menu = food_menu_fixture()
-      assert FoodMenuRepo.list_food_menus() == [food_menu]
-    end
-
     test "get_food_menu!/1 returns the food_menu with given id" do
       food_menu = food_menu_fixture()
       assert FoodMenuRepo.get_food_menu!(food_menu.id) == food_menu

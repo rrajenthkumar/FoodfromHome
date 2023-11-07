@@ -11,6 +11,11 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     render(conn, :index, food_menus: food_menus)
   end
 
+  def show(conn, %{"menu_id" => menu_id}) do
+    food_menu = FoodMenus.get_menu_details_and_produce_menu_viewed_topic(menu_id)
+    render(conn, :show, food_menu: food_menu)
+  end
+
   def create(conn, %{"food_menu" => food_menu_params}) do
     with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create_food_menu(food_menu_params) do
       conn
@@ -18,11 +23,6 @@ defmodule FoodFromHomeWeb.FoodMenuController do
       |> put_resp_header("location", ~p"/api/food_menus/#{food_menu}")
       |> render(:show, food_menu: food_menu)
     end
-  end
-
-  def show(conn, %{"menu_id" => menu_id}) do
-    food_menu = FoodMenus.get_food_menu!(menu_id)
-    render(conn, :show, food_menu: food_menu)
   end
 
   def update(conn, %{"menu_id" => menu_id, "food_menu" => food_menu_params}) do

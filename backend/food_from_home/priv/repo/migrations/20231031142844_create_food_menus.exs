@@ -5,8 +5,8 @@ defmodule FoodFromHome.Repo.Migrations.CreateFoodMenus do
     create table(:food_menus) do
       add :name, :string
       add :description, :text
-      add :ingredients, :array
-      add :allergens, :array, default: []
+      add :ingredients, {:array, :string}
+      add :allergens, {:array, :string}, default: []
       add :price, :decimal
       add :rebate, :map, default: nil
       add :menu_illustration, :binary

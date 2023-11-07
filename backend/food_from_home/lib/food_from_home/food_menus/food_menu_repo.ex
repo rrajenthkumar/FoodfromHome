@@ -8,32 +8,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   alias FoodFromHome.FoodMenus.FoodMenu
 
   @doc """
-  Returns the list of food_menus.
-
-  ## Examples
-
-      iex> list_food_menus()
-      [%FoodMenu{}, ...]
-
-  """
-  def list_food_menus do
-    Repo.all(FoodMenu)
-  end
-
-  @doc """
-  Returns the list of active food_menus from a seller.
-
-  ## Examples
-
-      iex> list_active_food_menus_from_seller(12345)
-      [%FoodMenu{}, ...]
-
-  """
-  def list_active_food_menus_from_seller(seller_id) do
-
-  end
-
-  @doc """
   Gets a single food_menu.
 
   Raises `Ecto.NoResultsError` if the Food menu does not exist.

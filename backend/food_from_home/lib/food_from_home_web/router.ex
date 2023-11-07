@@ -1,12 +1,19 @@
 defmodule FoodFromHomeWeb.Router do
   use FoodFromHomeWeb, :router
 
+  alias FoodFromHomeWeb.FoodMenuController
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/api", FoodFromHomeWeb do
+  scope "/api/v1", FoodFromHomeWeb do
     pipe_through :api
+
+    get "/food_menus/:seller_id", FoodMenuController, :index
+    post "/food_menus", FoodMenuController, :create
+    put "/food_menus/:menu_id", FoodMenuController, :update
+    delete "/food_menus/:menu_id", FoodMenuController, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
