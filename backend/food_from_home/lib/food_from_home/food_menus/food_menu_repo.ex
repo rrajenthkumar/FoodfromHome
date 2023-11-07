@@ -55,7 +55,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   def update_food_menu(menu_id, attrs) do
     menu_id
-    |> Repo.get_food_menu!()
+    |> get_food_menu!()
     |> change_food_menu(attrs)
     |> Repo.update()
   end
@@ -74,7 +74,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   def delete_food_menu(menu_id) do
     menu_id
-    |> Repo.get_food_menu!()
+    |> get_food_menu!()
     |> Repo.delete()
   end
 
