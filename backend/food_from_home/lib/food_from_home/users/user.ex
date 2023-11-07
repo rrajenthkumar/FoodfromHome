@@ -18,9 +18,9 @@ defmodule FoodFromHome.Users.User do
     field :profile_image, :binary
     field :deleted, :boolean
 
-    has_one :seller, Seller, foreign_key: :seller_user_id
-    has_many :orders, Order, foreign_key: :buyer_user_id
-    has_many :deliveries, Delivery, foreign_key: :deliverer_user_id
+    has_one :seller, Seller
+    has_many :orders, Order
+    has_many :deliveries, Delivery
 
     timestamps()
   end
@@ -31,5 +31,6 @@ defmodule FoodFromHome.Users.User do
     |> cast(attrs, [:first_name, :last_name, :email_id, :address, :phone_number, :gender, :profile_image, :user_type, :deleted])
     |> validate_required([:first_name, :last_name, :email_id, :gender, :user_type, :address, :phone_number])
     |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
+    |> validate_format(:email_id, ~r/@/)
   end
 end

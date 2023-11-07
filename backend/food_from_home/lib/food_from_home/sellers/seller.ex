@@ -25,5 +25,6 @@ defmodule FoodFromHome.Sellers.Seller do
     |> cast(attrs, [:tax_id, :introduction, :illustration])
     |> validate_required([:tax_id, :introduction])
     |> unique_constraint(:tax_id, :seller_user_id)
+    |> foreign_key_constraint(:user_id)
   end
 end

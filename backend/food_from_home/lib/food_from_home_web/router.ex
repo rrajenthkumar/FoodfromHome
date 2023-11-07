@@ -1,8 +1,6 @@
 defmodule FoodFromHomeWeb.Router do
   use FoodFromHomeWeb, :router
 
-  alias FoodFromHomeWeb.FoodMenuController
-
   pipeline :api do
     plug :accepts, ["json"]
   end

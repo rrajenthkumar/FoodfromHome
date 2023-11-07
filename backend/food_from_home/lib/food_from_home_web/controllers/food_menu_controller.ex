@@ -11,11 +11,6 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     render(conn, :index, food_menus: food_menus)
   end
 
-  def show(conn, %{"menu_id" => menu_id}) do
-    food_menu = FoodMenus.get_menu_details_and_produce_menu_viewed_topic(menu_id)
-    render(conn, :show, food_menu: food_menu)
-  end
-
   def create(conn, %{"food_menu" => food_menu_params}) do
     with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create_food_menu(food_menu_params) do
       conn

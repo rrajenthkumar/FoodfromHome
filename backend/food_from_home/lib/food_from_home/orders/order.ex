@@ -30,5 +30,7 @@ defmodule FoodFromHome.Orders.Order do
     |> cast(attrs, [:date, :delivery_address, :status, :invoice_link])
     |> validate_required([:date, :status, :invoice_link])
     |> unique_constraint(:invoice_link)
+    |> foreign_key_constraint(:seller_id)
+    |> foreign_key_constraint(:user_id)
   end
 end

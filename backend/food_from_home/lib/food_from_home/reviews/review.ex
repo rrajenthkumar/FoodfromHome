@@ -19,5 +19,6 @@ defmodule FoodFromHome.Reviews.Review do
     |> cast(attrs, [:stars, :note])
     |> validate_required([:stars])
     |> unique_constraint(:order_id)
+    |> foreign_key_constraint(:order_id)
   end
 end

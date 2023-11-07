@@ -25,5 +25,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
     |> cast(attrs, [:picked_up_at,:current_position, :delivered_at, :distance_travelled_in_kms])
     |> validate_required([:picked_up_at, :current_position])
     |> unique_constraint(:order_id)
+    |> foreign_key_constraint(:order_id)
+    |> foreign_key_constraint(:user_id)
   end
 end

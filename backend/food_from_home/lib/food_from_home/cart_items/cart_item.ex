@@ -21,5 +21,7 @@ defmodule FoodFromHome.CartItems.CartItem do
     |> cast(attrs, [:count, :remark])
     |> validate_required([:count])
     |> unique_constraint(:order_id_food_menu_id_index_constraint, name: :order_id_food_menu_id_index)
+    |> foreign_key_constraint(:food_menu_id)
+    |> foreign_key_constraint(:order_id)
   end
 end

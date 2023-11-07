@@ -28,5 +28,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> cast(attrs, [:name, :description, :ingredients, :allergens, :price, :rebate, :menu_illustration, :preparation_time_in_minutes, :valid_until])
     |> validate_required([:name, :description, :ingredients, :price, :menu_illustration, :preparation_time_in_minutes, :valid_until])
     |> unique_constraint(:seller_id_name_valid_until_constraint, name: :seller_id_name_valid_until_index)
+    |> foreign_key_constraint(:seller_id)
   end
 end
