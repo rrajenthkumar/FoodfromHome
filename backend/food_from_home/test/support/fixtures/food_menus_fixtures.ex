@@ -11,6 +11,7 @@ defmodule FoodFromHome.FoodMenusFixtures do
     {:ok, food_menu} =
       attrs
       |> Enum.into(%{
+        seller_id: 12345,
         allergens: :lactose,
         description: "some description",
         ingredients: ["egg", "butter"],

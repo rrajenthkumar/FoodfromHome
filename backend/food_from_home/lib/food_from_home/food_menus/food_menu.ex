@@ -25,8 +25,8 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   @doc false
   def changeset(food_menu, attrs) do
     food_menu
-    |> cast(attrs, [:name, :description, :ingredients, :allergens, :price, :rebate, :menu_illustration, :preparation_time_in_minutes, :valid_until])
-    |> validate_required([:name, :description, :ingredients, :price, :menu_illustration, :preparation_time_in_minutes, :valid_until])
+    |> cast(attrs, [:seller_id, :name, :description, :ingredients, :allergens, :price, :rebate, :menu_illustration, :preparation_time_in_minutes, :valid_until])
+    |> validate_required([:seller_id, :name, :description, :ingredients, :price, :menu_illustration, :preparation_time_in_minutes, :valid_until])
     |> unique_constraint(:seller_id_name_valid_until_constraint, name: :seller_id_name_valid_until_index)
     |> foreign_key_constraint(:seller_id)
   end

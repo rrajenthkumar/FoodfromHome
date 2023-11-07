@@ -8,7 +8,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoTest do
 
     import FoodFromHome.FoodMenusFixtures
 
-    @invalid_attrs %{description: nil, ingredients: nil, menu_illustration: nil, name: nil, preparation_time_in_minutes: nil, price: nil, valid_until: nil}
+    @invalid_attrs %{seller_id: nil, description: nil, ingredients: nil, menu_illustration: nil, name: nil, preparation_time_in_minutes: nil, price: nil, valid_until: nil}
 
     test "get_food_menu!/1 returns the food_menu with given id" do
       food_menu = food_menu_fixture()
@@ -16,9 +16,12 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoTest do
     end
 
     test "create_food_menu/1 with valid data creates a food_menu" do
-      valid_attrs = %{description: "some description", ingredients: ["egg", "milk"], menu_illustration: "some menu_illustration", name: "some name", preparation_time_in_minutes: 42, price: "120.5", valid_until: ~U[2023-10-30 14:28:00Z]}
+      valid_attrs = %{seller_id: 23456, description: "some description", ingredients: ["egg", "milk"], menu_illustration: "some menu_illustration", name: "some name", preparation_time_in_minutes: 42, price: "120.5", valid_until: ~U[2023-10-30 14:28:00Z]}
+
+
 
       assert {:ok, %FoodMenu{} = food_menu} = FoodMenuRepo.create_food_menu(valid_attrs)
+      assert food_menu.seller_id == 23456
       assert food_menu.allergens == []
       assert food_menu.description == "some description"
       assert food_menu.ingredients == ["egg", "milk"]
