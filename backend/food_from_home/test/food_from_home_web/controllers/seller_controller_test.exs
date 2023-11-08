@@ -1,7 +1,7 @@
 defmodule FoodFromHomeWeb.SellerControllerTest do
   use FoodFromHomeWeb.ConnCase
 
-  import FoodFromHome.SellersFixtures
+  import FoodFromHome.FoodMenus.SellerRepoFixtures
 
   alias FoodFromHome.Sellers.Seller
 

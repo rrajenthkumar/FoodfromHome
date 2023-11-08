@@ -1,8 +1,10 @@
-defmodule FoodFromHome.SellersFixtures do
+defmodule FoodFromHome.Sellers.SellerRepoFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `FoodFromHome.Sellers` context.
+  entities via the `FoodFromHome.Sellers.SellerRepo`.
   """
+  alias FoodFromHome.Sellers.SellerRepo
+  alias FoodFromHome.Users.UserRepoFixtures
 
   @doc """
   Generate a unique seller tax_id.
@@ -13,6 +15,8 @@ defmodule FoodFromHome.SellersFixtures do
   Generate a seller.
   """
   def seller_fixture(attrs \\ %{}) do
+    user = UserRepoFixtures.user_fixture()
+
     {:ok, seller} =
       attrs
       |> Enum.into(%{
@@ -20,7 +24,7 @@ defmodule FoodFromHome.SellersFixtures do
         introduction: "some introduction",
         tax_id: unique_seller_tax_id()
       })
-      |> FoodFromHome.Sellers.create_seller()
+      |> SellerRepo.create_seller(user.id)
 
     seller
   end

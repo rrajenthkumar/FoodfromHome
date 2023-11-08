@@ -1,7 +1,7 @@
 defmodule FoodFromHomeWeb.FoodMenuControllerTest do
   use FoodFromHomeWeb.ConnCase
 
-  import FoodFromHome.FoodMenusFixtures
+  import FoodFromHome.FoodMenus.FoodMenuRepoFixtures
 
   @create_attrs %{
     description: "some description",

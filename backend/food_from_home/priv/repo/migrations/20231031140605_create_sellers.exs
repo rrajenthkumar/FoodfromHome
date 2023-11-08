@@ -3,7 +3,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateSellers do
 
   def change do
     create table(:sellers) do
-      add :seller_user_id, references(:users, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :nothing)
       add :illustration, :binary
       add :introduction, :text
       add :tax_id, :string
@@ -13,6 +13,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateSellers do
     end
 
     create unique_index(:sellers, [:tax_id])
-    create unique_index(:sellers, [:seller_user_id])
+    create unique_index(:sellers, [:user_id])
   end
 end

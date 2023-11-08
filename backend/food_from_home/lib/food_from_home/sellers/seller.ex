@@ -22,9 +22,10 @@ defmodule FoodFromHome.Sellers.Seller do
   @doc false
   def changeset(seller, attrs) do
     seller
-    |> cast(attrs, [:tax_id, :introduction, :illustration])
-    |> validate_required([:tax_id, :introduction])
-    |> unique_constraint(:tax_id, :seller_user_id)
+    |> cast(attrs, [:user_id, :illustration, :introduction, :tax_id])
+    |> validate_required([:user_id, :introduction, :tax_id])
+    |> unique_constraint(:user_id)
+    |> unique_constraint(:tax_id)
     |> foreign_key_constraint(:user_id)
   end
 end
