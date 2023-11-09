@@ -6,7 +6,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoTest do
   alias FoodFromHome.FoodMenus.FoodMenuRepoFixtures
   alias FoodFromHome.Sellers.SellerRepoFixtures
 
-    @invalid_attrs %{seller_id: nil, description: nil, ingredients: nil, menu_illustration: nil, name: nil, preparation_time_in_minutes: nil, price: nil, valid_until: nil}
+    @invalid_attrs %{description: nil, ingredients: nil, menu_illustration: nil, name: nil, preparation_time_in_minutes: nil, price: nil, valid_until: nil}
 
     setup do
       food_menu = FoodMenuRepoFixtures.food_menu_fixture()
@@ -26,7 +26,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoTest do
 
       seller = SellerRepoFixtures.seller_fixture()
 
-      valid_attrs = %{description: "some description", ingredients: ["egg", "milk"], menu_illustration: "some menu_illustration", name: "some name", preparation_time_in_minutes: 50, price: "50.25", valid_until: ~U[2100-11-30 14:28:00Z]}
+      valid_attrs = %{description: "some description", ingredients: ["egg", "milk"], menu_illustration: "some menu_illustration", name: "some name", preparation_time_in_minutes: 50, price: 9.5, valid_until: ~U[2100-11-30 14:28:00Z]}
 
       assert {:ok, %FoodMenu{} = food_menu} = FoodMenuRepo.create_food_menu(valid_attrs, seller.id)
       assert food_menu.seller_id == seller.id
@@ -36,7 +36,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoTest do
       assert food_menu.menu_illustration == "some menu_illustration"
       assert food_menu.name == "some name"
       assert food_menu.preparation_time_in_minutes == 50
-      assert food_menu.price == Decimal.new("50.25")
+      assert food_menu.price == Decimal.new("9.5")
       assert food_menu.rebate == nil
       assert food_menu.valid_until == ~U[2100-11-30 14:28:00Z]
     end
@@ -48,22 +48,22 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoTest do
     end
 
     test "update_food_menu/2 with valid data updates the food menu", %{food_menu: food_menu} do
-      update_attrs = %{allergens: ["gluten"], description: "some updated description", ingredients: ["sugar", "wheat flour"], menu_illustration: "some updated menu_illustration", name: "some updated name", preparation_time_in_minutes: 43, price: "456.7", rebate: %{}, valid_until: ~U[2100-10-31 14:28:00Z]}
+      update_attrs = %{allergens: ["gluten"], description: "some updated description", ingredients: ["sugar", "wheat flour"], menu_illustration: "some updated menu_illustration", name: "some updated name", preparation_time_in_minutes: 45, price: 11.25, rebate: %{}, valid_until: ~U[2100-10-31 14:28:00Z]}
 
-      assert {:ok, %FoodMenu{} = food_menu} = FoodMenuRepo.update_food_menu(food_menu.id, update_attrs)
+      assert {:ok, %FoodMenu{} = food_menu} = FoodMenuRepo.update_food_menu(update_attrs, food_menu.id)
       assert food_menu.allergens == ["gluten"]
       assert food_menu.description == "some updated description"
       assert food_menu.ingredients == ["sugar", "wheat flour"]
       assert food_menu.menu_illustration == "some updated menu_illustration"
       assert food_menu.name == "some updated name"
-      assert food_menu.preparation_time_in_minutes == 43
-      assert food_menu.price == Decimal.new("456.7")
+      assert food_menu.preparation_time_in_minutes == 45
+      assert food_menu.price == Decimal.new("11.25")
       assert food_menu.rebate == %{}
       assert food_menu.valid_until == ~U[2100-10-31 14:28:00Z]
     end
 
     test "update_food_menu/2 with invalid data returns error changeset", %{food_menu: food_menu} do
-      assert {:error, %Ecto.Changeset{}} = FoodMenuRepo.update_food_menu(food_menu.id, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = FoodMenuRepo.update_food_menu(@invalid_attrs, food_menu.id)
       assert food_menu == FoodMenuRepo.get_food_menu!(food_menu.id)
     end
 

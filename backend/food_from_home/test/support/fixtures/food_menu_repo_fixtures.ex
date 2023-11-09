@@ -21,7 +21,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoFixtures do
         menu_illustration: "some menu_illustration",
         name: "some name",
         preparation_time_in_minutes: 42,
-        price: "120.5",
+        price: 12.5,
         rebate: %{},
         valid_until: ~U[2100-10-30 14:28:00Z]
       })

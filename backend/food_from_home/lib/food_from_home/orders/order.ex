@@ -11,7 +11,7 @@ defmodule FoodFromHome.Orders.Order do
   schema "orders" do
     field :date, :utc_datetime
     field :delivery_address, :map
-    field :status, Ecto.Enum, values: [:open, :confirmed, :ready_for_pickup, :on_the_way, :delivered, :cancelled]
+    field :status, Ecto.Enum, values: [:open, :confirmed, :ready_for_pickup, :reserved_for_pickup, :on_the_way, :delivered, :cancelled]
     field :invoice_link, :string
 
     belongs_to :seller, Seller

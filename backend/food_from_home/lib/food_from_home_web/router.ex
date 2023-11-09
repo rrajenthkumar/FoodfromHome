@@ -8,10 +8,16 @@ defmodule FoodFromHomeWeb.Router do
   scope "/api/v1", FoodFromHomeWeb do
     pipe_through :api
 
-    get "/food_menus/:seller_id", FoodMenuController, :index
-    post "/food_menus", FoodMenuController, :create
-    put "/food_menus/:menu_id", FoodMenuController, :update
-    delete "/food_menus/:menu_id", FoodMenuController, :delete
+    scope "/sellers" do
+      get "/:seller_id/food-menus", FoodMenuController, :index
+      post "/:seller_id/food-menus", FoodMenuController, :create
+    end
+
+    scope "/food-menus" do
+      get "/:menu_id", FoodMenuController, :show
+      put "/:menu_id", FoodMenuController, :update
+      delete "/:menu_id", FoodMenuController, :delete
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

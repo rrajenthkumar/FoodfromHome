@@ -24,7 +24,9 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
       menu_illustration: food_menu.menu_illustration,
       name: food_menu.name,
       price: food_menu.price,
-      rebate: food_menu.rebate
+      rebate: food_menu.rebate,
+      preparation_time_in_minutes: food_menu.preparation_time_in_minutes,
+      valid_until: food_menu.valid_until
     }
   end
 end

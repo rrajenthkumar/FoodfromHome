@@ -9,6 +9,26 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   alias FoodFromHome.Sellers
 
   @doc """
+  Creates a food_menu.
+
+  ## Examples
+
+      iex> create_food_menu(%{field: value}, 12345)
+      {:ok, %FoodMenu{}}
+
+      iex> create_food_menu(%{field: bad_value}, 12345)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_food_menu(attrs \\ %{}, seller_id) do
+    seller_id
+    |> Sellers.get_seller!()
+    |> Ecto.build_assoc(:food_menus, attrs)
+    |> change_food_menu(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Gets a single food_menu.
 
   Raises `Ecto.NoResultsError` if the Food menu does not exist.
@@ -36,31 +56,10 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   def list_active_food_menus_from_seller(seller_id) do
     query =
       from(food_menu in FoodMenu,
-        where: food_menu.seller_id == ^seller_id and food_menu.valid_until >= ^DateTime.utc_now(),
-        select: {food_menu.name, food_menu.description, food_menu.menu_illustration, food_menu.ingredients, food_menu.allergens, food_menu.price, food_menu.rebate}
+        where: food_menu.seller_id == ^seller_id and food_menu.valid_until >= ^DateTime.utc_now()
       )
 
     Repo.all(query)
-  end
-
-  @doc """
-  Creates a food_menu.
-
-  ## Examples
-
-      iex> create_food_menu(%{field: value}, 12345)
-      {:ok, %FoodMenu{}}
-
-      iex> create_food_menu(%{field: bad_value}, 12345)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_food_menu(attrs \\ %{}, seller_id) do
-    seller_id
-    |> Sellers.get_seller!()
-    |> Ecto.build_assoc(:food_menus, attrs)
-    |> change_food_menu(attrs)
-    |> Repo.insert()
   end
 
   @doc """
@@ -68,14 +67,14 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   ## Examples
 
-      iex> update_food_menu(12345, %{field: new_value})
+      iex> update_food_menu(%{field: new_value}, 12345)
       {:ok, %FoodMenu{}}
 
-      iex> update_food_menu(12345, %{field: bad_value})
+      iex> update_food_menu(%{field: new_value}, 12345)
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_food_menu(menu_id, attrs) do
+  def update_food_menu(attrs, menu_id) do
     menu_id
     |> get_food_menu!()
     |> change_food_menu(attrs)
