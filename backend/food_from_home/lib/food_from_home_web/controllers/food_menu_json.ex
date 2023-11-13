@@ -18,6 +18,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
   defp data(%FoodMenu{} = food_menu) do
     %{
       id: food_menu.id,
+      seller_id: food_menu.seller_id,
       allergens: food_menu.allergens,
       description: food_menu.description,
       ingredients: food_menu.ingredients,

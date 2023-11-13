@@ -1,11 +1,11 @@
 defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   @moduledoc """
-  All CRUD operations related to food_menus table.
+  All CRUD operations related to food menus table.
   """
   import Ecto.Query, warn: false
 
-  alias FoodFromHome.Repo
   alias FoodFromHome.FoodMenus.FoodMenu
+  alias FoodFromHome.Repo
   alias FoodFromHome.Sellers
 
   @doc """
@@ -45,24 +45,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   def get_food_menu!(menu_id), do: Repo.get!(FoodMenu, menu_id)
 
   @doc """
-  Returns the list of active food_menus from a seller.
-
-  ## Examples
-
-    iex> list_active_food_menus_from_seller(12345)
-    [%FoodMenu{}, ...]
-
-  """
-  def list_active_food_menus_from_seller(seller_id) do
-    query =
-      from(food_menu in FoodMenu,
-        where: food_menu.seller_id == ^seller_id and food_menu.valid_until >= ^DateTime.utc_now()
-      )
-
-    Repo.all(query)
-  end
-
-  @doc """
   Updates a food_menu.
 
   ## Examples
@@ -74,7 +56,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_food_menu(attrs, menu_id) do
+  def update_food_menu(attrs = %{}, menu_id) do
     menu_id
     |> get_food_menu!()
     |> change_food_menu(attrs)
@@ -97,6 +79,44 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
     menu_id
     |> get_food_menu!()
     |> Repo.delete()
+  end
+
+  @doc """
+  Returns a list of food_menus after applying given filters.
+  When 'active' filter is set to 'true' only the food menus whose validity haven't expired will be listed
+  ## Examples
+
+    iex> list_food_menus(%{})
+    [%FoodMenu{}, ...]
+
+  """
+  def list_food_menus(filter_params = %{}) do
+    filters =
+      Enum.map(filter_params, fn
+        {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
+        key_value_pair -> key_value_pair
+      end)
+    list_food_menus(filters)
+  end
+
+  def list_food_menus(_filters = []) do
+    Repo.all(FoodMenu)
+  end
+
+  def list_food_menus(filters) when is_list(filters) do
+    {active, other_filters} = Keyword.pop(filters, :active, "false")
+    query =
+      case active do
+        "true" ->
+          from(food_menu in FoodMenu,
+            where: ^other_filters,
+            where: food_menu.valid_until >= ^DateTime.utc_now())
+        "false" ->
+          from(food_menu in FoodMenu,
+            where: ^other_filters)
+
+    end
+    Repo.all(query)
   end
 
   @doc """

@@ -9,8 +9,16 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoFixtures do
   @doc """
   Generate a food_menu.
   """
-  def food_menu_fixture(attrs\\ %{}) do
-    seller = SellerRepoFixtures.seller_fixture()
+  def food_menu_fixture(attrs\\ %{}, seller_id\\ nil) do
+
+
+    seller_id =
+      case seller_id do
+        nil ->
+          seller = SellerRepoFixtures.seller_fixture()
+          seller.id
+        seller_id -> seller_id
+      end
 
     {:ok, food_menu} =
       attrs
@@ -25,7 +33,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoFixtures do
         rebate: %{},
         valid_until: ~U[2100-10-30 14:28:00Z]
       })
-      |> FoodMenuRepo.create_food_menu(seller.id)
+      |> FoodMenuRepo.create_food_menu(seller_id)
 
     food_menu
   end
