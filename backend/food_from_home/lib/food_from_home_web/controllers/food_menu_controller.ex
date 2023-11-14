@@ -6,8 +6,8 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def index(conn, params = %{}) do
-    food_menus = FoodMenus.list_food_menus(params)
+  def index(conn, filter_params = %{}) do
+    food_menus = FoodMenus.list_food_menus(filter_params)
     render(conn, :index, food_menus: food_menus)
   end
 

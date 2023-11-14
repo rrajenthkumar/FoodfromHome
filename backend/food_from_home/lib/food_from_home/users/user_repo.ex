@@ -18,7 +18,7 @@ defmodule FoodFromHome.Users.UserRepo do
   """
   def create_user(attrs \\ %{}) do
     %User{}
-    |> change_user(attrs)
+    |> change_create_user(attrs)
     |> Repo.insert()
   end
 
@@ -66,10 +66,10 @@ defmodule FoodFromHome.Users.UserRepo do
 
   """
   def update_user(user_id, attrs) do
-    user_id
-    |> get_user!()
-    |> change_user(attrs)
-    |> Repo.update()
+    user = user_id
+      |> get_user!()
+      |> change_update_user(attrs)
+      |> Repo.update()
   end
 
   @doc """
@@ -81,7 +81,7 @@ defmodule FoodFromHome.Users.UserRepo do
       iex> mark_user_as_deleted(234)
       {:ok, %User{}}
 
-      iex> mark_user_as_deleted(567)
+      iex> mark_user_as_deleted(_non_existing_user_id = 567)
       {:error, %Ecto.Changeset{}}
 
   """
@@ -90,16 +90,56 @@ defmodule FoodFromHome.Users.UserRepo do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
+  Returns a list of users after applying given filters.
+  ## Examples
+
+    iex> list_users(%{user_type = :seller})
+    [%User{}, ...]
+
+  """
+  def list_users(filter_params = %{}) do
+    filters =
+      Enum.map(filter_params, fn
+        {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
+        key_value_pair -> key_value_pair
+      end)
+    list_users(filters)
+  end
+
+  def list_users(_filters = []) do
+    Repo.all(User)
+  end
+
+  def list_users(filters) when is_list(filters) do
+    query =
+          from(user in User,
+            where: ^filters)
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user changes during user creation.
 
   ## Examples
 
-      iex> change_user(user)
+      iex> change_create_user(user)
       %Ecto.Changeset{data: %User{}}
 
   """
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
+  def change_create_user(%User{} = user, attrs \\ %{}) do
+    User.create_changeset(user, attrs)
   end
 
+    @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user changes during user updation.
+
+  ## Examples
+
+      iex> change_update_user(user)
+      %Ecto.Changeset{data: %User{}}
+
+  """
+  def change_update_user(%User{} = user, attrs \\ %{}) do
+    User.update_changeset(user, attrs)
+  end
 end
