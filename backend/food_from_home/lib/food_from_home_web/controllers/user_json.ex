@@ -15,7 +15,23 @@ defmodule FoodFromHomeWeb.UserJSON do
     %{data: data(user)}
   end
 
-  defp data(%User{} = user) do
+  defp data(user = %User{user_type: :seller}) do
+    %{
+      id: user.id,
+      address: user.address,
+      phone_number: user.phone_number,
+      email_id: user.email_id,
+      first_name: user.first_name,
+      gender: user.gender,
+      last_name: user.last_name,
+      profile_image: user.profile_image,
+      user_type: user.user_type,
+      deleted: user.deleted,
+      seller: user.seller
+    }
+  end
+
+  defp data(user = %User{}) do
     %{
       id: user.id,
       address: user.address,

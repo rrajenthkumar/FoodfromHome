@@ -9,7 +9,7 @@ defmodule FoodFromHome.Users.User do
   alias FoodFromHome.Users.User.Address
 
   @allowed_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :profile_image]
-  @allowed_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :profile_image, :deleted]
+  @allowed_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :profile_image]
   @required_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type]
   @address_keys [:door_number, :street, :city, :country, :postal_code]
 
@@ -65,7 +65,7 @@ defmodule FoodFromHome.Users.User do
 
   @doc """
   Changeset function for user updation.
-  Seller schema data can't be updated from User context (though they were created from User context). Please refer Seller context for seller data updation.
+  Please note that Seller schema data has been disallowed from updating it through User context (though it is created from User context). Use Seller context for seller data updation.
   """
   def update_changeset(user = %User{}, attrs = %{}) do
     user
@@ -76,7 +76,17 @@ defmodule FoodFromHome.Users.User do
     |> cast_embed(:address, required: true, with: &address_changeset/2)
   end
 
-  @doc false
+  @doc """
+  Changeset function for user (soft) deletion.
+  Whenever an user is to be deleted the 'deleted' field is set to true rather than removing the data completely from table, to preserve the history.
+  """
+  def soft_delete_changeset(user = %User{}) do
+    cast(user, %{deleted: true}, [:deleted])
+  end
+
+  @doc """
+    Changeset function for Address schema.
+    """
   def address_changeset(address= %Address{}, attrs = %{}) do
     address
     |> cast(attrs, @address_keys)
