@@ -9,23 +9,24 @@ defmodule FoodFromHomeWeb.Router do
     pipe_through :api
 
     scope "/users" do
-      post "", UserController, :create
-      get "", UserController, :index
+      get "/", UserController, :index
+      post "/", UserController, :create
       get "/:user_id", UserController, :show
       put "/:user_id", UserController, :update
-      post "/:user_id/sellers", SellerController, :create
+      delete "/:user_id", UserController, :delete
+      get "/:user_id/seller", SellerController, :show
     end
 
     scope "/sellers" do
-      get "", SellerController, :index
-      get "/:seller_id/food-menus", SellerController, :index
+      get "/", SellerController, :index
       get "/:seller_id", SellerController, :show
       put "/:seller_id", SellerController, :update
       post "/:seller_id/food-menus", FoodMenuController, :create
+      get "/:seller_id/food-menus", FoodMenuController, :index
     end
 
     scope "/food-menus" do
-      get "", FoodMenuController, :index
+      get "/", FoodMenuController, :index
       get "/:menu_id", FoodMenuController, :show
       put "/:menu_id", FoodMenuController, :update
       delete "/:menu_id", FoodMenuController, :delete
