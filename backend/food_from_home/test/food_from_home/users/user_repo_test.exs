@@ -108,8 +108,14 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert UserRepo.get_user!(user.id) == updated_user
     end
 
-    test "with user_type update returns error changeset", %{user: user} do
+    test "returns error changeset on trying to update 'user_type' field", %{user: user} do
       assert {:error, %Ecto.Changeset{}} = UserRepo.update_user(user, %{user_type: :deliverer})
+
+      assert UserRepo.get_user!(user.id) == user
+    end
+
+    test "returns error changeset on trying to update 'deleted' field", %{user: user} do
+      assert {:error, %Ecto.Changeset{}} = UserRepo.update_user(user, %{deleted: true})
 
       assert UserRepo.get_user!(user.id) == user
     end

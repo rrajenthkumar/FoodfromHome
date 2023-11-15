@@ -8,8 +8,9 @@ defmodule FoodFromHome.Users.User do
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
 
-  @allowed_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :profile_image]
+  @allowed_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :profile_image]
   @required_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type]
+  @allowed_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :deleted, :profile_image]
   @required_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number]
   @address_keys [:door_number, :street, :city, :country, :postal_code]
 
@@ -44,7 +45,7 @@ defmodule FoodFromHome.Users.User do
   """
   def create_changeset(user = %User{}, attrs = %{user_type: :seller}) do
     user
-    |> cast(attrs, @allowed_user_keys)
+    |> cast(attrs, @allowed_create_user_keys)
     |> validate_required(@required_create_user_keys)
     |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
     |> validate_format(:email_id, ~r/@/)
@@ -54,7 +55,7 @@ defmodule FoodFromHome.Users.User do
 
   def create_changeset(user = %User{}, attrs = %{}) do
     user
-    |> cast(attrs, @allowed_user_keys)
+    |> cast(attrs, @allowed_create_user_keys)
     |> validate_required(@required_create_user_keys)
     |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
     |> validate_format(:email_id, ~r/@/)
@@ -68,7 +69,7 @@ defmodule FoodFromHome.Users.User do
   """
   def update_changeset(user = %User{}, attrs = %{}) do
     user
-    |> cast(attrs, @allowed_user_keys)
+    |> cast(attrs, @allowed_update_user_keys)
     |> validate_required(@required_update_user_keys)
     |> validate_exclusion(:user_type, [:buyer, :seller, :deliverer], message: "user_type field cannot be updated")
     |> validate_exclusion(:deleted, [true, false], message: "deleted field cannot be updated")
