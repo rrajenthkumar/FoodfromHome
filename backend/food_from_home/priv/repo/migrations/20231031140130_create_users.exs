@@ -16,6 +16,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateUsers do
       timestamps()
     end
 
+    create index(:users, [:deleted])
     create unique_index(:users, [:email_id], where: "deleted is false", name: :index_for_uniqueness_of_email_id_of_active_users)
   end
 end

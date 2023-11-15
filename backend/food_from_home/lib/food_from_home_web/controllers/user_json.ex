@@ -1,5 +1,6 @@
 defmodule FoodFromHomeWeb.UserJSON do
   alias FoodFromHome.Users.User
+  alias FoodFromHome.Users.User.Address
 
   @doc """
   Renders a list of users.
@@ -18,7 +19,7 @@ defmodule FoodFromHomeWeb.UserJSON do
   defp data(user = %User{user_type: :seller}) do
     %{
       id: user.id,
-      address: user.address,
+      address: data(user.address),
       phone_number: user.phone_number,
       email_id: user.email_id,
       first_name: user.first_name,
@@ -34,7 +35,7 @@ defmodule FoodFromHomeWeb.UserJSON do
   defp data(user = %User{}) do
     %{
       id: user.id,
-      address: user.address,
+      address: data(user.address),
       phone_number: user.phone_number,
       email_id: user.email_id,
       first_name: user.first_name,
@@ -43,6 +44,16 @@ defmodule FoodFromHomeWeb.UserJSON do
       profile_image: user.profile_image,
       user_type: user.user_type,
       deleted: user.deleted
+    }
+  end
+
+  defp data(address = %Address{}) do
+    %{
+      door_number: address.door_number,
+      street: address.street,
+      city: address.city,
+      country: address.country,
+      postal_code: address.postal_code
     }
   end
 end

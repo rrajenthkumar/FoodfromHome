@@ -15,7 +15,7 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
   def unique_tax_id, do: "xyz_#{System.unique_integer([:positive])}"
 
   @doc """
-  Generate a user.
+  Generate a user of types :buyer or :deliverer.
   """
   def user_fixture(attrs \\ %{}) do
     {:ok, user} =
@@ -42,7 +42,7 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
   end
 
   @doc """
-  Generate a user of type seller.
+  Generate a user of type :seller.
   """
   def user_fixture_for_seller_type(attrs \\ %{}) do
     {:ok, user} =

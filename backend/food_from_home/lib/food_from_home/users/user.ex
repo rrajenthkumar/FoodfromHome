@@ -8,13 +8,12 @@ defmodule FoodFromHome.Users.User do
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
 
-  @allowed_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :profile_image]
-  @allowed_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :profile_image]
-  @required_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type]
+  @allowed_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :profile_image]
+  @required_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type]
+  @required_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number]
   @address_keys [:door_number, :street, :city, :country, :postal_code]
 
   schema "users" do
-
     field :email_id, :string
     field :first_name, :string
     field :last_name, :string
@@ -40,24 +39,23 @@ defmodule FoodFromHome.Users.User do
   end
 
   @doc """
-  1. Changeset function for new user creation and 'seller' user type.
-  2. Changeset function for new user creation and other user types.
+  1. Changeset function for new user creation for :seller user type.
+  2. Changeset function for new user creation for other user types.
   """
   def create_changeset(user = %User{}, attrs = %{user_type: :seller}) do
     user
-    |> cast(attrs, @allowed_create_user_keys)
-    |> validate_required(@required_user_keys)
+    |> cast(attrs, @allowed_user_keys)
+    |> validate_required(@required_create_user_keys)
     |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
-    |> cast_assoc(:seller, with: &Seller.changeset/2)
-    |> validate_required([:seller])
+    |> cast_assoc(:seller, required: true, with: &Seller.changeset/2)
   end
 
   def create_changeset(user = %User{}, attrs = %{}) do
     user
-    |> cast(attrs, @allowed_create_user_keys)
-    |> validate_required(@required_user_keys)
+    |> cast(attrs, @allowed_user_keys)
+    |> validate_required(@required_create_user_keys)
     |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
@@ -65,12 +63,15 @@ defmodule FoodFromHome.Users.User do
 
   @doc """
   Changeset function for user updation.
-  Please note that Seller schema data has been disallowed from updating it through User context (though it is created from User context). Use Seller context for seller data updation.
+  Please note that Seller schema data has been disallowed from updating it through User context (though it is created initially through User context).
+  Use Seller context for seller data updation.
   """
   def update_changeset(user = %User{}, attrs = %{}) do
     user
-    |> cast(attrs, @allowed_update_user_keys)
-    |> validate_required(@required_user_keys)
+    |> cast(attrs, @allowed_user_keys)
+    |> validate_required(@required_update_user_keys)
+    |> validate_exclusion(:user_type, [:buyer, :seller, :deliverer], message: "user_type field cannot be updated")
+    |> validate_exclusion(:deleted, [true, false], message: "deleted field cannot be updated")
     |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
@@ -78,15 +79,15 @@ defmodule FoodFromHome.Users.User do
 
   @doc """
   Changeset function for user (soft) deletion.
-  Whenever an user is to be deleted the 'deleted' field is set to true rather than removing the data completely from table, to preserve the history.
+  Whenever an user is to be deleted, the 'deleted' field is set to true rather than removing the data completely from table, to preserve history.
   """
   def soft_delete_changeset(user = %User{}) do
-    cast(user, %{deleted: true}, [:deleted])
+    change(user, %{deleted: true})
   end
 
   @doc """
-    Changeset function for Address schema.
-    """
+  Changeset function for Address schema.
+  """
   def address_changeset(address= %Address{}, attrs = %{}) do
     address
     |> cast(attrs, @address_keys)

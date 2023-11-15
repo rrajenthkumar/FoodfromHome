@@ -80,26 +80,27 @@ defmodule FoodFromHome.Users.UserRepo do
 
   """
   def list_users(filter_params = %{} \\ %{}) do
-    filters =
-      Enum.map(filter_params, fn
-        {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
-        key_value_pair -> key_value_pair
-      end)
-    list_users(filters)
+    filters = Enum.map(filter_params, fn
+                {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
+                key_value_pair -> key_value_pair
+              end)
+    filter_users(filters)
   end
 
-  def list_users(_filters = []) do
-    Repo.all(User)
+  defp filter_users(_filters = []) do
+    query = from(user in User,
+            where: user.deleted == false)
+    Repo.all(query)
   end
 
-  def list_users(filters) when is_list(filters) do
+  defp filter_users(filters) when is_list(filters) do
     {include_deleted, other_filters} = Keyword.pop(filters, :include_deleted, "false")
     query =
       case include_deleted do
         "true" ->
           from(user in User,
             where: ^other_filters)
-        "false" ->
+        _ ->
           from(user in User,
             where: ^other_filters,
             where: user.deleted == false)
