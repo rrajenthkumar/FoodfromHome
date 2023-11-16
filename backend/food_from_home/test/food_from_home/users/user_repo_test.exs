@@ -20,7 +20,9 @@ defmodule FoodFromHome.Users.UserRepoTest do
   @attrs_with_invalid_seller_data %{address: %{door_number: "2", street: "Postweg", city: "Munich", country: "Germany", postal_code: "666555"}, phone_number: "+4912344321545", email_id: "random@email.de", first_name: "some random first_name", gender: :female, last_name: "some random last_name", profile_image: "some random profile image", user_type: :seller, seller: %{introduction: nil, illustration: nil, tax_id: nil}}
 
   setup do
-    user = UserRepoFixtures.user_fixture()
+    user =
+      UserRepoFixtures.user_fixture()
+      |> Repo.preload(:seller)
     %{user: user}
   end
 
@@ -43,7 +45,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert user.user_type == :buyer
       assert user.deleted == false
 
-      assert UserRepo.get_user!(user.id) == user
+      assert UserRepo.get_user!(user.id) == user |> Repo.preload(:seller)
     end
 
     test "valid data of user_type ':seller' creates a user and also a corresponding seller" do
@@ -66,7 +68,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert seller.illustration == "some random illustration"
       assert seller.tax_id == "xyz12345678"
 
-      assert UserRepo.get_user!(user.id) |> Repo.preload(:seller) == user
+      assert UserRepo.get_user!(user.id) == user
       assert Sellers.get_seller!(seller.id) == seller
     end
 
@@ -137,7 +139,10 @@ defmodule FoodFromHome.Users.UserRepoTest do
 
   describe "list_users/1" do
     setup do
-      user_2 = UserRepoFixtures.user_fixture(%{user_type: :deliverer})
+      user_2 =
+        %{user_type: :deliverer}
+        |> UserRepoFixtures.user_fixture()
+        |> Repo.preload(:seller)
       %{user_2: user_2}
     end
 
@@ -158,12 +163,13 @@ defmodule FoodFromHome.Users.UserRepoTest do
     end
 
     test "returns users based on combination of filter params", %{user: _user_1, user_2: user_2} do
-      user_3 = UserRepoFixtures.user_fixture(%{user_type: :deliverer})
+      user_3 =
+        %{user_type: :deliverer}
+        |> UserRepoFixtures.user_fixture()
+        |> Repo.preload(:seller)
       {:ok, %User{} = _soft_deleted_user_3} = UserRepo.soft_delete_user(user_3)
 
       _user_4 = UserRepoFixtures.user_fixture_for_seller_type()
-
-
 
       assert UserRepo.list_users(%{user_type: "deliverer", include_deleted: "false"}) == [user_2]
     end

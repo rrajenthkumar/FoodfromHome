@@ -36,7 +36,11 @@ defmodule FoodFromHome.Users.UserRepo do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(user_id), do: Repo.get!(User, user_id)
+  def get_user!(user_id) do
+    User
+    |> Repo.get!(user_id)
+    |> Repo.preload(:seller)
+  end
 
   @doc """
   Updates an user.
@@ -84,28 +88,27 @@ defmodule FoodFromHome.Users.UserRepo do
                 {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
                 key_value_pair -> key_value_pair
               end)
-    filter_users(filters)
+    get_query(filters)
+    |> Repo.all()
+    |> Repo.preload(:seller)
   end
 
-  defp filter_users(_filters = []) do
-    query = from(user in User,
-            where: user.deleted == false)
-    Repo.all(query)
+  defp get_query(_filters = []) do
+    from(user in User,
+      where: user.deleted == false)
   end
 
-  defp filter_users(filters) when is_list(filters) do
+  defp get_query(filters) when is_list(filters) do
     {include_deleted, other_filters} = Keyword.pop(filters, :include_deleted, "false")
-    query =
-      case include_deleted do
-        "true" ->
-          from(user in User,
-            where: ^other_filters)
-        _ ->
-          from(user in User,
-            where: ^other_filters,
-            where: user.deleted == false)
-      end
-    Repo.all(query)
+    case include_deleted do
+      "true" ->
+        from(user in User,
+          where: ^other_filters)
+      _ ->
+        from(user in User,
+          where: ^other_filters,
+          where: user.deleted == false)
+    end
   end
 
   @doc """
