@@ -10,6 +10,7 @@ defmodule FoodFromHome.Users.User do
 
   @allowed_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :profile_image]
   @required_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type]
+  #TO DO: :user_type, :deleted have been allowed so that validate_exclusion can be used on changeset. This solution has to be improved.
   @allowed_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :deleted, :profile_image]
   @required_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number]
   @address_keys [:door_number, :street, :city, :country, :postal_code]
