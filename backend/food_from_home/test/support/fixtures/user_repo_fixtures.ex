@@ -69,6 +69,7 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
         }
       })
       |> UserRepo.create_user()
+
     user
   end
 end

@@ -3,6 +3,7 @@ defmodule FoodFromHome.Users.UserRepo do
 
   alias FoodFromHome.Repo
   alias FoodFromHome.Users.User
+  alias FoodFromHome.Utils
 
   @doc """
   Creates an user.
@@ -84,11 +85,9 @@ defmodule FoodFromHome.Users.UserRepo do
 
   """
   def list_users(filter_params = %{} \\ %{}) do
-    filters = Enum.map(filter_params, fn
-                {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
-                key_value_pair -> key_value_pair
-              end)
-    get_query(filters)
+    filter_params
+    |> Utils.convert_map_to_keyword_list()
+    |> get_query()
     |> Repo.all()
     |> Repo.preload(:seller)
   end
