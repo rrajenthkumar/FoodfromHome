@@ -2,7 +2,6 @@ defmodule FoodFromHome.Users do
   @moduledoc """
   The Users context.
   """
-  alias FoodFromHome.Users.User
   alias FoodFromHome.Users.UserRepo
 
   defdelegate create_user(attrs), to: UserRepo

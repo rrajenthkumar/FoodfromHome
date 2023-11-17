@@ -40,6 +40,28 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Auth0
+config :food_from_home,
+  auth0: %{
+    url: %URI{
+      host: "rrajenthkumar-private.eu.auth0.com/",
+      port: 443,
+      scheme: "https"
+    },
+    client_id: "p6QC3xImNEFFB0RB0Km03VGytMyKyKlm",
+    client_secret: "4HLGtsHe-0Itt_4B_Zz8n-ijnVwJ1XnkHW1o7-zCZoK0OvTB8c6BOvN4amnCAbl6",
+    audience: "https://www.rajenthzfoodfromhome.de/",
+    scope: "admin"
+  }
+
+# Guardian
+config :food_from_home, FoodFromHome.Auth.Guardian,
+allowed_algos: ["HS256"],
+verify_module: Guardian.JWT,
+issuer: "rrajenthkumar-private.eu.auth0.com/",
+verify_issuer: true,
+secret_key: "7RaD6ybqYwIIvc1aqgzTrMopliOLDpFy"
+
 # Configures Kaffe, the Elixir wrapper around brod: the Erlang Kafka client
 # config :kaffe,
 #   producer: [

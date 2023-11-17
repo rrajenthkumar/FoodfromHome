@@ -5,31 +5,49 @@ defmodule FoodFromHomeWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :api_auth do
+    plug FoodFromHomeWeb.Pipelines.JWTAuthorisation
+  end
+
+  scope "/auth", FoodFromHomeWeb do
+    pipe_through [:api]
+
+    get "/login/:credentials", AuthController, :login
+  end
+
   scope "/api/v1", FoodFromHomeWeb do
-    pipe_through :api
+    pipe_through [:api]
 
-    scope "/users" do
-      get "/", UserController, :index
-      post "/", UserController, :create
-      get "/:user_id", UserController, :show
-      put "/:user_id", UserController, :update
-      delete "/:user_id", UserController, :delete
-      get "/:user_id/seller", SellerController, :show
+    scope "/auth" do
+      get "/login/:credentials", AuthController, :login
     end
 
-    scope "/sellers" do
-      get "/", SellerController, :index
-      get "/:seller_id", SellerController, :show
-      put "/:seller_id", SellerController, :update
-      post "/:seller_id/food-menus", FoodMenuController, :create
-      get "/:seller_id/food-menus", FoodMenuController, :index
-    end
+    scope "/" do
+      pipe_through [:api_auth]
 
-    scope "/food-menus" do
-      get "/", FoodMenuController, :index
-      get "/:menu_id", FoodMenuController, :show
-      put "/:menu_id", FoodMenuController, :update
-      delete "/:menu_id", FoodMenuController, :delete
+      scope "/users" do
+        get "/", UserController, :index
+        post "/", UserController, :create
+        get "/:user_id", UserController, :show
+        put "/:user_id", UserController, :update
+        delete "/:user_id", UserController, :delete
+        get "/:user_id/seller", SellerController, :show
+      end
+
+      scope "/sellers" do
+        get "/", SellerController, :index
+        get "/:seller_id", SellerController, :show
+        put "/:seller_id", SellerController, :update
+        post "/:seller_id/food-menus", FoodMenuController, :create
+        get "/:seller_id/food-menus", FoodMenuController, :index
+      end
+
+      scope "/food-menus" do
+        get "/", FoodMenuController, :index
+        get "/:menu_id", FoodMenuController, :show
+        put "/:menu_id", FoodMenuController, :update
+        delete "/:menu_id", FoodMenuController, :delete
+      end
     end
   end
 
