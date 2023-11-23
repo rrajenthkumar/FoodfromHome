@@ -46,9 +46,10 @@ defmodule FoodFromHome.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:geo_postgis, "~> 3.5"},
       {:kaffe, "~> 1.24"},
-      {:guardian, "~> 2.3"},
-      {:httpoison, "~> 2.2"},
-      {:bypass, "~> 2.1"}
+      {:ueberauth, "~> 0.10.5"},
+      {:ueberauth_auth0, "~> 2.1"},
+      {:oauth2, "~> 2.1"},
+      {:httpoison, "~> 2.2"}
     ]
   end
 

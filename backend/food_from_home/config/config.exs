@@ -40,27 +40,15 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Auth0
-config :food_from_home,
-  auth0: %{
-    url: %URI{
-      host: "rrajenthkumar-private.eu.auth0.com/",
-      port: 443,
-      scheme: "https"
-    },
-    client_id: "p6QC3xImNEFFB0RB0Km03VGytMyKyKlm",
-    client_secret: "4HLGtsHe-0Itt_4B_Zz8n-ijnVwJ1XnkHW1o7-zCZoK0OvTB8c6BOvN4amnCAbl6",
-    audience: "https://www.rajenthzfoodfromhome.de/",
-    scope: "admin"
-  }
+config :ueberauth, Ueberauth,
+  providers: [
+    auth0: {Ueberauth.Strategy.Auth0, []}
+  ]
 
-# Guardian
-config :food_from_home, FoodFromHome.Auth.Guardian,
-allowed_algos: ["HS256"],
-verify_module: Guardian.JWT,
-issuer: "rrajenthkumar-private.eu.auth0.com/",
-verify_issuer: true,
-secret_key: "7RaD6ybqYwIIvc1aqgzTrMopliOLDpFy"
+config :ueberauth, Ueberauth.Strategy.Auth0.OAuth,
+  client_id: "9PWU23oPd307UdtdyzzieBoPZpUQpgxe",
+  client_secret: "UkeV6vcX7P4RoWkbW5kQZYOU7HxN6zh2c7WpoSX0VtxQvpfLrXi96yFoQoXOgQX5",
+  redirect_uri: "http://localhost:4000/auth/auth0/callback"
 
 # Configures Kaffe, the Elixir wrapper around brod: the Erlang Kafka client
 # config :kaffe,
