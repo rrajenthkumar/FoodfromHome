@@ -16,6 +16,8 @@ config :food_from_home, FoodFromHome.Repo,
 # Configures the endpoint
 config :food_from_home, FoodFromHomeWeb.Endpoint,
   url: [host: "localhost"],
+  http: [:inet6, port: 4000],
+  server: true,
   render_errors: [
     formats: [json: FoodFromHomeWeb.ErrorJSON],
     layout: false

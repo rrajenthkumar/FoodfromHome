@@ -5,24 +5,20 @@ defmodule FoodFromHomeWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :auth do
-    plug FoodFromHomeWeb.Plugs.JWTAuthorisation
+  scope "/auth", FoodFromHomeWeb do
+    pipe_through [:api]
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
   end
 
   scope "/api/v1", FoodFromHomeWeb do
     pipe_through [:api]
 
-    scope "/users" do
-      post "/", UserController, :create # implemented
-    end
-
-    scope "/login" do
-      get "/:credentials", AuthController, :login
-    end
-
     scope "/" do
-      #pipe_through [:auth]
       scope "/users" do
+        # To create a new user and also a seller in case of seller user type.
+        post "/", UserController, :create
         # To list sellers with limited fields based on query parameters for filtering.
         get "/", UserController, :index
         # To get an user same as current user.
