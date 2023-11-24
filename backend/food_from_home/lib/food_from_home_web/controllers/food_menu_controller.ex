@@ -3,38 +3,64 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
+  alias FoodFromHome.Utils
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def index(conn, filter_params = %{}) do
-    food_menus = FoodMenus.list_food_menus(filter_params)
+  def index(conn, params_with_filters = %{"seller_id" => _seller_id}) do
+    food_menus = FoodMenus.list(params_with_filters)
+
     render(conn, :index, food_menus: food_menus)
   end
 
-  def create(conn, %{"food_menu" => food_menu_params, "seller_id" => seller_id}) do
-    with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create_food_menu(food_menu_params, seller_id) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/v1/food-menus/#{food_menu.id}")
-      |> render(:show, food_menu: food_menu)
+  def create(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => food_menu_params, "seller_id" => seller_id}) do
+    food_menu_params = Utils.convert_map_string_keys_to_atoms(food_menu_params)
+
+    case seller_belongs_to_current_user?(current_user, seller_id) do
+      true ->
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(food_menu_params, seller_id) do
+          conn
+          |> put_status(:created)
+          |> put_resp_header("location", ~p"/api/v1/food-menus/#{food_menu.id}")
+          |> render(:show, food_menu: food_menu)
+        end
+      false ->
+        ErrorHandler.handle_error(conn, "403")
     end
   end
 
-  def show(conn, %{"menu_id" => menu_id}) do
-    with %FoodMenu{} = food_menu <- FoodMenus.get_food_menu!(menu_id) do
+  def show(conn, %{"menu_id" => menu_id, "seller_id" => _seller_id}) do
+    with %FoodMenu{} = food_menu <- FoodMenus.get!(menu_id) do
       render(conn, :show, food_menu: food_menu)
     end
   end
 
-  def update(conn, %{"food_menu" => food_menu_params, "menu_id" => menu_id}) do
-    with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update_food_menu(food_menu_params, menu_id) do
-      render(conn, :show, food_menu: food_menu)
+  def update(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => food_menu_params, "seller_id" => seller_id, "menu_id" => menu_id}) do
+    food_menu_params = Utils.convert_map_string_keys_to_atoms(food_menu_params)
+
+    case seller_belongs_to_current_user?(current_user, seller_id) do
+      true ->
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(food_menu_params, menu_id) do
+          render(conn, :show, food_menu: food_menu)
+        end
+      false ->
+        ErrorHandler.handle_error(conn, "403")
     end
   end
 
-  def delete(conn, %{"menu_id" => menu_id}) do
-    with {:ok, %FoodMenu{}} <- FoodMenus.delete_food_menu(menu_id) do
-      send_resp(conn, :no_content, "")
+  def delete(conn = %{assigns: %{current_user: current_user}}, %{"seller_id" => seller_id, "menu_id" => menu_id}) do
+    case seller_belongs_to_current_user?(current_user, seller_id) do
+      true ->
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.delete(menu_id) do
+          send_resp(conn, :no_content, "")
+        end
+      false ->
+        ErrorHandler.handle_error(conn, "403")
     end
+  end
+
+  defp seller_belongs_to_current_user?(current_user = %User{id: current_user_id}, seller_id) do
+    %Seller{user_id: seller_user_id} = Sellers.get!(seller_id)
+    seller_user_id === current_user_id
   end
 end

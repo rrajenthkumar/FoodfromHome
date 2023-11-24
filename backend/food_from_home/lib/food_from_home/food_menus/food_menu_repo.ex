@@ -1,134 +1,161 @@
 defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   @moduledoc """
-  All CRUD operations related to food menus table.
+  CRUD operations related to food menus table.
   """
   import Ecto.Query, warn: false
 
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers
+  alias FoodFromHome.Utils
 
   @doc """
-  Creates a food_menu.
+  Creates a food_menu for a given seller id.
 
   ## Examples
 
-      iex> create_food_menu(%{field: value}, 12345)
+      iex> create(%{field: value}, 12345)
       {:ok, %FoodMenu{}}
 
-      iex> create_food_menu(%{field: bad_value}, 12345)
+      iex> create(%{field: bad_value}, 12345)
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_food_menu(attrs \\ %{}, seller_id) do
+  def create(attrs, seller_id) when is_map(attrs) and is_integer(seller_id) do
     seller_id
     |> Sellers.get_seller!()
     |> Ecto.build_assoc(:food_menus, attrs)
-    |> change_food_menu()
+    |> create_change()
     |> Repo.insert()
   end
 
   @doc """
-  Gets a single food_menu.
+  Gets a single food_menu using menu_id.
 
   Raises `Ecto.NoResultsError` if the Food menu does not exist.
 
   ## Examples
 
-      iex> get_food_menu!(123)
+      iex> get!(123)
       %FoodMenu{}
 
-      iex> get_food_menu!(456)
+      iex> get!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_food_menu!(menu_id), do: Repo.get!(FoodMenu, menu_id)
+  def get!(menu_id) when is_integer(menu_id), do: Repo.get!(FoodMenu, menu_id)
 
   @doc """
   Updates a food_menu.
+  If an associated cart item exists updation is forbidden and it results in ecto changeset error.
 
   ## Examples
 
-      iex> update_food_menu(%{field: new_value}, 12345)
+      iex> update(%{field: new_value}, 12345)
       {:ok, %FoodMenu{}}
 
-      iex> update_food_menu(%{field: new_value}, 12345)
+      iex> update(%{field: new_value}, 12345)
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_food_menu(attrs = %{}, menu_id) do
+  def update(attrs = %{}, menu_id) when is_map(attrs) and is_integer(menu_id) do
     menu_id
-    |> get_food_menu!()
-    |> change_food_menu(attrs)
+    |> get!()
+    |> update_change(attrs)
     |> Repo.update()
   end
 
   @doc """
   Deletes a food_menu.
+  If an associated cart item exists deletion is forbidden.
 
   ## Examples
 
-      iex> delete_food_menu(12345)
+      iex> delete(12345)
       {:ok, %FoodMenu{}}
 
-      iex> delete_food_menu(12345)
-      {:error, %Ecto.Changeset{}}
+      iex> delete(12345)
+      {:error, :forbidden}
 
   """
-  def delete_food_menu(menu_id) do
+  def delete(menu_id) when is_integer(menu_id) do
     menu_id
-    |> get_food_menu!()
-    |> Repo.delete()
+    |> get!()
+    |> no_associated_cart_items?()
+    |> case do
+      true -> Repo.delete()
+      false -> {:error, :forbidden}
+    end
   end
 
   @doc """
-  Returns a list of food_menus after applying given filters.
-  When 'active' filter is set to 'true' only the food menus whose validity haven't expired will be listed
+  Returns a list of food_menus for a given seller id and applicable filters.
+  When 'active: true' filter is set, the food menus belonging to the seller, with quantity > 0 and which are still valid are displayed.
+
   ## Examples
 
-    iex> list_food_menus(%{})
+    iex> list(12345)
     [%FoodMenu{}, ...]
 
   """
-  def list_food_menus(filter_params = %{}) do
+  def list(params_with_filters = %{"seller_id" => seller_id}) do
     filters =
-      Enum.map(filter_params, fn
-        {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
-        key_value_pair -> key_value_pair
-      end)
-    list_food_menus(filters)
+      params_with_filters
+      |> Map.drop("seller_id")
+      |> Utils.convert_map_to_keyword_list()
+
+    list(seller_id, filters)
   end
 
-  def list_food_menus(_filters = []) do
-    Repo.all(FoodMenu)
-  end
-
-  def list_food_menus(filters) when is_list(filters) do
+  def list(seller_id, filters) when is_integer(seller_id) and is_list(filters) do
     {active, other_filters} = Keyword.pop(filters, :active, "false")
+
     query =
       case active do
         "true" ->
           from(food_menu in FoodMenu,
-            where: ^other_filters,
+            where: food_menu.seller_id == ^seller_id,
+            where: food_menu.remaining_quantity > 0,
             where: food_menu.valid_until >= ^DateTime.utc_now())
         "false" ->
           from(food_menu in FoodMenu,
-            where: ^other_filters)
-
-    end
+            where: food_menu.seller_id == ^seller_id)
+      end
     Repo.all(query)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking food_menu changes.
+  Returns an `%Ecto.Changeset{}` for tracking food_menu changes during record creation.
 
   ## Examples
 
-      iex> change_food_menu(food_menu)
+      iex> create_change(food_menu)
       %Ecto.Changeset{data: %FoodMenu{}}
 
   """
-  def change_food_menu(%FoodMenu{} = food_menu, attrs \\ %{}) do
+  def create_change(%FoodMenu{} = food_menu, attrs = %{} \\ %{}) do
     FoodMenu.changeset(food_menu, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking food_menu changes during record updation.
+
+  ## Examples
+
+      iex> update_change(food_menu)
+      %Ecto.Changeset{data: %FoodMenu{}}
+
+  """
+  def update_change(%FoodMenu{} = food_menu, attr = %{} \\ %{}) do
+    FoodMenu.changeset(food_menu, attrs)
+  end
+
+  defp no_associated_cart_items?(%FoodMenu{} = food_menu) do
+    cart_item_count = Repo.aggregate(from cart_item in CartItem, where: cart_item.food_menu_id == ^food_menu.id, select: count(cart_item.id))
+      if cart_item_count > 0 do
+        false
+      else
+        true
+      end
   end
 end

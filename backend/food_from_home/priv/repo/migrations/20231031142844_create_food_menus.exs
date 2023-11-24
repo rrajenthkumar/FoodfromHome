@@ -13,6 +13,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateFoodMenus do
       add :preparation_time_in_minutes, :integer
       add :valid_until, :utc_datetime
       add :seller_id, references(:sellers, on_delete: :nothing)
+      add :remaining_quantity, :integer
 
       timestamps()
     end

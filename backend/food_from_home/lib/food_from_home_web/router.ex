@@ -13,7 +13,7 @@ defmodule FoodFromHomeWeb.Router do
   end
 
   scope "/api/v1", FoodFromHomeWeb do
-    pipe_through [:api]
+    pipe_through [:api, FoodFromHomeWeb.HasCurrentUserPlug]
 
     scope "/" do
       scope "/users" do
@@ -33,23 +33,23 @@ defmodule FoodFromHomeWeb.Router do
         # To list food menus of a seller with limited fields.
         get "/:seller_id/food-menus", FoodMenuController, :index
         # To get a food menu.
-        get "/:seller_id/food-menus/menu_id", FoodMenuController, :show
+        get "/:seller_id/food-menus/:menu_id", FoodMenuController, :show
 
         scope "/" do
-          pipe_through [FoodFromHomeWeb.SellerCheckPlug]
+          pipe_through [FoodFromHomeWeb.IsSellerPlug]
 
           # To create a food menu linked to current user of type seller.
           post "/:seller_id/food-menus", FoodMenuController, :create
           # To update a food menu linked to current seller user. No linked order must exist.
-          put "/:seller_id/food-menus/menu_id", FoodMenuController, :update
+          put "/:seller_id/food-menus/:menu_id", FoodMenuController, :update
           # To delete a food menu linked to current seller user. No linked order must exist.
-          delete "/:seller_id/food-menus/menu_id", FoodMenuController, :delete
+          delete "/:seller_id/food-menus/:menu_id", FoodMenuController, :delete
         end
       end
 
       scope "/orders" do
         scope "/" do
-          pipe_through [FoodFromHomeWeb.BuyerCheckPlug]
+          pipe_through [FoodFromHomeWeb.IsBuyerPlug]
 
           # To create a order when the current user is of type buyer.
           post "/", OrderController, :create
@@ -71,7 +71,7 @@ defmodule FoodFromHomeWeb.Router do
         end
 
         scope "/" do
-          pipe_through [FoodFromHomeWeb.DelivererCheckPlug]
+          pipe_through [FoodFromHomeWeb.IsDelivererPlug]
 
           # To update a delivery for an order linked to current deliverer user.
           # Current location and distance travelled must be ideally updated automatically by deliverer's device location tracker. We mock this behaviour.
@@ -101,7 +101,7 @@ defmodule FoodFromHomeWeb.Router do
 
 
         scope "/" do
-          pipe_through [FoodFromHomeWeb.SellerOrBuyerCheckPlug]
+          pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
 
           # To get a review of an order linked to current buyer or seller user.
           get "/:order_id/review", ReviewController, :show
@@ -113,14 +113,14 @@ defmodule FoodFromHomeWeb.Router do
       end
 
       scope "/deliveries" do
-        pipe_through [FoodFromHomeWeb.SellerOrBuyerCheckPlug]
+        pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
 
         # Lists deliveries with limited fields based on query parameters for filtering. Only deliveries of orders related to current buyer or seller user are listed.
         get "/", DeliveryController, :index
       end
 
       scope "/reviews" do
-        pipe_through [FoodFromHomeWeb.SellerOrBuyerCheckPlug]
+        pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
 
         # Lists reviews with limited fields based on query parameters for filtering. Only reviews of orders related to current buyer or seller user are listed.
         get "/", ReviewController, :index
