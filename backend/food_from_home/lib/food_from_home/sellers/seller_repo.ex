@@ -24,7 +24,7 @@ defmodule FoodFromHome.Sellers.SellerRepo do
     user_id
     |> Users.get_user!()
     |> Ecto.build_assoc(:seller, attrs)
-    |> change_seller(attrs)
+    |> change_seller()
     |> Repo.insert()
   end
 
@@ -43,6 +43,28 @@ defmodule FoodFromHome.Sellers.SellerRepo do
 
   """
   def get_seller!(seller_id), do: Repo.get!(Seller, seller_id)
+
+    @doc """
+  Gets a single seller using user id.
+
+  Raises `Ecto.NoResultsError` if the Seller does not exist.
+
+  ## Examples
+
+      iex> get_seller_from_user_id!(123)
+      %Seller{}
+
+      iex> get_seller_from_user_id!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_seller_with_user_id!(user_id) do
+    query =
+      from seller in Seller,
+      where: seller.user_id == ^user_id
+
+    Repo.one!(query)
+  end
 
   @doc """
   Updates a seller.

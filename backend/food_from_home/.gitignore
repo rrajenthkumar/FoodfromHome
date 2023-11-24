@@ -25,6 +25,7 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 food_from_home-*.tar
 
-# Ignore config.
-/config/
+# Ignore configuration files
+config/
+.config/
 

@@ -30,21 +30,55 @@ defmodule FoodFromHomeWeb.Router do
       end
 
       scope "/sellers" do
-        # To create a food menu linked to current user of type seller.
-        post "/:seller_id/food-menus", FoodMenuController, :create
-        # To list food menus with limited fields for a seller.
+        # To list food menus of a seller with limited fields.
         get "/:seller_id/food-menus", FoodMenuController, :index
         # To get a food menu.
         get "/:seller_id/food-menus/menu_id", FoodMenuController, :show
-        # To update a food menu linked to current seller user. No linked order must exist.
-        put "/:seller_id/food-menus/menu_id", FoodMenuController, :update
-        # To delete a food menu linked to current seller user. No linked order must exist.
-        delete "/:seller_id/food-menus/menu_id", FoodMenuController, :delete
+
+        scope "/" do
+          pipe_through [FoodFromHomeWeb.SellerCheckPlug]
+
+          # To create a food menu linked to current user of type seller.
+          post "/:seller_id/food-menus", FoodMenuController, :create
+          # To update a food menu linked to current seller user. No linked order must exist.
+          put "/:seller_id/food-menus/menu_id", FoodMenuController, :update
+          # To delete a food menu linked to current seller user. No linked order must exist.
+          delete "/:seller_id/food-menus/menu_id", FoodMenuController, :delete
+        end
       end
 
       scope "/orders" do
-        # To create a order when the current user is of type buyer.
-        post "/", OrderController, :create
+        scope "/" do
+          pipe_through [FoodFromHomeWeb.BuyerCheckPlug]
+
+          # To create a order when the current user is of type buyer.
+          post "/", OrderController, :create
+          # To delete an unconfirmed order linked to current buyer user.
+          delete "/:order_id", OrderController, :delete
+
+          # To create a cart item for an order linked to current buyer user.
+          post "/:order_id/cart_items", CartItemController, :create
+          # To update a cart item for an order linked to current buyer user. Order must be of 'open' status.
+          put "/:order_id/cart_items/:cart_item_id", CartItemController, :update
+          # To delete a cart item for an order linked to current buyer user. Order must be of 'open' status.
+          delete "/:order_id/cart_items/:cart_item_id", CartItemController, :delete
+
+          # To create a review for an order linked to current buyer user and is in 'delivered' status.
+          post "/:order_id/review", ReviewController, :create
+          # To delete a review for an order linked to current buyer user. Delivery should have been not earlier than in the past one month.
+          # Once reply has been added the review cannot be deleted.
+          delete "/:order_id/review", ReviewController, :delete
+        end
+
+        scope "/" do
+          pipe_through [FoodFromHomeWeb.DelivererCheckPlug]
+
+          # To update a delivery for an order linked to current deliverer user.
+          # Current location and distance travelled must be ideally updated automatically by deliverer's device location tracker. We mock this behaviour.
+          # When delivery is confirmed by deliverer 'delivered at' is added and order status is changed to 'delivered'.
+          put "/:order_id/delivery", DeliveryController, :update
+        end
+
         # Lists orders with limited fields based on query parameters for filtering. Only deliveries of orders related to current buyer or seller user are listed.
         # Orders must be linked to current seller, buyer or deliverer user. For 'ready for pickup' orders they must be from within the deliverer's city.
         get "/", OrderController, :index
@@ -58,46 +92,36 @@ defmodule FoodFromHomeWeb.Router do
         # If status is 'reserved for pickup' deliverer can change status to 'on the way'.
         # If status is 'on the way' deliverer can change status to 'delivered'.
         put "/:order_id", OrderController, :update
-        # To delete an unconfirmed order linked to current buyer user.
-        delete "/:order_id", OrderController, :delete
 
-        # To create a cart item for an order linked to current buyer user.
-        post "/:order_id/cart_items", CartItemController, :create
         # To list a cart items for an order linked to current buyer, seller or deliverer user.
         get "/:order_id/cart_items", CartItemController, :index
-        # To update a cart item for an order linked to current buyer user. Order must be of 'open' status.
-        put "/:order_id/cart_items/:cart_item_id", CartItemController, :update
-        # To delete a cart item for an order linked to current buyer user. Order must be of 'open' status.
-        delete "/:order_id/cart_items/:cart_item_id", CartItemController, :delete
 
-        # To create a delivery for an order linked to current deliverer user and is in 'on the way' status.
-        post "/:order_id/delivery", DeliveryController, :create
         # To get a delivery for an order linked to current seller or buyer or deliverer user.
         get "/:order_id/delivery", DeliveryController, :show
-        # To update a delivery for an order linked to current deliverer user.
-        # Current location and distance travelled must be ideally updated automatically by deliverer's device location tracker. We mock this behaviour.
-        # When delivery is confirmed by deliverer 'delivered at' is added and order status is changed to 'delivered'.
-        put "/:order_id/delivery", DeliveryController, :update
 
-        # To create a review for an order linked to current buyer user and is in 'delivered' status.
-        post "/:order_id/review", ReviewController, :create
-        # To get a review of an order linked to current buyer or seller user.
-        get "/:order_id/review", ReviewController, :show
-        # To update a review for an order linked to current buyer or seller user.
-        # A buyer can update the fields 'Stars' and 'Note'. A seller can update the field 'Reply'.
-        # Once reply has been added the review cannot be updated further.
-        put "/:order_id/review", ReviewController, :update
-        # To delete a review for an order linked to current buyer user. Delivery should have been not earlier than in the past one month.
-        # Once reply has been added the review cannot be deleted.
-        delete "/:order_id/review", ReviewController, :delete
+
+        scope "/" do
+          pipe_through [FoodFromHomeWeb.SellerOrBuyerCheckPlug]
+
+          # To get a review of an order linked to current buyer or seller user.
+          get "/:order_id/review", ReviewController, :show
+          # To update a review for an order linked to current buyer or seller user.
+          # A buyer can update the fields 'Stars' and 'Note'. A seller can update the field 'Reply'.
+          # Once reply has been added the review cannot be updated further.
+          put "/:order_id/review", ReviewController, :update
+        end
       end
 
       scope "/deliveries" do
+        pipe_through [FoodFromHomeWeb.SellerOrBuyerCheckPlug]
+
         # Lists deliveries with limited fields based on query parameters for filtering. Only deliveries of orders related to current buyer or seller user are listed.
         get "/", DeliveryController, :index
       end
 
       scope "/reviews" do
+        pipe_through [FoodFromHomeWeb.SellerOrBuyerCheckPlug]
+
         # Lists reviews with limited fields based on query parameters for filtering. Only reviews of orders related to current buyer or seller user are listed.
         get "/", ReviewController, :index
       end

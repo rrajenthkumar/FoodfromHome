@@ -8,12 +8,12 @@ defmodule FoodFromHome.Sellers.Finders.SellerDetailsWithActiveFoodMenus do
   alias FoodFromHome.Sellers.Seller
 
   def find(seller_id) do
-    query = from seller in Seller,
-    join: food_menu in assoc(seller, :food_menus),
-    where: seller.id == ^seller_id and food_menu.valid_until >= ^DateTime.utc_now(),
-    order_by: [asc: food_menu.name],
-    preload: [food_menus: food_menu]
-
+    query =
+      from seller in Seller,
+        join: food_menu in assoc(seller, :food_menus),
+        where: seller.id == ^seller_id and food_menu.valid_until >= ^DateTime.utc_now(),
+        order_by: [asc: food_menu.name],
+        preload: [food_menus: food_menu]
     Repo.one!(query)
   end
 end

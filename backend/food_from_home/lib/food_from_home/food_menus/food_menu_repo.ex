@@ -24,7 +24,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
     seller_id
     |> Sellers.get_seller!()
     |> Ecto.build_assoc(:food_menus, attrs)
-    |> change_food_menu(attrs)
+    |> change_food_menu()
     |> Repo.insert()
   end
 
