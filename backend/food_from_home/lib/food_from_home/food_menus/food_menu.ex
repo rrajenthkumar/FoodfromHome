@@ -1,8 +1,10 @@
 defmodule FoodFromHome.FoodMenus.FoodMenu do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, warn: false
 
   alias FoodFromHome.CartItems.CartItem
+  alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.FoodMenus.FoodMenu.Rebate
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers.Seller
@@ -18,7 +20,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     field :ingredients, {:array, :string}
     field :allergens, {:array, :string}, default: []
     field :price, :decimal
-    field :rebate, :map, default: nil
     field :valid_until, :utc_datetime
     field :preparation_time_in_minutes, :integer
     field :remaining_quantity, :integer
@@ -63,7 +64,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   Changeset function for Rebate schema.
   """
   def rebate_changeset(rebate = %Rebate{}, attrs = %{}) do
-    address
+    rebate
     |> cast(attrs, [:count, :discount_percentage])
     |> validate_required([:count, :discount_percentage])
   end

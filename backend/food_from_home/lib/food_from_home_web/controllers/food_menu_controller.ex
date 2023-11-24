@@ -3,7 +3,10 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
+  alias FoodFromHome.Sellers.Seller
+  alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
+  alias FoodFromHomeWeb.ErrorHandler
 
   action_fallback FoodFromHomeWeb.FallbackController
 
@@ -21,7 +24,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(food_menu_params, seller_id) do
           conn
           |> put_status(:created)
-          |> put_resp_header("location", ~p"/api/v1/food-menus/#{food_menu.id}")
+          |> put_resp_header("location", ~p"/api/v1/#{seller_id}/food-menus/#{food_menu.id}")
           |> render(:show, food_menu: food_menu)
         end
       false ->
@@ -51,7 +54,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
   def delete(conn = %{assigns: %{current_user: current_user}}, %{"seller_id" => seller_id, "menu_id" => menu_id}) do
     case seller_belongs_to_current_user?(current_user, seller_id) do
       true ->
-        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.delete(menu_id) do
+        with {:ok, %FoodMenu{}} <- FoodMenus.delete(menu_id) do
           send_resp(conn, :no_content, "")
         end
       false ->
@@ -59,7 +62,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  defp seller_belongs_to_current_user?(current_user = %User{id: current_user_id}, seller_id) do
+  defp seller_belongs_to_current_user?(_current_user = %User{id: current_user_id}, seller_id) do
     %Seller{user_id: seller_user_id} = Sellers.get!(seller_id)
     seller_user_id === current_user_id
   end

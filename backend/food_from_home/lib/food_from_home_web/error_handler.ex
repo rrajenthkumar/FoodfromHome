@@ -1,4 +1,9 @@
 defmodule FoodFromHomeWeb.ErrorHandler do
+  @moduledoc """
+  Handles errors in plugs
+  """
+  use FoodFromHomeWeb, :controller
+
   def handle_error(conn, _error_status = "401") do
     conn
     |> put_status(:unauthorized)

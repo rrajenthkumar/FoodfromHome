@@ -146,7 +146,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       %Ecto.Changeset{data: %FoodMenu{}}
 
   """
-  def update_change(%FoodMenu{} = food_menu, attr = %{} \\ %{}) do
+  def update_change(%FoodMenu{} = food_menu, attrs = %{} \\ %{}) do
     FoodMenu.changeset(food_menu, attrs)
   end
 
