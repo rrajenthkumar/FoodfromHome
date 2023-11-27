@@ -5,7 +5,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
   Renders a list of food_menus.
   """
   def index(%{food_menus: food_menus}) do
-    %{data: for(food_menu <- food_menus, do: data(food_menu))}
+    %{data: for(food_menu <- food_menus, do: limited_data(food_menu))}
   end
 
   @doc """
@@ -13,6 +13,16 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
   """
   def show(%{food_menu: food_menu}) do
     %{data: data(food_menu)}
+  end
+
+  defp limited_data(%FoodMenu{} = food_menu) do
+    %{
+      id: food_menu.id,
+      menu_illustration: food_menu.menu_illustration,
+      name: food_menu.name,
+      price: food_menu.price,
+      rebate: food_menu.rebate
+    }
   end
 
   defp data(%FoodMenu{} = food_menu) do
