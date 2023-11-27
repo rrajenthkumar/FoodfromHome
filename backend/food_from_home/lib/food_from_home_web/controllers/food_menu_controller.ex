@@ -21,7 +21,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
     case seller_belongs_to_current_user?(current_user, seller_id) do
       true ->
-        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(food_menu_params, seller_id) do
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(seller_id, food_menu_params) do
           conn
           |> put_status(:created)
           |> put_resp_header("location", ~p"/api/v1/#{seller_id}/food-menus/#{food_menu.id}")
@@ -43,7 +43,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
     case seller_belongs_to_current_user?(current_user, seller_id) do
       true ->
-        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(food_menu_params, menu_id) do
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(menu_id, food_menu_params) do
           render(conn, :show, food_menu: food_menu)
         end
       false ->

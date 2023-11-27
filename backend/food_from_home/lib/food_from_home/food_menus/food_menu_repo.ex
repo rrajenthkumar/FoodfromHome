@@ -21,7 +21,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(attrs, seller_id) when is_map(attrs) and is_integer(seller_id) do
+  def create(seller_id, attrs) when is_integer(seller_id) and is_map(attrs) do
     seller_id
     |> Sellers.get_seller!()
     |> Ecto.build_assoc(:food_menus, attrs)
@@ -58,7 +58,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(attrs = %{}, menu_id) when is_map(attrs) and is_integer(menu_id) do
+  def update(menu_id, attrs) when is_map(attrs) and is_integer(menu_id) do
     menu_id
     |> get!()
     |> update_change(attrs)
