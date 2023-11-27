@@ -25,7 +25,7 @@ defmodule FoodFromHome.Users.User do
     field :profile_image, :binary, default: nil
     field :deleted, :boolean, default: false
 
-    embeds_one :address, Address, on_replace: :update do
+    embeds_one :address, Address, on_replace: :update, validate_required: true do
       field :door_number, :string
       field :street, :string
       field :city, :string

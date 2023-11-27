@@ -10,18 +10,23 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def index(conn, params_with_filters = %{"seller_id" => _seller_id}) do
-    food_menus = FoodMenus.list(params_with_filters)
+  def index(conn, %{"seller_id" => seller_id}) do
+    filters =
+      conn
+      |> fetch_query_params()
+      |> Utils.convert_map_to_keyword_list()
+
+    food_menus = FoodMenus.list(seller_id, filters)
 
     render(conn, :index, food_menus: food_menus)
   end
 
-  def create(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => food_menu_params, "seller_id" => seller_id}) do
+  def create(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => attrs, "seller_id" => seller_id}) do
     food_menu_params = Utils.convert_map_string_keys_to_atoms(food_menu_params)
 
     case seller_belongs_to_current_user?(current_user, seller_id) do
       true ->
-        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(seller_id, food_menu_params) do
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(seller_id, attrs) do
           conn
           |> put_status(:created)
           |> put_resp_header("location", ~p"/api/v1/#{seller_id}/food-menus/#{food_menu.id}")
@@ -32,18 +37,18 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  def show(conn, %{"menu_id" => menu_id, "seller_id" => _seller_id}) do
+  def show(conn, %{"menu_id" => menu_id}) do
     with %FoodMenu{} = food_menu <- FoodMenus.get!(menu_id) do
       render(conn, :show, food_menu: food_menu)
     end
   end
 
-  def update(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => food_menu_params, "seller_id" => seller_id, "menu_id" => menu_id}) do
+  def update(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => attrs, "seller_id" => seller_id, "menu_id" => menu_id}) do
     food_menu_params = Utils.convert_map_string_keys_to_atoms(food_menu_params)
 
     case seller_belongs_to_current_user?(current_user, seller_id) do
       true ->
-        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(menu_id, food_menu_params) do
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(menu_id, attrs) do
           render(conn, :show, food_menu: food_menu)
         end
       false ->

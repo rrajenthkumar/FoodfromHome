@@ -8,5 +8,5 @@ defmodule FoodFromHome.FoodMenus do
   defdelegate get!(menu_id), to: FoodMenuRepo
   defdelegate update(menu_id, attrs), to: FoodMenuRepo
   defdelegate delete(menu_id), to: FoodMenuRepo
-  defdelegate list(params_with_filters), to: FoodMenuRepo
+  defdelegate list(seller_id, filters), to: FoodMenuRepo
 end

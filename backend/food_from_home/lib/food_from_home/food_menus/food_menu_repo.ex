@@ -7,7 +7,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers
-  alias FoodFromHome.Utils
 
   @doc """
   Creates a food_menu for a given seller id.
@@ -98,14 +97,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
     [%FoodMenu{}, ...]
 
   """
-  def list(params_with_filters = %{"seller_id" => seller_id}) do
-    filters =
-      params_with_filters
-      |> Map.drop("seller_id")
-      |> Utils.convert_map_to_keyword_list()
-
-    list(seller_id, filters)
-  end
 
   def list(seller_id, filters) when is_integer(seller_id) and is_list(filters) do
     {active, other_filters} = Keyword.pop(filters, :active, "false")
