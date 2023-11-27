@@ -4,19 +4,15 @@ defmodule FoodFromHomeWeb.ErrorHandler do
   """
   use FoodFromHomeWeb, :controller
 
-  def handle_error(conn, _error_status = "401") do
+  @doc """
+  Puts error status in connection and renders ErrorJSON with given error status and error message.
+  Also halts the connection.
+  """
+  def handle_error(conn, error_status, error_message) do
     conn
-    |> put_status(:unauthorized)
+    |> put_status(error_status)
     |> put_view(json: FoodFromHomeWeb.ErrorJSON)
-    |> render(:"401")
-    |> Plug.Conn.halt()
-  end
-
-  def handle_error(conn, _error_status = "403") do
-    conn
-    |> put_status(:forbidden)
-    |> put_view(json: FoodFromHomeWeb.ErrorJSON)
-    |> render(:"403")
+    |> render(:"#{error_status}", message: error_message)
     |> Plug.Conn.halt()
   end
 end

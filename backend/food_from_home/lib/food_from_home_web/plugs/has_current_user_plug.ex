@@ -21,10 +21,10 @@ defmodule FoodFromHomeWeb.HasCurrentUserPlug do
   end
 
   def call(conn = %{assigns: %{current_user: nil}}, _default) do
-    ErrorHandler.handle_error(conn, "401")
+    ErrorHandler.handle_error(conn, "401", "There is no current user")
   end
 
   def call(conn, _default) do
-    ErrorHandler.handle_error(conn, "401")
+    ErrorHandler.handle_error(conn, "401", "There is no current user")
   end
 end

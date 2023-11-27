@@ -20,7 +20,7 @@ defmodule FoodFromHomeWeb.IsDelivererPlug do
       :deliverer ->
         conn
       _ ->
-        ErrorHandler.handle_error(conn, "403")
+        ErrorHandler.handle_error(conn, "403", "The current user is not of type :deliverer")
     end
   end
 end

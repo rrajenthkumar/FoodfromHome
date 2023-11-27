@@ -9,7 +9,11 @@ defmodule FoodFromHomeWeb.ErrorJSON do
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.json" becomes
   # "Not Found".
+  def render(template, assigns = %{message: error_message}) do
+    %{errors: %{status: Phoenix.Controller.status_message_from_template(template), message: error_message}}
+  end
+
   def render(template, _assigns) do
-    %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
+    %{errors: %{status: Phoenix.Controller.status_message_from_template(template)}}
   end
 end
