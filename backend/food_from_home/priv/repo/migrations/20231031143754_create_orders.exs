@@ -16,5 +16,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateOrders do
     create index(:orders, [:seller_id])
     create index(:orders, [:buyer_user_id])
     create unique_index(:orders, [:invoice_link])
+    create unique_index(:orders, [:buyer_id], where: "status = 'open'", name: :unique_open_order_per_buyer_index)
   end
 end

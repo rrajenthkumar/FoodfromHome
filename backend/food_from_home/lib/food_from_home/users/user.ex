@@ -48,7 +48,7 @@ defmodule FoodFromHome.Users.User do
     user
     |> cast(attrs, @allowed_create_user_keys)
     |> validate_required(@required_create_user_keys)
-    |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
+    |> unique_constraint(:unique_active_user_email_constraint, name: :unique_active_user_email_index, message: "Another active user has the same email id.")
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
     |> cast_assoc(:seller, required: true, with: &Seller.changeset/2)
@@ -58,7 +58,7 @@ defmodule FoodFromHome.Users.User do
     user
     |> cast(attrs, @allowed_create_user_keys)
     |> validate_required(@required_create_user_keys)
-    |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
+    |> unique_constraint(:unique_active_user_email_constraint, name: :unique_active_user_email_index, message: "Another active user has the same email id.")
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
   end
@@ -74,7 +74,7 @@ defmodule FoodFromHome.Users.User do
     |> validate_required(@required_update_user_keys)
     |> validate_exclusion(:user_type, [:buyer, :seller, :deliverer], message: "user_type field cannot be updated")
     |> validate_exclusion(:deleted, [true, false], message: "deleted field cannot be updated")
-    |> unique_constraint(:email_id, name: :index_for_uniqueness_of_email_id_of_active_users)
+    |> unique_constraint(:unique_active_user_email_constraint, name: :unique_active_user_email_index, message: "Another active user has the same email id.")
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
   end

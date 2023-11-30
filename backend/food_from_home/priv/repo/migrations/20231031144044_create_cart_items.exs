@@ -13,6 +13,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateCartItems do
 
     create index(:cart_items, [:order_id])
     create index(:cart_items, [:food_menu_id])
-    create unique_index(:cart_items, [:order_id, :food_menu_id], name: :order_id_food_menu_id_index)
+    create unique_index(:cart_items, [:order_id, :food_menu_id], name: :unique_food_menu_id_order_id_combo_index)
   end
 end
