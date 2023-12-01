@@ -1,6 +1,6 @@
 defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
   @moduledoc """
-  Finder to find the user record of a seller related to an order
+  Finder to find a seller user from an order
   """
   import Ecto.Query, warn: false
 
@@ -8,24 +8,27 @@ defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
   alias FoodFromHome.Users.User
 
   @doc """
-  Gets the user linked to a seller related to an order.
+  Gets the user of type :seller related to an order along with seller details.
 
   Raises `Ecto.NoResultsError` if user is not found.
 
   ## Examples
 
-      iex> find!(%Order{id: 123})
+      iex> find!(%Order{id: 123, user_type: :seller})
       %User{}
 
-      iex> find!(%Order{id: 456})
+      iex> find!(%Order{id: 456, user_type: seller})
       ** (Ecto.NoResultsError)
 
   """
-  def find!(%Order{id: order_id}) do
-    from(user in User,
-      join: seller in assoc(user, :sellers),
-      join: order in assoc(seller, :orders),
-      where: order.id == ^order_id)
+  def find!(%Order{seller_id: seller_id}) do
+    query =
+      from(user in User,
+        join: seller in assoc(user, :seller),
+        where: seller.id == ^seller_id)
+
+    query
     |> Repo.one!()
+    |> Repo.preload(:seller)
   end
 end

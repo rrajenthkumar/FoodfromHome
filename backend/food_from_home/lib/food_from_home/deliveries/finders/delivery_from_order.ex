@@ -1,6 +1,6 @@
 defmodule FoodFromHome.Deliveries.Finders.DeliveryFromOrder do
   @moduledoc """
-  Finder to find a delivery using an order
+  Finder to find a delivery from an order
   """
   import Ecto.Query, warn: false
 
@@ -9,7 +9,7 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveryFromOrder do
   alias FoodFromHome.Repo
 
   @doc """
-  Gets a single order linked to a delivery.
+  Gets a order linked to a delivery.
 
   Raises `Ecto.NoResultsError` if the Order does not exist.
 
@@ -23,9 +23,11 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveryFromOrder do
 
   """
   def find!(%Order{id: order_id}) do
-    from(delivery in Delivery,
-      join: order in assoc(delivery, :orders),
-      where: order.id == ^order_id)
-    |> Repo.one!()
+    query =
+      from(delivery in Delivery,
+        join: order in assoc(delivery, :order),
+        where: order.id == ^order_id)
+
+    Repo.one!(query)
   end
 end

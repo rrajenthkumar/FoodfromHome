@@ -2,8 +2,10 @@ defmodule FoodFromHome.Sellers do
   @moduledoc """
   The Sellers context.
   """
+  alias FoodFromHome.Sellers.Finders.SellerFromUser
   alias FoodFromHome.Sellers.SellerRepo
 
-  defdelegate get_seller!(seller_id), to: SellerRepo
-  defdelegate update_seller(seller_id, attrs), to: SellerRepo
+  defdelegate list(filter_params), to: SellerRepo
+
+  def find_seller_from_user!(user), do: SellerFromUser.find!(user)
 end
