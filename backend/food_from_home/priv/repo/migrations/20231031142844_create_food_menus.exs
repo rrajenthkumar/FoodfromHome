@@ -19,6 +19,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateFoodMenus do
     end
 
     create index(:food_menus, [:seller_id])
-    create unique_index(:food_menus, [:seller_id, :name], name: :unique_active_food_menu_name_per_seller_index, where: fragment("? > CURRENT_TIMESTAMP", field("valid_until")), using: :btree)
+    create unique_index(:food_menus, [:seller_id, :name], name: :unique_active_food_menu_name_per_seller_index, where: fragment("? >= CURRENT_TIMESTAMP", field("valid_until")), using: :btree)
   end
 end

@@ -4,6 +4,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   import Ecto.Query, warn: false
 
+  alias FoodFromHome.CartItems.CartItem
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers
@@ -13,78 +14,19 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   ## Examples
 
-      iex> create(%{field: value}, 12345)
+      iex> create(12345, %{field: value})
       {:ok, %FoodMenu{}}
 
-      iex> create(%{field: bad_value}, 12345)
+      iex> create(12345, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create(seller_id, attrs) when is_integer(seller_id) and is_map(attrs) do
     seller_id
-    |> Sellers.get_seller!()
+    |> Sellers.get!()
     |> Ecto.build_assoc(:food_menus, attrs)
     |> create_change()
     |> Repo.insert()
-  end
-
-  @doc """
-  Gets a single food_menu using menu_id.
-
-  Raises `Ecto.NoResultsError` if the Food menu does not exist.
-
-  ## Examples
-
-      iex> get!(123)
-      %FoodMenu{}
-
-      iex> get!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get!(menu_id) when is_integer(menu_id), do: Repo.get!(FoodMenu, menu_id)
-
-  @doc """
-  Updates a food_menu.
-  If an associated cart item exists updation is forbidden and it results in ecto changeset error.
-
-  ## Examples
-
-      iex> update(%{field: new_value}, 12345)
-      {:ok, %FoodMenu{}}
-
-      iex> update(%{field: new_value}, 12345)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update(menu_id, attrs) when is_map(attrs) and is_integer(menu_id) do
-    menu_id
-    |> get!()
-    |> update_change(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a food_menu.
-  If an associated cart item exists deletion is forbidden.
-
-  ## Examples
-
-      iex> delete(12345)
-      {:ok, %FoodMenu{}}
-
-      iex> delete(12345)
-      {:error, :forbidden}
-
-  """
-  def delete(menu_id) when is_integer(menu_id) do
-    menu_id
-    |> get!()
-    |> no_associated_cart_items?()
-    |> case do
-      true -> Repo.delete()
-      false -> {:error, :forbidden}
-    end
   end
 
   @doc """
@@ -105,14 +47,75 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       case active do
         "true" ->
           from(food_menu in FoodMenu,
+            where: ^other_filters,
             where: food_menu.seller_id == ^seller_id,
             where: food_menu.remaining_quantity > 0,
             where: food_menu.valid_until >= ^DateTime.utc_now())
         "false" ->
           from(food_menu in FoodMenu,
+            where: ^other_filters,
             where: food_menu.seller_id == ^seller_id)
       end
     Repo.all(query)
+  end
+
+  @doc """
+  Gets a food_menu with food_menu_id.
+
+  Raises `Ecto.NoResultsError` if the Food menu does not exist.
+
+  ## Examples
+
+      iex> get!(123)
+      %FoodMenu{}
+
+      iex> get!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get!(food_menu_id) when is_integer(food_menu_id), do: Repo.get!(FoodMenu, food_menu_id)
+
+  @doc """
+  Updates a food_menu.
+  If an associated cart item exists updation is forbidden and it results in ecto changeset error.
+
+  ## Examples
+
+      iex> update(12345, %{field: new_value})
+      {:ok, %FoodMenu{}}
+
+      iex> update(12345, %{field: new_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update(food_menu_id, attrs) when is_map(attrs) and is_integer(food_menu_id) do
+    food_menu_id
+    |> get!()
+    |> update_change(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a food_menu.
+  If an associated cart item exists deletion is forbidden.
+
+  ## Examples
+
+      iex> delete(12345)
+      {:ok, %FoodMenu{}}
+
+      iex> delete(12345)
+      {:error, :forbidden}
+
+  """
+  def delete(food_menu_id) when is_integer(food_menu_id) do
+    food_menu_id
+    |> get!()
+    |> no_associated_cart_items?()
+    |> case do
+      true -> Repo.delete()
+      false -> {:error, :forbidden}
+    end
   end
 
   @doc """
@@ -125,7 +128,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   """
   def create_change(%FoodMenu{} = food_menu, attrs = %{} \\ %{}) do
-    FoodMenu.changeset(food_menu, attrs)
+    FoodMenu.create_changeset(food_menu, attrs)
   end
 
   @doc """
@@ -138,15 +141,20 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   """
   def update_change(%FoodMenu{} = food_menu, attrs = %{} \\ %{}) do
-    FoodMenu.changeset(food_menu, attrs)
+    FoodMenu.update_changeset(food_menu, attrs)
   end
 
   defp no_associated_cart_items?(%FoodMenu{} = food_menu) do
-    cart_item_count = Repo.aggregate(from cart_item in CartItem, where: cart_item.food_menu_id == ^food_menu.id, select: count(cart_item.id))
-      if cart_item_count > 0 do
-        false
-      else
-        true
-      end
+    query =
+      from cart_item in CartItem,
+        where: cart_item.food_menu_id == ^food_menu.id
+
+    cart_item_count = Repo.aggregate(query, :count, :id)
+
+    if cart_item_count > 0 do
+      false
+    else
+      true
+    end
   end
 end
