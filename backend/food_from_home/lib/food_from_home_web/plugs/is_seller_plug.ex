@@ -20,7 +20,7 @@ defmodule FoodFromHomeWeb.IsSellerPlug do
       :seller ->
         conn
       _ ->
-        ErrorHandler.handle_error(conn, "403", "The current user is not of type :seller")
+        ErrorHandler.handle_error(conn, "403", "Route accessible only to users of type :seller")
     end
   end
 end
