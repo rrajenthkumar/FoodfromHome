@@ -37,47 +37,11 @@ defmodule FoodFromHomeWeb.OrderController do
     with %Order{} = order <- Orders.get!(order_id) do
       case order_related_to_current_user?(current_user, order) do
         true ->
-          render(conn, :show, order: order, related_users: get_seller_buyer_deliverer_users(order))
+          render(conn, :show, order: order, related_users: get_related_users(order))
         false ->
           ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
       end
     end
-  end
-
-  defp get_seller_buyer_deliverer_users(order = %Order{status: :open}) do
-    seller_user = Users.SellerUserFromOrder.find!(order)
-    buyer_user = Users.BuyerUserFromOrder.find!(order)
-
-    {seller_user, buyer_user, nil}
-  end
-
-  defp get_seller_buyer_deliverer_users(order = %Order{status: :confirmed}) do
-    seller_user = Users.SellerUserFromOrder.find!(order)
-    buyer_user = Users.BuyerUserFromOrder.find!(order)
-
-    {seller_user, buyer_user, nil}
-  end
-
-  defp get_seller_buyer_deliverer_users(order = %Order{status: :cancelled}) do
-    seller_user = Users.SellerUserFromOrder.find!(order)
-    buyer_user = Users.BuyerUserFromOrder.find!(order)
-
-    {seller_user, buyer_user, nil}
-  end
-
-  defp get_seller_buyer_deliverer_users(order = %Order{status: :ready_for_delivery}) do
-    seller_user = Users.SellerUserFromOrder.find!(order)
-    buyer_user = Users.BuyerUserFromOrder.find!(order)
-
-    {seller_user, buyer_user, nil}
-  end
-
-  defp get_seller_buyer_deliverer_users(order = %Order{}) do
-    seller_user = Users.SellerUserFromOrder.find!(order)
-    buyer_user = Users.BuyerUserFromOrder.find!(order)
-    deliverer_user = Users.DelivererUserFromOrder.find!(order)
-
-    {seller_user, buyer_user, deliverer_user}
   end
 
   def update(conn = %{assigns: %{current_user: current_user}}, %{"order_id" => order_id, "order" => attrs}) do
@@ -121,6 +85,21 @@ defmodule FoodFromHomeWeb.OrderController do
   defp order_related_to_current_user?(%User{id: current_user_id, user_type: :deliverer}, order = %Order{}) do
     %Delivery{deliverer_user_id: deliverer_user_id} = Deliveries.find_delivery_from_order!(order)
     deliverer_user_id === current_user_id
+  end
+
+  defp get_related_users(order = %Order{status: status}) when status in [:open, :confirmed, :cancelled, :ready_for_delivery]do
+    seller_user = Users.SellerUserFromOrder.find!(order)
+    buyer_user = Users.BuyerUserFromOrder.find!(order)
+
+    {seller_user, buyer_user, nil}
+  end
+
+  defp get_related_users(order = %Order{}) do
+    seller_user = Users.SellerUserFromOrder.find!(order)
+    buyer_user = Users.BuyerUserFromOrder.find!(order)
+    deliverer_user = Users.DelivererUserFromOrder.find!(order)
+
+    {seller_user, buyer_user, deliverer_user}
   end
 
   defp allowed_fields(current_user = %User{user_type: :seller}), do: [:status, :seller_remark]

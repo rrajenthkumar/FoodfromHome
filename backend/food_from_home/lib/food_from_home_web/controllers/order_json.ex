@@ -12,8 +12,12 @@ defmodule FoodFromHomeWeb.OrderJSON do
   end
 
   @doc """
-  Renders a single order with all details.
+  Renders a single order.
   """
+  def show(%{order: order}) do
+    %{data: data(order)}
+  end
+
   def show(%{order: order, related_users: related_users}) do
     %{data: data(order, related_users)}
   end
@@ -23,6 +27,19 @@ defmodule FoodFromHomeWeb.OrderJSON do
       id: order.id,
       date: order.inserted_at,
       status: order.status
+    }
+  end
+
+  defp data(order = %Order{}) do
+    %{
+      id: order.id,
+      date: order.inserted_at,
+      status: order.status,
+      seller_id: seller_id,
+      buyer_user: buyer_user_id,
+      delivery_address: data(order.delivery_address),
+      invoice_link: order.invoice_link,
+      seller_remark: order.seller_remark
     }
   end
 
@@ -67,6 +84,16 @@ defmodule FoodFromHomeWeb.OrderJSON do
     }
   end
 
+  defp data(delivery_address = %DeliveryAddress{}) do
+    %{
+      door_number: delivery_address.door_number,
+      street: delivery_address.street,
+      city: delivery_address.city,
+      country: delivery_address.country,
+      postal_code: delivery_address.postal_code
+    }
+  end
+
   defp data(address = %Address{}) do
     %{
       door_number: address.door_number,
@@ -77,13 +104,5 @@ defmodule FoodFromHomeWeb.OrderJSON do
     }
   end
 
-  defp data(delivery_address = %DeliveryAddress{}) do
-    %{
-      door_number: delivery_address.door_number,
-      street: delivery_address.street,
-      city: delivery_address.city,
-      country: delivery_address.country,
-      postal_code: delivery_address.postal_code
-    }
-  end
+
 end
