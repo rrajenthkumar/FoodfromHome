@@ -43,9 +43,9 @@ defmodule FoodFromHomeWeb.Router do
           # Creates a food menu linked to current seller user
           post "/:seller_id/food-menus", FoodMenuController, :create
           # Updates a food menu linked to current seller user. No linked order must exist.
-          put "/:seller_id/food-menus/:menu_id", FoodMenuController, :update
+          put "/:seller_id/food-menus/:food_menu_id", FoodMenuController, :update
           # Deletes a food menu linked to current seller user. No linked order must exist.
-          delete "/:seller_id/food-menus/:menu_id", FoodMenuController, :delete
+          delete "/:seller_id/food-menus/:food_menu_id", FoodMenuController, :delete
         end
 
         scope "/" do
@@ -54,66 +54,67 @@ defmodule FoodFromHomeWeb.Router do
           # Lists food menus of a seller based on query parameters with limited fields for current buyer user
           # Lists only own food menus based on query parameters with limited fields for current seller user
           get "/:seller_id/food-menus", FoodMenuController, :index
-          # Gets food menu with menu_id for current buyer user
-          # Gets only own food menu with menu_id for current seller user
-          get "/:seller_id/food-menus/:menu_id", FoodMenuController, :show
+          # Gets food menu with food_menu_id for current buyer user
+          # Gets only own food menu with food_menu_id for current seller user
+          get "/:seller_id/food-menus/:food_menu_id", FoodMenuController, :show
         end
       end
 
       scope "/orders" do
         scope "/" do
 
-        # Gets an order linked to current buyer, seller or deliverer user with order_id
-        # Add option to expand buyer, seller, deliverer, delivery, cart items, foodmenu details
-        get "/:order_id", OrderController, :show
-        # Updates order linked to current buyer, seller or deliverer user
-        # Status update can be done based on the type of user and current status
-        put "/:order_id", OrderController, :update
-        # Lists all orders related to current buyer or seller user, with limited fields, based on query parameters
-        # For a deliverer user, lists orders within the deliverer's city with 'ready for pickup' status,
-        get "/", OrderController, :index
+          # Lists all orders related to current buyer or seller user, with limited fields, based on query parameters
+          # For a deliverer user, lists orders within the deliverer's city with 'ready for pickup' status,
+          get "/", OrderController, :index
+          # Gets an order linked to current buyer, seller or deliverer user with order_id
+          # Add option to expand buyer, seller, deliverer, delivery, cart items, foodmenu details
+          get "/:order_id", OrderController, :show
+          # Updates order linked to current buyer, seller or deliverer user
+          # Status update can be done based on the type of user and current status
+          put "/:order_id", OrderController, :update
 
-        scope "/" do
-          pipe_through [FoodFromHomeWeb.IsBuyerPlug]
+          scope "/" do
+            pipe_through [FoodFromHomeWeb.IsBuyerPlug]
 
-          # Creates an order linked to current buyer user along with the first cart item
-          post "/", OrderController, :create
-          # Creates a subsequent cart item for an existing order linked to current buyer user. Order must be of 'open' status.
-          post "/:order_id/cart_items", CartItemController, :create
-          # Updates a cart item for an order linked to current buyer user. Order must be of 'open' status.
-          put "/:order_id/cart_items/:cart_item_id", CartItemController, :update
-          # Deletes a cart item for an order linked to current buyer user. Order must be of 'open' status.
-          # When it's the last cart item, the related order is also deleted.
-          delete "/:order_id/cart_items/:cart_item_id", CartItemController, :delete
-          # To create a review for an order linked to current buyer user. Order must be in 'delivered' status.
-          post "/:order_id/review", ReviewController, :create
-          # To delete a review for an order linked to current buyer user. Delivery should not be more than a month old.
-          # Once reply has been added the review cannot be deleted.
-          delete "/:order_id/review", ReviewController, :delete
-        end
+            # Creates an order linked to current buyer user along with the first cart item
+            post "/", OrderController, :create
+            # Creates a subsequent cart item for an existing order linked to current buyer user. Order must be of 'open' status.
+            post "/:order_id/cart_items", CartItemController, :create
+            # Updates a cart item for an order linked to current buyer user. Order must be of 'open' status.
+            put "/:order_id/cart_items/:cart_item_id", CartItemController, :update
+            # Deletes a cart item for an order linked to current buyer user. Order must be of 'open' status.
+            # When it's the last cart item, the related order is also deleted.
+            delete "/:order_id/cart_items/:cart_item_id", CartItemController, :delete
+            # To create a review for an order linked to current buyer user. Order must be in 'delivered' status.
+            post "/:order_id/review", ReviewController, :create
+            # To delete a review for an order linked to current buyer user. Delivery should not be more than a month old.
+            # Once reply has been added the review cannot be deleted.
+            delete "/:order_id/review", ReviewController, :delete
+          end
 
-        scope "/" do
-          pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
+          scope "/" do
+            pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
 
-          # To get the review of an order linked to current buyer or seller user.
-          get "/:order_id/review", ReviewController, :show
-          # To update the review for an order linked to current buyer or seller user.
-          # A buyer can update the fields 'Stars' and 'Note'. Delivery should not be more than a month old.
-          # A seller can update the field 'Reply' after the buyer has added his 'Note' and / or 'Stars'.
-          # Once reply has been added the review cannot be updated further.
-          put "/:order_id/review", ReviewController, :update
-        end
+            # To get the review of an order linked to current buyer or seller user.
+            get "/:order_id/review", ReviewController, :show
+            # To update the review for an order linked to current buyer or seller user.
+            # A buyer can update the fields 'Stars' and 'Note'. Delivery should not be more than a month old.
+            # A seller can update the field 'Reply' after the buyer has added his 'Note' and / or 'Stars'.
+            # Once reply has been added the review cannot be updated further.
+            put "/:order_id/review", ReviewController, :update
+          end
 
-        scope "/" do
-          pipe_through [FoodFromHomeWeb.IsDelivererPlug]
+          scope "/" do
+            pipe_through [FoodFromHomeWeb.IsDelivererPlug]
 
-          # Lists deliveries linked to current deliverer user with limited fields based on query parameters
-          get "/deliveries", DeliveryController, :index
-          # To get a delivery for an order linked to current deliverer user
-          # Add option to expand buyer, seller, delivery, cart items, foodmenu details
-          get "/:order_id/delivery", DeliveryController, :show
-          # For updates by deliverer's device location tracker. Currently we mock it using genserver.
-          put "/:order_id/delivery", DeliveryController, :update
+            # Lists deliveries linked to current deliverer user with limited fields based on query parameters
+            get "/deliveries", DeliveryController, :index
+            # To get a delivery for an order linked to current deliverer user
+            # Add option to expand buyer, seller, delivery, cart items, foodmenu details
+            get "/:order_id/delivery", DeliveryController, :show
+            # For updates by deliverer's device location tracker. Currently we mock it using genserver.
+            put "/:order_id/delivery", DeliveryController, :update
+          end
         end
       end
       # TO DO: pagination & sorting feature for all :index function routes
@@ -136,5 +137,4 @@ defmodule FoodFromHomeWeb.Router do
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
-end
 end
