@@ -9,7 +9,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
   end
 
   @doc """
-  Renders a single food_menu with all details.
+  Renders a single food_menu with more details.
   """
   def show(%{food_menu: food_menu}) do
     %{data: data(food_menu)}
@@ -36,8 +36,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
       name: food_menu.name,
       price: food_menu.price,
       rebate: food_menu.rebate,
-      preparation_time_in_minutes: food_menu.preparation_time_in_minutes,
-      valid_until: food_menu.valid_until
+      preparation_time_in_minutes: food_menu.preparation_time_in_minutes
     }
   end
 end
