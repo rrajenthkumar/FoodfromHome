@@ -10,21 +10,10 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def index(conn, %{"seller_id" => seller_id}) do
-    filters =
-      conn
-      |> fetch_query_params()
-      |> Utils.convert_map_to_keyword_list()
-
-    food_menus = FoodMenus.list(seller_id, filters)
-
-    render(conn, :index, food_menus: food_menus)
-  end
-
   def create(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => attrs, "seller_id" => seller_id}) do
-    food_menu_params = Utils.convert_map_string_keys_to_atoms(food_menu_params)
+    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    case seller_belongs_to_current_user?(current_user, seller_id) do
+    case seller_id_belongs_to_current_user?(current_user, seller_id) do
       true ->
         with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(seller_id, attrs) do
           conn
@@ -37,18 +26,29 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  def show(conn, %{"menu_id" => menu_id}) do
-    with %FoodMenu{} = food_menu <- FoodMenus.get!(menu_id) do
+  def index(conn, %{"seller_id" => seller_id}) do
+    filters =
+      conn
+      |> fetch_query_params()
+      |> Utils.convert_map_to_keyword_list()
+
+    food_menus = FoodMenus.list(seller_id, filters)
+
+    render(conn, :index, food_menus: food_menus)
+  end
+
+  def show(conn, %{"food_menu_id" => food_menu_id}) do
+    with %FoodMenu{} = food_menu <- FoodMenus.get!(food_menu_id) do
       render(conn, :show, food_menu: food_menu)
     end
   end
 
-  def update(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => attrs, "seller_id" => seller_id, "menu_id" => menu_id}) do
-    food_menu_params = Utils.convert_map_string_keys_to_atoms(food_menu_params)
+  def update(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => attrs, "seller_id" => seller_id, "food_menu_id" => food_menu_id}) do
+    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    case seller_belongs_to_current_user?(current_user, seller_id) do
+    case seller_id_belongs_to_current_user?(current_user, seller_id) do
       true ->
-        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(menu_id, attrs) do
+        with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(food_menu_id, attrs) do
           render(conn, :show, food_menu: food_menu)
         end
       false ->
@@ -56,10 +56,10 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  def delete(conn = %{assigns: %{current_user: current_user}}, %{"seller_id" => seller_id, "menu_id" => menu_id}) do
-    case seller_belongs_to_current_user?(current_user, seller_id) do
+  def delete(conn = %{assigns: %{current_user: current_user}}, %{"seller_id" => seller_id, "food_menu_id" => food_menu_id}) do
+    case seller_id_belongs_to_current_user?(current_user, seller_id) do
       true ->
-        with {:ok, %FoodMenu{}} <- FoodMenus.delete(menu_id) do
+        with {:ok, %FoodMenu{}} <- FoodMenus.delete(food_menu_id) do
           send_resp(conn, :no_content, "")
         end
       false ->
@@ -67,7 +67,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  defp seller_belongs_to_current_user?(_current_user = %User{id: current_user_id}, seller_id) do
+  defp seller_id_belongs_to_current_user?(_current_user = %User{id: current_user_id}, seller_id) do
     %Seller{user_id: seller_user_id} = Sellers.get!(seller_id)
     seller_user_id === current_user_id
   end
