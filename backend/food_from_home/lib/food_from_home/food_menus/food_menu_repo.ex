@@ -105,7 +105,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       {:ok, %FoodMenu{}}
 
       iex> delete(12345)
-      {:error, :forbidden}
+      {:error, 403, "An associated cart item exists"}
 
   """
   def delete(food_menu_id) when is_integer(food_menu_id) do
@@ -114,7 +114,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
     |> no_associated_cart_items?()
     |> case do
       true -> Repo.delete()
-      false -> {:error, :forbidden}
+      false -> {:error, 403, "An associated cart item exists"}
     end
   end
 

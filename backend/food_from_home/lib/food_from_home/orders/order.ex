@@ -21,8 +21,8 @@ defmodule FoodFromHome.Orders.Order do
   alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users.User
 
-  @allowed_create_keys [:seller_id, :buyer_user_id]
-  @required_keys [:seller_id, :buyer_user_id, :status]
+  @allowed_create_keys [:seller_id, :buyer_user_id, :delivery_address]
+  @required_keys [:seller_id, :buyer_user_id, :status, :delivery_address]
   @allowed_update_keys [:status, :delivery_address, :invoice_link, :seller_remark]
   @delivery_address_keys [:door_number, :street, :city, :country, :postal_code]
 
@@ -31,7 +31,7 @@ defmodule FoodFromHome.Orders.Order do
     field :invoice_link, :string, default: nil
     field :seller_remark, :string, default: nil
 
-    embeds_one :delivery_address, DeliveryAddress, on_replace: :update do
+    embeds_one :delivery_address, DeliveryAddress, on_replace: :update, validate_required: true do
       field :door_number, :string
       field :street, :string
       field :city, :string

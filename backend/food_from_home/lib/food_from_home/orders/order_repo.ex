@@ -22,9 +22,14 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   """
   def create(buyer_user_id, attrs) when is_integer(buyer_user_id) and is_map(attrs) do
-    buyer_user_id
-    |> Users.get!()
-    |> Ecto.build_assoc(:orders, attrs)
+    buyer_user = %User{address: default_delivery_address} = Users.get!(buyer_user_id)
+
+    default_delivery_address_map = Map.from_struct(default_delivery_address)
+
+    attrs_with_default_delivery_address =  Map.put(attrs, :delivery_address, default_delivery_address_map)
+
+    buyer_user
+    |> Ecto.build_assoc(:orders, attrs_with_default_delivery_addres)
     |> create_change()
     |> Repo.insert()
   end
@@ -117,7 +122,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
       {:ok, %Order{}}
 
       iex> delete_order(%Order{status: :confirmed})
-      {:error, :forbidden}
+      {:error, 403, "Only an order of :open status can be deleted"}
 
   """
   def delete(order = %Order{status: :open}) do
@@ -125,7 +130,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
   end
 
   def delete(order = %Order{}) do
-    {:error, :forbidden}
+    {:error, 403, "Only an order of :open status can be deleted"}
   end
 
   @doc """

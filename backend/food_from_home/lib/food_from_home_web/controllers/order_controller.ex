@@ -1,9 +1,12 @@
 defmodule FoodFromHomeWeb.OrderController do
   use FoodFromHomeWeb, :controller
 
+  alias FoodFromHome.Deliveries
+  alias FoodFromHome.Deliveries.Delivery
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Sellers
+  alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
@@ -44,33 +47,108 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: current_user}}, %{"order_id" => order_id, "order" => attrs}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id, "order" => %{"delivery_address" => delivery_address}}) do
     with %Order{} = order <- Orders.get!(order_id) do
       case order_related_to_current_user?(current_user, order) do
         true ->
-          allowed_fields = allowed_fields(current_user)
+          delivery_address = Utils.convert_map_string_keys_to_atoms(delivery_address)
 
-          {allowed_attrs, other_attrs} = Map.split(attrs, allowed_fields)
-
-          case Enum.empty?(other_attrs) do
-            true ->
-              attrs = Utils.convert_map_string_keys_to_atoms(allowed_attrs)
-
-              case valid_status_attr?(current_user, attrs) do
-                true ->
-                  with {:ok, %Order{} = order} <- Orders.update(order, attrs) do
-                    render(conn, :show, order: order)
-                  end
-                false ->
-                  ErrorHandler.handle_error(conn, "403", "Status change not permitted for the user")
-              end
-            false ->
-              ErrorHandler.handle_error(conn, "403", "Not permitted attributes found in request")
+          with {:ok, %Order{} = order} <- Orders.update_delivery_address(order, delivery_address) do
+            render(conn, :show, order: order)
           end
         false ->
           ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
       end
     end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"delivery_address" => _delivery_address}}) do
+    ErrorHandler.handle_error(conn, "403", "Only a buyer user is permitted to update the delivery address")
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :ready_for_pickup}}) do
+    with %Order{} = order <- Orders.get!(order_id) do
+      case order_related_to_current_user?(current_user, order) do
+        true ->
+          with {:ok, %Order{} = order} <- Orders.mark_as_ready_for_pickup(order) do
+            render(conn, :show, order: order)
+          end
+        false ->
+          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+      end
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :ready_for_pickup}}) do
+    ErrorHandler.handle_error(conn, "403", "Only a seller user is allowed to mark an order as ready for pickup")
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :cancelled, "seller_remark" => seller_remark}}) do
+    with %Order{} = order <- Orders.get!(order_id) do
+      case order_related_to_current_user?(current_user, order) do
+        true ->
+          with {:ok, %Order{} = order} <- Orders.cancel(order, seller_remark) do
+            render(conn, :show, order: order)
+          end
+        false ->
+          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+      end
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :cancelled}}) do
+    ErrorHandler.handle_error(conn, "403", "Only a seller user is allowed to cancel an order")
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :reserved_for_pickup}}) do
+    with %Order{} = order <- Orders.get!(order_id) do
+      case order_related_to_current_user?(current_user, order) do
+        true ->
+          with {:ok, %Order{} = order} <- Orders.reserve_for_pickup(order, current_user) do
+            render(conn, :show, order: order)
+          end
+        false ->
+          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+      end
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :reserved_for_pickup}}) do
+    ErrorHandler.handle_error(conn, "403", "Only a deliverer user is allowed to reserve an order for pickup")
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :on_the_way}}) do
+    with %Order{} = order <- Orders.get!(order_id) do
+      case order_related_to_current_user?(current_user, order) do
+        true ->
+          with {:ok, %Order{} = order} <- Orders.mark_as_on_the_way(order) do
+            render(conn, :show, order: order)
+          end
+        false ->
+          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+      end
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :on_the_way}}) do
+    ErrorHandler.handle_error(conn, "403", "Only a deliverer user is allowed to mark an order as on the way")
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :delivered}}) do
+    with %Order{} = order <- Orders.get!(order_id) do
+      case order_related_to_current_user?(current_user, order) do
+        true ->
+          with {:ok, %Order{} = order} <- Orders.mark_as_delivered(order) do
+            render(conn, :show, order: order)
+          end
+        false ->
+          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+      end
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :delivered}}) do
+    ErrorHandler.handle_error(conn, "403", "Only a deliverer user is allowed to mark an order as delivered")
   end
 
   defp order_related_to_current_user?(current_user = %User{user_type: :seller}, %Order{seller_id: seller_id}) do
@@ -101,16 +179,4 @@ defmodule FoodFromHomeWeb.OrderController do
 
     {seller_user, buyer_user, deliverer_user}
   end
-
-  defp allowed_fields(current_user = %User{user_type: :seller}), do: [:status, :seller_remark]
-
-  defp allowed_fields(current_user = %User{user_type: :buyer}), do: [:delivery_address]
-
-  defp allowed_fields(current_user = %User{user_type: :deliverer}), do: [:status]
-
-  defp valid_status_attr?(current_user = %User{user_type: :seller}, _attrs = %{status: status}), do: Enum.member?([:ready_for_pickup, :cancelled], status)
-
-  defp valid_status_attr?(current_user = %User{user_type: :deliverer}, _attrs = %{status: status}), do: Enum.member?([:reserved_for_pickup, :on_the_way, :delivered], status)
-
-  defp valid_status_attr?(current_user = %User{}, _attrs = %{}), do: true
 end

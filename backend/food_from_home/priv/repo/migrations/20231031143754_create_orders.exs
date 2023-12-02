@@ -3,7 +3,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateOrders do
 
   def change do
     create table(:orders) do
-      add :delivery_address, :map, default: nil
+      add :delivery_address, :map
       add :status, :string, default: "open"
       add :invoice_link, :string, default: nil
       add :seller_remark, :string, default: nil
