@@ -21,7 +21,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndUpdateDeliveryAndProd
               {:ok, %Order{}} ->
                 {:error, 500, "The status update operation has been rolled back as pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason}. "}
               {:error, reason} ->
-                {:error, 500, "Pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason} and the eventual order status update rollback failed due to the following reason: #{reason}."}
+                {:error, 500, "Pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason} and the eventual order status update rollback also failed due to the following reason: #{reason}."}
             end
         end
       error ->

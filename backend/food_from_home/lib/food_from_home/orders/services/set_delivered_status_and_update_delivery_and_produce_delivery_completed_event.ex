@@ -21,7 +21,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndPro
               {:ok, %Order{}} ->
                 {:error, 500, "The status update operation has been rolled back as delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason}. "}
               {:error, reason} ->
-                {:error, 500, "Delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason} and the eventual order status update rollback failed due to the following reason: #{reason}."}
+                {:error, 500, "Delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason} and the eventual order status update rollback also failed due to the following reason: #{reason}."}
             end
         end
       error ->
