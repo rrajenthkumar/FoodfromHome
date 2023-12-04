@@ -15,6 +15,7 @@ defmodule FoodFromHome.GoogleGeocoding do
     case HTTPoison.get(position_request_url) do
       {:ok, %{body: body}} ->
 
+        position =
           body
           |> Jason.decode!()
           |> Map.get("results", [])
@@ -23,9 +24,10 @@ defmodule FoodFromHome.GoogleGeocoding do
           |> Map.get("location", %{})
           |> location_to_postgis()
 
-      {:error, reason} ->
-        IO.inspect(reason, label: "Geocoding API Error")
-        {:error, reason}
+        {:ok, position}
+
+      error ->
+        error
     end
   end
 

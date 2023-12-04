@@ -23,6 +23,7 @@ defmodule FoodFromHome.Orders do
   def confirm(order, invoice_link), do: SetConfirmedStatusAndAddInvoiceLinkAndProduceOrderConfirmedEvent.call(order, invoice_link)
   def cancel(order, seller_remark), do: SetCancelledStatusAndAddSellerRemarkAndProduceOrderCancelledEvent.call(order, seller_remark)
   def reserve_for_pickup(order, deliverer_user), do: SetReservedForPickupStatusAndCreateDelivery.call(order, deliverer_user)
+  #Below services are to be completed yet
   def mark_as_on_the_way(order), do: SetOnTheWayStatusAndUpdateDeliveryAndProduceDeliveryStartedEvent.call(order)
   def mark_as_delivered(order), do: SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent.call(order)
 end

@@ -1,23 +1,29 @@
 defmodule FoodFromHome.Orders.Services.SetReservedForPickupStatusAndCreateDelivery do
   @moduledoc """
-  When a deliverer reserves an order for pickup, the status of the order is changed to ':reserved_for_pickup'.
-  Simultaneously a new delivery record is created with current location.
+  Used by a deliverer to reserve an order for pickup.
+  Simultaneously a new delivery record is created with seller's location as current location.
   """
+
   alias FoodFromHome.Deliveries
-  alias FoodFromHome.GoogleGeocoding
+  alias FoodFromHome.Deliveries.Delivery
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
-  alias FoodFromHome.Users
   alias FoodFromHome.Users.User
 
-  def call(order = %Order{status: :confirmed}, deliverer_user = %User{id: deliverer_user_id, user_type: :deliverer}) do
-    Orders.update(order, %{status: :reserved_for_pickup})
-
-    Deliveries.create(order, %{deliverer_user_id: deliverer_user_id, current_position: get_start_position(order)})
+  def call(order = %Order{status: :ready_for_pickup}, deliverer_user = %User{user_type: :deliverer}) do
+    with {:ok, %Order{}} = result <- Orders.update(order, %{status: :reserved_for_pickup}) do
+      case Deliveries.initiate_delivery(order, deliverer_user) do
+        {:ok, %Delivery{}} -> result
+        {:error, reason} ->
+          # Rollingback status change
+          with {:ok, %Order{}} <- Orders.update(order, %{status: :ready_for_pickup}) do
+            {:error, 500, "The status update operation has been rolled back as creation of an associated delivery failed due to the following reason: #{reason}. "}
+          end
+      end
+    end
   end
 
-  defp get_start_position(order) do
-    _seller_user = %User{address: address} = Users.find_seller_user_from_order!(order)
-    GoogleGeocoding.get_position(address)
+  def call(order = %Order{status: another_status}, _deliverer_user = %User{user_type: :deliverer}) do
+    {:error, 403, "Order in #{another_status} status. Only an order of :ready_for_pickup status can be reserved for pickup"}
   end
 end
