@@ -2,7 +2,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndUpdateDeliveryAndProd
   @moduledoc """
   When a deliverer picks up an order that he has reserved for pickup, the status of the order is changed to ':on_the_way'.
   Simultaneously the corresponding delivery record is updated with the pickup time.
-  Then a 'delivery_started' Kafka event is produced.
+  Then a 'delivery_started' Kafka event is produced to be consumed by the notification module.
   """
   alias FoodFromHome.Deliveries
   alias FoodFromHome.Orders

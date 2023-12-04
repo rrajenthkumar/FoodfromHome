@@ -6,11 +6,13 @@ defmodule FoodFromHome.Orders.Services.SetCancelledStatusAndAddSellerRemarkAndPr
     alias FoodFromHome.Orders.Order
 
     def call(order = %Order{status: :open}, seller_remark) do
-      with {:ok, %Order{}} = result <- Orders.update(order, %{status: :cancelled, seller_remark: seller_remark}) do
-        # produce_order_cancelled_event()
+      case Orders.update(order, %{status: :cancelled, seller_remark: seller_remark}) do
+        {:ok, %Order{}} = result ->
+          # produce_order_cancelled_event()
+          result
+        error ->
+          error
       end
-
-      result
     end
 
     def call(order = %Order{status: another_status}, _seller_remark) do

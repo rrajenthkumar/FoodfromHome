@@ -2,7 +2,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndPro
   @moduledoc """
   When a deliverer delivers an order, the status of the order is changed to ':delivered'.
   Simultaneously the corresponding delivery record is updated with the delivery time.
-  Then a 'delivered' Kafka event is produced.
+  Then a 'delivered' Kafka event is produced to be consumed by the notification module.
   """
   alias FoodFromHome.Deliveries
   alias FoodFromHome.Orders
