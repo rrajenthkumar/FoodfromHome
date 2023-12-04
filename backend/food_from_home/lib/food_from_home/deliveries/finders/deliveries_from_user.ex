@@ -1,6 +1,6 @@
 defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
   @moduledoc """
-  Finder to list deliveries linked to seller or delliverer user
+  Finder to list deliveries linked to seller or deliverer user
   """
   import Ecto.Query, warn: false
 
