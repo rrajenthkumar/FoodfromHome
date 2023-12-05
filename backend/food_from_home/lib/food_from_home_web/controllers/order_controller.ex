@@ -25,7 +25,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def index(conn = %{assigns: %{current_user: current_user}}) do
+  def index(conn = %{assigns: %{current_user: %User{} = current_user}}) do
     filters =
       conn
       |> fetch_query_params()
@@ -36,7 +36,7 @@ defmodule FoodFromHomeWeb.OrderController do
       render(conn, :index, orders: orders)
   end
 
-  def show(conn = %{assigns: %{current_user: current_user}}, %{"order_id" => order_id}) do
+  def show(conn = %{assigns: %{current_user: %User{} = current_user}}, %{"order_id" => order_id}) do
     with %Order{} = order <- Orders.get!(order_id) do
       case order_related_to_current_user?(current_user, order) do
         true ->
