@@ -2,9 +2,9 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
   import Ecto.Query, warn: false
 
   alias FoodFromHome.Deliveries.Delivery
-  alias FoodFromHome.Deliveries
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Repo
+  alias FoodFromHome.Users.User
 
   @doc """
   Associates an order and creates a delivery.
@@ -18,7 +18,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(order = %Order{}, attrs \\ %{}) do
+  def create(order = %Order{}, attrs = %{}\\ %{}) do
     order
     |> Ecto.build_assoc(:delivery, attrs)
     |> change_create()
@@ -26,24 +26,30 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
   end
 
   @doc """
-  Gets a single delivery from delivery id.
+  Gets a delivery using order id.
 
   Raises `Ecto.NoResultsError` if the Delivery does not exist.
 
   ## Examples
 
-      iex> get!(123)
+      iex> get_with_order_id!(123)
       %Delivery{}
 
-      iex> get!(456)
+      iex> get_with_order_id!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get!(delivery_id), do: Repo.get!(Delivery, delivery_id)
+  def get_with_order_id!(order_id) when is_integer(order_id) do
+    query =
+      from delivery in Delivery,
+      where: delivery.order_id == ^order_id
+
+    Repo.one!(query)
+  end
 
 
   @doc """
-  Updates a delivery linked to an order.
+  Updates a delivery.
 
   ## Examples
 
@@ -54,9 +60,9 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(order = %Order{}, attrs) do
+  def update(delivery = %Delivery{}, attrs = %{}) do
 
-    Deliveries.find_delivery_from_order!(order)
+    delivery
     |> change_update(attrs)
     |> Repo.update()
   end
@@ -70,11 +76,11 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       %Ecto.Changeset{data: %Delivery{}}
 
   """
-  def change_create(%Delivery{} = delivery, attrs \\ %{}) do
+  def change_create(%Delivery{} = delivery, attrs = %{}\\ %{}) do
     Delivery.create_changeset(delivery, attrs)
   end
 
-    @doc """
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking delivery updation changes.
 
   ## Examples
@@ -83,7 +89,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       %Ecto.Changeset{data: %Delivery{}}
 
   """
-  def change_update(%Delivery{} = delivery, attrs \\ %{}) do
+  def change_update(%Delivery{} = delivery, attrs = %{}\\ %{}) do
     Delivery.update_changeset(delivery, attrs)
   end
 end

@@ -107,13 +107,18 @@ defmodule FoodFromHomeWeb.Router do
           scope "/" do
             pipe_through [FoodFromHomeWeb.IsDelivererPlug]
 
-            # Lists deliveries linked to current deliverer user with limited fields based on query parameters
-            get "/deliveries", DeliveryController, :index
-            # To get a delivery for an order linked to current deliverer user
-            # Add option to expand buyer, seller, delivery, cart items, foodmenu details
-            get "/:order_id/delivery", DeliveryController, :show
-            # For updates by deliverer's device location tracker. Currently we mock it using genserver.
+            # For updates by deliverer's device location tracker. Currently we mock it.
             put "/:order_id/delivery", DeliveryController, :update
+          end
+
+          scope "/" do
+            pipe_through [FoodFromHomeWeb.IsSellerOrDelivererPlug]
+
+            # Lists deliveries linked to current seller or deliverer user with limited fields based on query parameters
+            get "/deliveries", DeliveryController, :index
+            # To get a delivery for an order linked to current seller or deliverer user
+            # Add option to expand order, buyer, seller, delivery, cart items, foodmenu details
+            get "/:order_id/delivery", DeliveryController, :show
           end
         end
       end

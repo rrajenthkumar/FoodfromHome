@@ -1,41 +1,51 @@
 defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
-  @moduledoc """
-  Finder to list deliveries linked to seller or deliverer user
+@moduledoc """
+  Finder to find deliveries from a seller or deliverer user with applicable filters
   """
   import Ecto.Query, warn: false
 
+  alias FoodFromHome.Deliveries.Delivery
+  alias FoodFromHome.Repo
+  alias FoodFromHome.Users.User
+
   @doc """
-  Returns a list of deliveries linked to a seller or deliverer user, after applying given filters.
+  Returns a list of related deliveries for a user of type :deliverer with applicable filters.
+
   ## Examples
 
-    iex> find(%User{}, %{})
+    iex> list(%User{}, [])
     [%Delivery{}, ...]
 
   """
 
-  alias FoodFromHome.Repo
-  alias FoodFromHome.Deliveries.Delivery
-  alias FoodFromHome.Users.User
-  alias FoodFromHome.Utils
+  def find(%User{id: deliverer_user_id, user_type: :deliverer}, filters) when is_list(filters) do
+    query =
+      from(delivery in Delivery,
+        where: ^filters,
+        where: delivery.deliverer_user_id == ^deliverer_user_id)
 
-  def find(user = %User{}, filter_params = %{} \\ %{}) do
-    filter_params
-    |> Utils.convert_map_to_keyword_list()
-    |> build_query(user)
-    |> Repo.all()
+    Repo.all(query)
   end
 
-  defp build_query(filters, %User{user_type: :deliverer, id: deliverer_user_id}) when is_list(filters) do
-    from(delivery in Delivery,
-      where: delivery.deliverer_user_id == ^deliverer_user_id,
-      where: ^filters)
-  end
+  @doc """
+  Returns a list of related deliveries for a user of type :seller with applicable filters.
 
-  defp build_query(filters, %User{user_type: :seller, id: seller_user_id}) when is_list(filters) do
-    from(delivery in Delivery,
-      join: order in assoc(delivery, :orders),
-      join: seller in assoc(order, :sellers),
-      where: seller.user_id == ^seller_user_id,
-      where: ^filters)
+  ## Examples
+
+    iex> list(%User{}, [])
+    [%Delivery{}, ...]
+
+  """
+
+  def find(%User{id: seller_user_id, user_type: :seller}, filters) when is_list(filters) do
+    query =
+      from(delivery in Delivery,
+        join: order in assoc(delivery, :order),
+        join: seller in assoc(order, :seller),
+        join: user in assoc(seller, :user),
+        where: ^filters,
+        where: user.id == ^seller_user_id)
+
+    Repo.all(query)
   end
 end
