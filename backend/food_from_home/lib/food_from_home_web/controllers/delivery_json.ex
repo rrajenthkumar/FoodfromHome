@@ -18,10 +18,12 @@ defmodule FoodFromHomeWeb.DeliveryJSON do
   defp data(%Delivery{} = delivery) do
     %{
       id: delivery.id,
-      distance_travelled_in_kms: delivery.distance_travelled_in_kms,
+      order_id: order_id,
       picked_up_at: delivery.picked_up_at,
+      current_position: delivery.current_position,
+      distance_travelled_in_kms: delivery.distance_travelled_in_kms,
       delivered_at: delivery.delivered_at,
-      current_position: delivery.current_position
+      deliverer_user_id: deliverer_user_id
     }
   end
 end
