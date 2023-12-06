@@ -61,7 +61,7 @@ defmodule FoodFromHome.Orders.Order do
     |> foreign_key_constraint(:seller_id)
     |> foreign_key_constraint(:buyer_user_id)
     |> cast_embed(:delivery_address, required: true, with: &delivery_address_changeset/2)
-    |> cast_assoc(:cart_item, required: true, with: &CartItem.changeset/2)
+    |> cast_assoc(:cart_item, required: true, with: &CartItem.create_changeset/2)
   end
 
   @doc """

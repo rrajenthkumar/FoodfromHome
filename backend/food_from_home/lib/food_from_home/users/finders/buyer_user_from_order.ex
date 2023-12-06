@@ -5,6 +5,7 @@ defmodule FoodFromHome.Users.Finders.BuyerUserFromOrder do
   import Ecto.Query, warn: false
 
   alias FoodFromHome.Orders.Order
+  alias FoodFromHome.Repo
   alias FoodFromHome.Users.User
 
   @doc """

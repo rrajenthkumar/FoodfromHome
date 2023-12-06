@@ -51,7 +51,7 @@ defmodule FoodFromHomeWeb.SellerJSON do
       id: seller.id,
       illustration: seller.illustration,
       introduction: seller.introduction,
-      user: limited_data(seller.user)
+      user: limited_data(seller.seller_user)
     }
   end
 

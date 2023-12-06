@@ -17,7 +17,7 @@ defmodule FoodFromHome.Users.UserRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs = %{}) do
+  def create(attrs = %{}) do
     %User{}
     |> change_create_user(attrs)
     |> Repo.insert()
@@ -37,7 +37,7 @@ defmodule FoodFromHome.Users.UserRepo do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(user_id) do
+  def get!(user_id) do
     User
     |> Repo.get!(user_id)
     |> Repo.preload(:seller)
@@ -55,7 +55,7 @@ defmodule FoodFromHome.Users.UserRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user(user = %User{}, attrs = %{}) do
+  def update(user = %User{}, attrs = %{}) do
       user
       |> change_update_user(attrs)
       |> Repo.update()
@@ -70,7 +70,7 @@ defmodule FoodFromHome.Users.UserRepo do
       {:ok, %User{}}
 
   """
-  def soft_delete_user(user = %User{}) do
+  def soft_delete(user = %User{}) do
       user
       |> User.soft_delete_changeset()
       |> Repo.update()
@@ -84,7 +84,7 @@ defmodule FoodFromHome.Users.UserRepo do
     [%User{}, ...]
 
   """
-  def list_users(filter_params = %{} \\ %{}) do
+  def list(filter_params = %{} \\ %{}) do
     filter_params
     |> Utils.convert_map_to_keyword_list()
     |> get_query()

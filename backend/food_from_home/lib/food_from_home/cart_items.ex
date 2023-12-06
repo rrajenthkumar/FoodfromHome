@@ -49,9 +49,9 @@ defmodule FoodFromHome.CartItems do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_cart_item(attrs \\ %{}) do
+  def create_cart_item(attrs = %{} \\ %{}) do
     %CartItem{}
-    |> CartItem.changeset(attrs)
+    |> create_change_cart_item(attrs)
     |> Repo.insert()
   end
 
@@ -67,9 +67,9 @@ defmodule FoodFromHome.CartItems do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_cart_item(%CartItem{} = cart_item, attrs) do
+  def update_cart_item(%CartItem{} = cart_item, attrs = %{} \\ %{}) do
     cart_item
-    |> CartItem.changeset(attrs)
+    |> update_change_cart_item(attrs)
     |> Repo.update()
   end
 
@@ -98,7 +98,20 @@ defmodule FoodFromHome.CartItems do
       %Ecto.Changeset{data: %CartItem{}}
 
   """
-  def change_cart_item(%CartItem{} = cart_item, attrs \\ %{}) do
-    CartItem.changeset(cart_item, attrs)
+  def create_change_cart_item(%CartItem{} = cart_item, attrs \\ %{}) do
+    CartItem.create_changeset(cart_item, attrs)
+  end
+
+    @doc """
+  Returns an `%Ecto.Changeset{}` for tracking cart_item changes.
+
+  ## Examples
+
+      iex> change_cart_item(cart_item)
+      %Ecto.Changeset{data: %CartItem{}}
+
+  """
+  def update_change_cart_item(%CartItem{} = cart_item, attrs \\ %{}) do
+    CartItem.update_changeset(cart_item, attrs)
   end
 end

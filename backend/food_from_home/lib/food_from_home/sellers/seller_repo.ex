@@ -52,6 +52,6 @@ defmodule FoodFromHome.Sellers.SellerRepo do
 
   """
   def update_change(seller = %Seller{}, attrs = %{} \\ %{}) do
-    Seller.changeset(seller, attrs)
+    Seller.update_changeset(seller, attrs)
   end
 end

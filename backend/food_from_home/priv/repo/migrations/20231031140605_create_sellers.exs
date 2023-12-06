@@ -13,6 +13,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateSellers do
     end
 
     create unique_index(:sellers, [:tax_id])
-    create unique_index(:sellers, [:user_id])
+    create unique_index(:sellers, [:seller_user_id])
   end
 end

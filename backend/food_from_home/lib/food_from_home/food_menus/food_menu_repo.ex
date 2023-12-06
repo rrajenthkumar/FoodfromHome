@@ -109,11 +109,10 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   """
   def delete(food_menu_id) when is_integer(food_menu_id) do
-    food_menu_id
-    |> get!()
-    |> no_associated_cart_items?()
-    |> case do
-      true -> Repo.delete()
+    food_menu = get!(food_menu_id)
+
+    case no_associated_cart_items?(food_menu) do
+      true -> Repo.delete(food_menu)
       false -> {:error, 403, "An associated cart item exists"}
     end
   end

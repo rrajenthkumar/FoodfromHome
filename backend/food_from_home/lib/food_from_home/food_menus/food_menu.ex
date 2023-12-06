@@ -42,7 +42,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     food_menu
     |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
-    |> unique_constraint(:unique_active_food_menu_name_per_seller_constraint, name: :unique_active_food_menu_name_per_seller_index, message: "Another active food menu of the same name exists for this seller")
+    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint, name: :unique_food_menu_name_per_seller_per_valid_until_index, message: "Another active food menu of the same name exists for this seller for the same validity")
     |> foreign_key_constraint(:seller_id)
     |> cast_embed(:rebate, with: &rebate_changeset/2)
   end
@@ -55,7 +55,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_keys)
     |> validate_no_associated_cart_items()
-    |> unique_constraint(:unique_active_food_menu_name_per_seller_constraint, name: :unique_active_food_menu_name_per_seller_index, message: "Another active food menu of the same name exists for this seller")
+    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint, name: :unique_food_menu_name_per_seller_per_valid_until_index, message: "Another food menu of the same name exists for this seller for the same validity")
     |> foreign_key_constraint(:seller_id)
     |> cast_embed(:rebate, with: &rebate_changeset/2)
   end
