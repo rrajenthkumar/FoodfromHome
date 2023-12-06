@@ -20,7 +20,7 @@ defmodule FoodFromHomeWeb.OrderController do
     with {:ok, %Order{} = order} <- Orders.create(buyer_user_id, attrs) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/v1/api/orders/#{order.id}")
+      |> put_resp_header("location", ~p"/api/v1/orders/#{order.id}")
       |> render(:show, order: order)
     end
   end

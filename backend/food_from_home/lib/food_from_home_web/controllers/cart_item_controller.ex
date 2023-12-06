@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.CartItemController do
     with {:ok, %CartItem{} = cart_item} <- CartItems.create_cart_item(cart_item_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/cart_items/#{cart_item}")
+      |> put_resp_header("location", ~p"/api/v1/orders/order_id/cart_items/#{cart_item}")
       |> render(:show, cart_item: cart_item)
     end
   end

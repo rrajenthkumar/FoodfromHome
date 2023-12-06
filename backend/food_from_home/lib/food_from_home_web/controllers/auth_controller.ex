@@ -4,8 +4,8 @@ defmodule FoodFromHomeWeb.AuthController do
   use FoodFromHomeWeb, :controller
   plug Ueberauth
 
-  def request(conn, _params) do
-    Ueberauth.Strategy.Auth0.OAuth.authorization_url(conn)
+  def request(_conn, _params) do
+    #Ueberauth.Strategy.Auth0.OAuth.authorization_url(conn)
   end
 
   def callback(%{assigns: %{ueberauth_failure: fails}} = conn, _params) do

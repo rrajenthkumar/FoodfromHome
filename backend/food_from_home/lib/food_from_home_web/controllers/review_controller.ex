@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.ReviewController do
     with {:ok, %Review{} = review} <- Reviews.create_review(review_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/v1/reviews/#{review}")
+      |> put_resp_header("location", ~p"/api/v1/orders/order_id/reviews/#{review}")
       |> render(:show, review: review)
     end
   end

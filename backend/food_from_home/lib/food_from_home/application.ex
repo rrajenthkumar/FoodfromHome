@@ -19,7 +19,7 @@ defmodule FoodFromHome.Application do
       # Start the Endpoint (http/https)
       FoodFromHomeWeb.Endpoint,
       #Kaffe's Consumer module
-      {Kaffe.Consumer, []}
+      # {Kaffe.Consumer, []}
       # Start a worker by calling: FoodFromHome.Worker.start_link(arg)
       # {FoodFromHome.Worker, arg}
     ]

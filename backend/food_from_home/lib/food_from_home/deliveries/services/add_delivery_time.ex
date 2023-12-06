@@ -6,7 +6,7 @@ defmodule FoodFromHome.Deliveries.Services.AddDeliveryTime do
   alias FoodFromHome.Deliveries.Delivery
 
   def call(delivery = %Delivery{delivered_at: nil}) do
-    delivered_at = DateTime.now!()
+    delivered_at = DateTime.utc_now()
 
     Deliveries.update(delivery, %{delivered_at: delivered_at})
   end

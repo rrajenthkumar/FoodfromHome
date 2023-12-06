@@ -6,7 +6,7 @@ defmodule FoodFromHome.Deliveries.Services.AddPickupTime do
   alias FoodFromHome.Deliveries.Delivery
 
   def call(delivery = %Delivery{picked_up_at: nil}) do
-    picked_up_at = DateTime.now!()
+    picked_up_at = DateTime.utc_now()
 
     Deliveries.update(delivery, %{picked_up_at: picked_up_at})
   end

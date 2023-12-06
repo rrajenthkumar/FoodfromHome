@@ -2,6 +2,8 @@ defmodule FoodFromHome.Sellers.SellerRepoTest do
   use FoodFromHome.DataCase
 
   alias FoodFromHome.Sellers.SellerRepo
+  alias FoodFromHome.FoodMenus
+  alias FoodFromHome.Sellers.SellerRepoFixtures
 
   describe "sellers" do
     alias FoodFromHome.Sellers.Seller

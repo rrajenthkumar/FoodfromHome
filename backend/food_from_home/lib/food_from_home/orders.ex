@@ -2,6 +2,7 @@ defmodule FoodFromHome.Orders do
   @moduledoc """
   The Orders context.
   """
+  alias FoodFromHome.Orders.OrderRepo
   alias FoodFromHome.Orders.Services.UpdateDeliveryAddress
   alias FoodFromHome.Orders.Services.SetReadyForPickupStatus
   alias FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndProduceOrderConfirmedEvent

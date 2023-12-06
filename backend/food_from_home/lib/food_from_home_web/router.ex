@@ -53,7 +53,7 @@ defmodule FoodFromHomeWeb.Router do
         end
 
         scope "/" do
-          pipe_through [FoodFromHomeWeb.FoodFromHomeWeb.IsSellerOrBuyerPlug]
+          pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
 
           # Lists food menus of a seller based on query parameters with limited fields for current buyer user
           # Lists only own food menus based on query parameters with limited fields for current seller user
