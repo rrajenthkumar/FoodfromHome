@@ -15,7 +15,7 @@ defmodule FoodFromHome.Orders.Services.SetCancelledStatusAndAddSellerRemarkAndPr
       end
     end
 
-    def call(order = %Order{status: another_status}, _seller_remark) do
+    def call(%Order{status: another_status}, _seller_remark) do
       {:error, 403, "Order in #{another_status} status. Only an order of :open status can be cancelled"}
     end
 end

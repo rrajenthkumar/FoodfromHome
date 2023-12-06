@@ -15,8 +15,7 @@ defmodule FoodFromHome.Sellers.Seller do
     field :introduction, :string
     field :tax_id, :string
 
-    # Seller belongs to user of type :seller
-    belongs_to :user, User
+    belongs_to :seller_user, User, foreign_key: :seller_user_id
     has_many :orders, Order
     has_many :food_menus, FoodMenu
 
@@ -28,9 +27,9 @@ defmodule FoodFromHome.Sellers.Seller do
     seller
     |> cast(attrs, @allowed_create_seller_keys)
     |> validate_required(@required_seller_keys)
-    |> unique_constraint(:user_id)
+    |> unique_constraint(:seller_user_id)
     |> unique_constraint(:tax_id)
-    |> foreign_key_constraint(:user_id)
+    |> foreign_key_constraint(:seller_user_id)
   end
 
     @doc false
@@ -38,8 +37,8 @@ defmodule FoodFromHome.Sellers.Seller do
       seller
       |> cast(attrs, @allowed_update_seller_keys)
       |> validate_required(@required_seller_keys)
-      |> unique_constraint(:user_id)
+      |> unique_constraint(:seller_user_id)
       |> unique_constraint(:tax_id)
-      |> foreign_key_constraint(:user_id)
+      |> foreign_key_constraint(:seller_user_id)
     end
 end

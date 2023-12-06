@@ -2,8 +2,6 @@ defmodule FoodFromHomeWeb.IsSellerPlug do
   @moduledoc """
   This plug checks if the current user is of type :seller.
   """
-  @behaviour Plug
-
   import Plug.Conn
 
   use FoodFromHomeWeb, :controller

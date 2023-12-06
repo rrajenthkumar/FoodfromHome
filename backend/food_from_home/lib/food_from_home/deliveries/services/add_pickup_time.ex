@@ -11,7 +11,7 @@ defmodule FoodFromHome.Deliveries.Services.AddPickupTime do
     Deliveries.update(delivery, %{picked_up_at: picked_up_at})
   end
 
-  def call(delivery = %Delivery{}) do
+  def call(%Delivery{}) do
     {:error, 403, "Delivery picked_up_at time cannot be added as it already exists"}
   end
 end

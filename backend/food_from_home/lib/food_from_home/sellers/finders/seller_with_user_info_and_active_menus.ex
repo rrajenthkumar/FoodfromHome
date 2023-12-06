@@ -11,7 +11,7 @@ defmodule FoodFromHome.Sellers.Finders.SellerWithUserInfoAndActiveMenus do
   def find!(seller_id) when is_integer(seller_id) do
     query =
       from seller in Seller,
-        join: user in assoc(seller, :user),
+        join: user in assoc(seller, :seller_user),
         join: food_menu in assoc(seller, :food_menus),
         where: seller.id == ^seller_id,
         preload: [user: user, food_menus: ^from(food_menu in FoodMenu, where: food_menu.valid_until >= ^DateTime.utc_now() and food_menu.remaining_quantity > 0)]

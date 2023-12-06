@@ -18,8 +18,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
     field :distance_travelled_in_kms, :decimal, default: nil
 
     belongs_to :order, Order
-    # Delivery belongs to user of type :deliverer
-    belongs_to :user, User
+    belongs_to :deliverer_user, User, foreign_key: :deliverer_user_id
 
     timestamps()
   end

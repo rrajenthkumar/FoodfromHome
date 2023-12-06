@@ -10,7 +10,7 @@ defmodule FoodFromHome.Sellers.Finders.SellersWithUserInfo do
   def list(filters) when is_list(filters) do
     query =
       from seller in Seller,
-        join: user in assoc(seller, :user),
+        join: user in assoc(seller, :seller_user),
         where: ^filters,
         preload: [user: user]
 

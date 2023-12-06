@@ -25,7 +25,7 @@ defmodule FoodFromHome.Users.User do
     field :profile_image, :binary, default: nil
     field :deleted, :boolean, default: false
 
-    embeds_one :address, Address, on_replace: :update, validate_required: true do
+    embeds_one :address, Address, on_replace: :update do
       field :door_number, :string
       field :street, :string
       field :city, :string
@@ -33,9 +33,9 @@ defmodule FoodFromHome.Users.User do
       field :postal_code, :string
     end
 
-    has_one :seller, Seller, on_replace: :update
-    has_many :orders, Order
-    has_many :deliveries, Delivery
+    has_one :seller, Seller, on_replace: :update, foreign_key: :seller_user_id
+    has_many :orders, Order, foreign_key: :buyer_user_id
+    has_many :deliveries, Delivery, foreign_key: :deliverer_user_id
 
     timestamps()
   end

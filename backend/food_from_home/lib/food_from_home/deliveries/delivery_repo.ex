@@ -4,7 +4,6 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
   alias FoodFromHome.Deliveries.Delivery
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Repo
-  alias FoodFromHome.Users.User
 
   @doc """
   Associates an order and creates a delivery.

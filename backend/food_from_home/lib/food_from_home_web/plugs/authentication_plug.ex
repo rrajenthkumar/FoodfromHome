@@ -2,8 +2,6 @@ defmodule FoodFromHomeWeb.AuthenticationPlug do
   @moduledoc """
   This plug checks if there is an authenticated user.
   """
-  @behaviour Plug
-
   import Plug.Conn
 
   use FoodFromHomeWeb, :controller

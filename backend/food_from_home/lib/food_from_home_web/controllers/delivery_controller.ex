@@ -51,7 +51,7 @@ defmodule FoodFromHomeWeb.DeliveryController do
     deliverer_user_id === current_user_id
   end
 
-  defp delivery_related_to_current_user?(current_user = %User{id: current_user_id, user_type: :seller}, %Delivery{order_id: order_id}) do
+  defp delivery_related_to_current_user?(%User{id: current_user_id, user_type: :seller}, %Delivery{order_id: order_id}) do
     %User{id: seller_user_id} =
       order_id
       |> Orders.get!()

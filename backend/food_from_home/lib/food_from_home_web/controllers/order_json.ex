@@ -35,8 +35,8 @@ defmodule FoodFromHomeWeb.OrderJSON do
       id: order.id,
       date: order.inserted_at,
       status: order.status,
-      seller_id: seller_id,
-      buyer_user: buyer_user_id,
+      seller_id: order.seller_id,
+      buyer_user: order.buyer_user_id,
       delivery_address: data(order.delivery_address),
       invoice_link: order.invoice_link,
       seller_remark: order.seller_remark
@@ -103,6 +103,4 @@ defmodule FoodFromHomeWeb.OrderJSON do
       postal_code: address.postal_code
     }
   end
-
-
 end

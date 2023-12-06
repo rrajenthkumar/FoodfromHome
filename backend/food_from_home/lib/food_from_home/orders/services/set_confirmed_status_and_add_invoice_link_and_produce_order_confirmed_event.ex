@@ -16,7 +16,7 @@ defmodule FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndPro
     end
   end
 
-  def call(order = %Order{status: another_status}, _invoice_link) do
+  def call(%Order{status: another_status}, _invoice_link) do
     {:error, 403, "Order in #{another_status} status. Only an order of :open status can be confirmed"}
   end
 end

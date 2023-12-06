@@ -21,8 +21,9 @@ defmodule FoodFromHomeWeb.SellerController do
   end
 
   def show(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{"seller_id" => seller_id}) do
-    seller = Sellers.get_with_user_info_and_active_menus!(seller_id)
-    render(conn, :show, seller: seller)
+    with {:ok, %Seller{} = seller} <- Sellers.get_with_user_info_and_active_menus!(seller_id) do
+      render(conn, :show, seller: seller)
+    end
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{"seller_id" => seller_id, "seller" => seller_params}) do
@@ -38,7 +39,7 @@ defmodule FoodFromHomeWeb.SellerController do
     end
   end
 
-  defp seller_belongs_to_current_user?(%User{id: current_user_id, user_type: :seller}, %Seller{user_id: seller_user_id}) do
+  defp seller_belongs_to_current_user?(%User{id: current_user_id, user_type: :seller}, %Seller{seller_user_id: seller_user_id}) do
     seller_user_id === current_user_id
   end
 end

@@ -9,7 +9,7 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
   alias FoodFromHome.Users.User
 
   @doc """
-  Returns a list of related deliveries for a user of type :deliverer with applicable filters.
+  Returns a list of related deliveries for a user of type :deliverer or :seller with applicable filters.
 
   ## Examples
 
@@ -27,22 +27,12 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
     Repo.all(query)
   end
 
-  @doc """
-  Returns a list of related deliveries for a user of type :seller with applicable filters.
-
-  ## Examples
-
-    iex> list(%User{}, [])
-    [%Delivery{}, ...]
-
-  """
-
   def find(%User{id: seller_user_id, user_type: :seller}, filters) when is_list(filters) do
     query =
       from(delivery in Delivery,
         join: order in assoc(delivery, :order),
         join: seller in assoc(order, :seller),
-        join: user in assoc(seller, :user),
+        join: user in assoc(seller, :deliverer_user),
         where: ^filters,
         where: user.id == ^seller_user_id)
 

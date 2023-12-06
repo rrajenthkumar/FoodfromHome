@@ -5,6 +5,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndPro
   Then a 'delivered' Kafka event is produced to be consumed by the notification module.
   """
   alias FoodFromHome.Deliveries
+  alias FoodFromHome.Deliveries.Delivery
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
 
@@ -29,7 +30,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndPro
     end
   end
 
-  def call(order = %Order{status: another_status}) do
+  def call(%Order{status: another_status}) do
     {:error, 403, "Order in #{another_status} status. Only an order of :on_the_way status can be changed to :delivered status"}
   end
 

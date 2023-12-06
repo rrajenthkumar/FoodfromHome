@@ -62,7 +62,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"delivery_address" => _delivery_address}}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => _order_id, "order" => %{"delivery_address" => _delivery_address}}) do
     ErrorHandler.handle_error(conn, "403", "Only a buyer user is permitted to update the delivery address")
   end
 
@@ -79,7 +79,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :ready_for_pickup}}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => _order_id, "order" => %{"status" => :ready_for_pickup}}) do
     ErrorHandler.handle_error(conn, "403", "Only a seller user is allowed to mark an order as ready for pickup")
   end
 
@@ -96,7 +96,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :cancelled}}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => _order_id, "order" => %{"status" => :cancelled}}) do
     ErrorHandler.handle_error(conn, "403", "Only a seller user is allowed to cancel an order")
   end
 
@@ -113,7 +113,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :reserved_for_pickup}}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => _order_id, "order" => %{"status" => :reserved_for_pickup}}) do
     ErrorHandler.handle_error(conn, "403", "Only a deliverer user is allowed to reserve an order for pickup")
   end
 
@@ -130,7 +130,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :on_the_way}}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => _order_id, "order" => %{"status" => :on_the_way}}) do
     ErrorHandler.handle_error(conn, "403", "Only a deliverer user is allowed to mark an order as on the way")
   end
 
@@ -147,7 +147,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => order_id, "order" => %{"status" => :delivered}}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => _order_id, "order" => %{"status" => :delivered}}) do
     ErrorHandler.handle_error(conn, "403", "Only a deliverer user is allowed to mark an order as delivered")
   end
 
@@ -166,16 +166,16 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   defp get_related_users(order = %Order{status: status}) when status in [:open, :confirmed, :cancelled, :ready_for_delivery]do
-    seller_user = Users.SellerUserFromOrder.find!(order)
-    buyer_user = Users.BuyerUserFromOrder.find!(order)
+    seller_user = Users.find_seller_user_from_order!(order)
+    buyer_user = Users.find_buyer_user_from_order!(order)
 
     {seller_user, buyer_user, nil}
   end
 
   defp get_related_users(order = %Order{}) do
-    seller_user = Users.SellerUserFromOrder.find!(order)
-    buyer_user = Users.BuyerUserFromOrder.find!(order)
-    deliverer_user = Users.DelivererUserFromOrder.find!(order)
+    seller_user = Users.find_seller_user_from_order!(order)
+    buyer_user = Users.find_buyer_user_from_order!(order)
+    deliverer_user = Users.find_deliverer_user_from_order!(order)
 
     {seller_user, buyer_user, deliverer_user}
   end

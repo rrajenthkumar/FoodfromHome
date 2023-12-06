@@ -3,6 +3,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
+  alias FoodFromHome.Sellers
   alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
@@ -18,7 +19,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(seller_id, attrs) do
           conn
           |> put_status(:created)
-          |> put_resp_header("location", ~p"/api/v1/#{seller_id}/food-menus/#{food_menu.id}")
+          |> put_resp_header("location", ~p"/api/v1/sellers/#{seller_id}/food-menus/#{food_menu.id}")
           |> render(:show, food_menu: food_menu)
         end
       false ->
@@ -68,7 +69,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
   end
 
   defp seller_id_belongs_to_current_user?(_current_user = %User{id: current_user_id}, seller_id) do
-    %Seller{user_id: seller_user_id} = Sellers.get!(seller_id)
+    %Seller{seller_user_id: seller_user_id} = Sellers.get!(seller_id)
     seller_user_id === current_user_id
   end
 end

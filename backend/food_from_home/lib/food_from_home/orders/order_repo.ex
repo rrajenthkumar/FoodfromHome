@@ -29,7 +29,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
     attrs_with_default_delivery_address =  Map.put(attrs, :delivery_address, default_delivery_address_map)
 
     buyer_user
-    |> Ecto.build_assoc(:orders, attrs_with_default_delivery_addres)
+    |> Ecto.build_assoc(:orders, attrs_with_default_delivery_address)
     |> create_change()
     |> Repo.insert()
   end
@@ -51,12 +51,12 @@ defmodule FoodFromHome.Orders.OrderRepo do
     query =
       from(order in Order,
         where: ^filters,
-        where: Order.seller_id == ^seller_id)
+        where: order.seller_id == ^seller_id)
 
     Repo.all(query)
   end
 
-  def list(user = %User{id: user_id, user_type: :buyer}, filters) when is_list(filters) do
+  def list(%User{id: user_id, user_type: :buyer}, filters) when is_list(filters) do
     query =
       from(order in Order,
         where: ^filters,
@@ -65,12 +65,13 @@ defmodule FoodFromHome.Orders.OrderRepo do
     Repo.all(query)
   end
 
-  def list(user = %User{user_type: :deliverer, address: %Address{city: deliverer_city}}, filters) when is_list(filters) do
+  def list(%User{user_type: :deliverer, address: %Address{city: deliverer_city}}, filters) when is_list(filters) do
     query =
-      from(order in Order,
+      from order in Order,
+        join: delivery_address in assoc(order, :delivery_address),
         where: ^filters,
-        where: order.delivery_address.city == ^deliverer_city,
-        where: status == :ready_for_pickup)
+        where: order.status == :ready_for_pickup,
+        where: delivery_address.city == ^deliverer_city
 
     Repo.all(query)
   end
@@ -129,7 +130,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
     Repo.delete(order)
   end
 
-  def delete(order = %Order{}) do
+  def delete(%Order{}) do
     {:error, 403, "Only an order of :open status can be deleted"}
   end
 
@@ -142,7 +143,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
       %Ecto.Changeset{data: %Order{}}
 
   """
-  def create_change(order = %Order{}, attrs) when is_map(attrs) do
+  def create_change(order = %Order{}, attrs = %{} \\ %{}) do
     Order.create_changeset(order, attrs)
   end
 
@@ -155,7 +156,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
       %Ecto.Changeset{data: %Order{}}
 
   """
-  def update_change(order = %Order{}, attrs) when is_map(attrs) do
+  def update_change(order = %Order{}, attrs = %{} \\ %{}) do
     Order.update_changeset(order, attrs)
   end
 end

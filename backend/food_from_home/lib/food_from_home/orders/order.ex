@@ -16,6 +16,7 @@ defmodule FoodFromHome.Orders.Order do
 
   alias FoodFromHome.CartItems.CartItem
   alias FoodFromHome.Deliveries.Delivery
+  alias FoodFromHome.Orders.Order
   alias FoodFromHome.Orders.Order.DeliveryAddress
   alias FoodFromHome.Reviews.Review
   alias FoodFromHome.Sellers.Seller
@@ -31,7 +32,7 @@ defmodule FoodFromHome.Orders.Order do
     field :invoice_link, :string, default: nil
     field :seller_remark, :string, default: nil
 
-    embeds_one :delivery_address, DeliveryAddress, on_replace: :update, validate_required: true do
+    embeds_one :delivery_address, DeliveryAddress, on_replace: :update do
       field :door_number, :string
       field :street, :string
       field :city, :string
@@ -40,8 +41,7 @@ defmodule FoodFromHome.Orders.Order do
     end
 
     belongs_to :seller, Seller
-    # Order belongs to user of type :buyer
-    belongs_to :user, User
+    belongs_to :buyer_user, User, foreign_key: :buyer_user_id
     has_many :cart_items, CartItem
     has_one :delivery, Delivery
     has_one :review, Review
@@ -60,7 +60,7 @@ defmodule FoodFromHome.Orders.Order do
     |> unique_constraint(:unique_open_order_per_buyer_constraint, name: :unique_open_order_per_buyer_index, message: "A buyer can have only one open order at a time.")
     |> foreign_key_constraint(:seller_id)
     |> foreign_key_constraint(:buyer_user_id)
-    |> cast_embed(:delivery_address, with: &delivery_address_changeset/2)
+    |> cast_embed(:delivery_address, required: true, with: &delivery_address_changeset/2)
     |> cast_assoc(:cart_item, required: true, with: &CartItem.changeset/2)
   end
 
@@ -97,7 +97,7 @@ defmodule FoodFromHome.Orders.Order do
   end
 
   defp validate_status_change(changeset = %Ecto.Changeset{data: %Order{status: :confirmed}, changes: %{status: new_status}}) do
-    if new_status == :ready_for_pickup or status == :cancelled do
+    if new_status == :ready_for_pickup or new_status == :cancelled do
       changeset
     else
       add_error(changeset, :status, "The status cannot be updated to #{new_status} from :confirmed status.")
