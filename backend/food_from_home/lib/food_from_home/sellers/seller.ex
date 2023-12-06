@@ -7,7 +7,8 @@ defmodule FoodFromHome.Sellers.Seller do
   alias FoodFromHome.Users.User
 
   @required_seller_keys [:introduction, :tax_id]
-  @allowed_seller_keys [:illustration, :introduction, :tax_id]
+  @allowed_create_seller_keys [:illustration, :introduction, :tax_id]
+  @allowed_update_seller_keys [:illustration, :introduction]
 
   schema "sellers" do
     field :illustration, :binary, default: nil
@@ -23,12 +24,22 @@ defmodule FoodFromHome.Sellers.Seller do
   end
 
   @doc false
-  def changeset(seller, attrs) do
+  def create_changeset(seller, attrs) do
     seller
-    |> cast(attrs, @allowed_seller_keys)
+    |> cast(attrs, @allowed_create_seller_keys)
     |> validate_required(@required_seller_keys)
     |> unique_constraint(:user_id)
     |> unique_constraint(:tax_id)
     |> foreign_key_constraint(:user_id)
   end
+
+    @doc false
+    def update_changeset(seller, attrs) do
+      seller
+      |> cast(attrs, @allowed_update_seller_keys)
+      |> validate_required(@required_seller_keys)
+      |> unique_constraint(:user_id)
+      |> unique_constraint(:tax_id)
+      |> foreign_key_constraint(:user_id)
+    end
 end

@@ -3,41 +3,42 @@ defmodule FoodFromHomeWeb.SellerController do
 
   alias FoodFromHome.Sellers
   alias FoodFromHome.Sellers.Seller
+  alias FoodFromHome.Users.User
+  alias FoodFromHome.Utils
+  alias FoodFromHomeWeb.ErrorHandler
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def index(conn, _params) do
-    sellers = Sellers.list_sellers()
+  def index(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, _params) do
+
+    filters =
+      conn
+      |> fetch_query_params()
+      |> Utils.convert_map_to_keyword_list()
+
+    sellers = Sellers.list(filters)
     render(conn, :index, sellers: sellers)
   end
 
-  def create(conn, %{"seller" => seller_params}) do
-    with {:ok, %Seller{} = seller} <- Sellers.create_seller(seller_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/sellers/#{seller}")
-      |> render(:show, seller: seller)
-    end
-  end
-
-  def show(conn, %{"id" => id}) do
-    seller = Sellers.get_seller!(id)
+  def show(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{"seller_id" => seller_id}) do
+    seller = Sellers.get_with_user_info_and_active_menus!(seller_id)
     render(conn, :show, seller: seller)
   end
 
-  def update(conn, %{"id" => id, "seller" => seller_params}) do
-    seller = Sellers.get_seller!(id)
+  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{"seller_id" => seller_id, "seller" => seller_params}) do
+    seller = Sellers.get!(seller_id)
 
-    with {:ok, %Seller{} = seller} <- Sellers.update_seller(seller, seller_params) do
-      render(conn, :show, seller: seller)
+    case seller_belongs_to_current_user?(current_user, seller) do
+      true ->
+        with {:ok, %Seller{} = seller} <- Sellers.update(seller, seller_params) do
+          render(conn, :show, seller: seller)
+        end
+      false ->
+        ErrorHandler.handle_error(conn, "403", "Seller is not related to the current user")
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    seller = Sellers.get_seller!(id)
-
-    with {:ok, %Seller{}} <- Sellers.delete_seller(seller) do
-      send_resp(conn, :no_content, "")
-    end
+  defp seller_belongs_to_current_user?(%User{id: current_user_id, user_type: :seller}, %Seller{user_id: seller_user_id}) do
+    seller_user_id === current_user_id
   end
 end

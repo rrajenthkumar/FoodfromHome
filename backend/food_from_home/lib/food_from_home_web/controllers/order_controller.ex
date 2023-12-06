@@ -25,7 +25,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  def index(conn = %{assigns: %{current_user: %User{} = current_user}}) do
+  def index(conn = %{assigns: %{current_user: %User{} = current_user}}, _params) do
     filters =
       conn
       |> fetch_query_params()

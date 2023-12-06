@@ -33,6 +33,8 @@ defmodule FoodFromHomeWeb.Router do
 
           # Lists sellers with limited fields (along with user info) based on query parameters (to search based on location, text etc) for current buyer user
           get "/", SellerController, :index
+          # Gets a seller (along with user info and food menu) for current buyer user
+          get "/:seller_id", SellerController, :show
           # Lists reviews of a seller based on query parameters with limited fields for current buyer user
           get "/:seller_id/reviews", ReviewController, :index
         end
@@ -40,6 +42,8 @@ defmodule FoodFromHomeWeb.Router do
         scope "/" do
           pipe_through [FoodFromHomeWeb.IsSellerPlug]
 
+          # Updates a seller
+          put "/:seller_id", SellerController, :update
           # Creates a food menu linked to current seller user
           post "/:seller_id/food-menus", FoodMenuController, :create
           # Updates a food menu linked to current seller user. No linked order must exist.

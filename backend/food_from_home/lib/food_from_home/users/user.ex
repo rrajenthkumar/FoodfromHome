@@ -51,7 +51,7 @@ defmodule FoodFromHome.Users.User do
     |> unique_constraint(:unique_active_user_email_constraint, name: :unique_active_user_email_index, message: "Another active user has the same email id.")
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
-    |> cast_assoc(:seller, required: true, with: &Seller.changeset/2)
+    |> cast_assoc(:seller, required: true, with: &Seller.create_changeset/2)
   end
 
   def create_changeset(user = %User{}, attrs = %{}) do
