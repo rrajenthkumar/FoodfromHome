@@ -14,6 +14,7 @@ defmodule FoodFromHome.Orders do
 
   defdelegate create(buyer_user_id, attrs), to: OrderRepo
   defdelegate list(user, filters), to: OrderRepo
+  defdelegate get(order_id), to: OrderRepo
   defdelegate get!(order_id), to: OrderRepo
   defdelegate update(order, attrs), to: OrderRepo
   # Used by CartItems.Services.DeleteLastCartItemAndDeleteRelatedOpenOrder

@@ -7,6 +7,7 @@ defmodule FoodFromHome.Sellers do
   alias FoodFromHome.Sellers.Finders.SellerWithUserInfoAndActiveMenus
   alias FoodFromHome.Sellers.SellerRepo
 
+  defdelegate get(seller_id), to: SellerRepo
   defdelegate get!(seller_id), to: SellerRepo
   defdelegate update(seller, attrs), to: SellerRepo
 

@@ -62,6 +62,22 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   @doc """
   Gets a food_menu with food_menu_id.
 
+  Returns 'nil' when the food menu does not exist.
+
+  ## Examples
+
+      iex> get(123)
+      %FoodMenu{}
+
+      iex> get(456)
+      nil
+
+  """
+  def get(food_menu_id) when is_integer(food_menu_id), do: Repo.get(FoodMenu, food_menu_id)
+
+  @doc """
+  Gets a food_menu with food_menu_id.
+
   Raises `Ecto.NoResultsError` if the Food menu does not exist.
 
   ## Examples

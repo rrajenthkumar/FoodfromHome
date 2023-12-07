@@ -79,6 +79,29 @@ defmodule FoodFromHome.Orders.OrderRepo do
   @doc """
   Gets an order using order_id.
 
+  Returns 'nil' if the Order does not exist.
+
+  ## Examples
+
+      iex> get_order(123)
+      %Order{}
+
+      iex> get_order(456)
+      nil
+
+  """
+  def get(order_id) when is_integer(order_id) do
+    order_id
+    |> Repo.get(Order)
+    |> case do
+      nil -> nil
+      order -> Repo.preload([:delivery, :review, cart_items: [:food_menus]])
+    end
+  end
+
+  @doc """
+  Gets an order using order_id.
+
   Raises `Ecto.NoResultsError` if the Order does not exist.
 
   ## Examples
