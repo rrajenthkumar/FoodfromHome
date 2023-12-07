@@ -5,6 +5,8 @@ defmodule FoodFromHomeWeb.ReviewController do
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Reviews
   alias FoodFromHome.Reviews.Review
+  alias FoodFromHome.Sellers
+  alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
   alias FoodFromHomeWeb.ErrorHandler
@@ -12,8 +14,17 @@ defmodule FoodFromHomeWeb.ReviewController do
   action_fallback FoodFromHomeWeb.FallbackController
 
   def index(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{"seller_id" => seller_id}) do
-    reviews = Reviews.list(seller_id)
-    render(conn, :index, reviews: reviews)
+    case Sellers.get(seller_id) do
+      %Seller{} = seller ->
+        filters =
+          conn
+          |> fetch_query_params()
+          |> Utils.convert_map_to_keyword_list()
+
+        reviews = Reviews.list(seller, filters)
+        render(conn, :index, reviews: reviews)
+      nil -> ErrorHandler.handle_error(conn, "404", "Seller not found")
+    end
   end
 
   def create(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id, "review" => attrs}) do

@@ -2,7 +2,6 @@ defmodule FoodFromHome.Orders do
   @moduledoc """
   The Orders context.
   """
-  alias FoodFromHome.Orders.Finders.OrderFromReview
   alias FoodFromHome.Orders.OrderRepo
   alias FoodFromHome.Orders.Services.IsOrderRelatedToUser
   alias FoodFromHome.Orders.Services.SetReadyForPickupStatus
@@ -28,6 +27,5 @@ defmodule FoodFromHome.Orders do
   def reserve_for_pickup(order, deliverer_user), do: SetReservedForPickupStatusAndCreateDelivery.call(order, deliverer_user)
   def mark_as_on_the_way(order), do: SetOnTheWayStatusAndUpdateDeliveryAndProduceDeliveryStartedEvent.call(order)
   def mark_as_delivered(order), do: SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent.call(order)
-  def find_order_from_review!(review), do: OrderFromReview.find!(review)
   def is_order_related_to_user?(order, user), do: IsOrderRelatedToUser.check?(order, user)
 end

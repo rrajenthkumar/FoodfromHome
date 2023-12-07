@@ -3,13 +3,13 @@ defmodule FoodFromHome.Reviews do
   The Reviews context.
   """
   alias FoodFromHome.Reviews.Finders.ReviewFromOrder
+  alias FoodFromHome.Reviews.Finders.ReviewsFromSeller
   alias FoodFromHome.Reviews.ReviewRepo
-  alias FoodFromHome.Reviews.Services.IsReviewRelatedToUser
 
   defdelegate create(order, attrs), to: ReviewRepo
-  defdelegate list(seller_id), to: ReviewRepo
   defdelegate update(review, attrs), to: ReviewRepo
   defdelegate delete(review), to: ReviewRepo
 
   def find_review_from_order(order), do: ReviewFromOrder.find(order)
+  def list_reviews_from_seller(seller, filters), do: ReviewsFromSeller.list(seller, filters)
 end
