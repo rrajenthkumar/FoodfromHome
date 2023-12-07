@@ -23,16 +23,30 @@ defmodule FoodFromHomeWeb.SellerJSON do
       id: seller.id,
       illustration: seller.illustration,
       introduction: seller.introduction,
-      user: limited_data(seller_user),
+      user: data(seller_user),
       food_menus: for(food_menu <- food_menus, do: limited_data(food_menu))
     }
   end
 
+  # To show seller after updation of fields
   defp data(%Seller{} = seller) do
     %{
       id: seller.id,
       illustration: seller.illustration,
       introduction: seller.introduction
+    }
+  end
+
+  defp data(%User{} = seller_user) do
+    %{
+      id: seller_user.id,
+      address: data(seller_user.address),
+      phone_number: seller_user.phone_number,
+      email_id: seller_user.email_id,
+      first_name: seller_user.first_name,
+      gender: seller_user.gender,
+      last_name: seller_user.last_name,
+      profile_image: seller_user.profile_image
     }
   end
 
@@ -58,9 +72,6 @@ defmodule FoodFromHomeWeb.SellerJSON do
   defp limited_data(%User{} = seller_user) do
     %{
       id: seller_user.id,
-      address: data(seller_user.address),
-      phone_number: seller_user.phone_number,
-      email_id: seller_user.email_id,
       first_name: seller_user.first_name,
       gender: seller_user.gender,
       last_name: seller_user.last_name,
