@@ -6,13 +6,6 @@ defmodule FoodFromHomeWeb.FallbackController do
   """
   use FoodFromHomeWeb, :controller
 
-  def call(conn, Ecto.NoResultsError) do
-    conn
-    |> put_status(:not_found)
-    |> put_view(json: FoodFromHomeWeb.ErrorJSON)
-    |> render(:"404", detail: "Ecto.NoResultsError")
-  end
-
   def call(conn, {:error, %Ecto.Changeset{}}) do
     conn
     |> put_status(:unprocessable_entity)
@@ -25,12 +18,5 @@ defmodule FoodFromHomeWeb.FallbackController do
     |> put_status(status)
     |> put_view(json: FoodFromHomeWeb.ErrorJSON)
     |> render(:"#{status}", detail: error_detail)
-  end
-
-  def fallback(conn, params) do
-    conn
-    |> put_status(:internal_server_error)
-    |> put_view(json: FoodFromHomeWeb.ErrorJSON)
-    |> render(:"500", detail: params)
   end
 end

@@ -3,8 +3,9 @@ defmodule FoodFromHome.Repo.Migrations.CreateReviews do
 
   def change do
     create table(:reviews) do
-      add :stars, :string
-      add :note, :text
+      add :rating, :integer
+      add :buyer_note, :text, default: nil
+      add :seller_reply, :text, default: nil
       add :order_id, references(:orders, on_delete: :nothing)
 
       timestamps()

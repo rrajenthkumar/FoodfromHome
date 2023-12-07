@@ -76,6 +76,8 @@ defmodule FoodFromHomeWeb.Router do
           # Updates order linked to current buyer, seller or deliverer user
           # Status update can be done based on the type of user and current status
           put "/:order_id", OrderController, :update
+          # To get the review of an order linked to current buyer, seller or deliverer user.
+          get "/:order_id/review", ReviewController, :show
 
           scope "/" do
             pipe_through [FoodFromHomeWeb.IsBuyerPlug]
@@ -98,9 +100,6 @@ defmodule FoodFromHomeWeb.Router do
 
           scope "/" do
             pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
-
-            # To get the review of an order linked to current buyer or seller user.
-            get "/:order_id/review", ReviewController, :show
             # To update the review for an order linked to current buyer or seller user.
             # A buyer can update the fields 'Stars' and 'Note'. Delivery should not be more than a month old.
             # A seller can update the field 'Reply' after the buyer has added his 'Note' and / or 'Stars'.

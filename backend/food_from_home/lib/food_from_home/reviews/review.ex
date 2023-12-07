@@ -5,8 +5,9 @@ defmodule FoodFromHome.Reviews.Review do
   alias FoodFromHome.Orders.Order
 
   schema "reviews" do
-    field :stars, Ecto.Enum, values: [:"1", :"2", :"3", :"4", :"5"]
-    field :note, :string
+    field :rating, Ecto.Enum, values: [1, 2, 3, 4, 5]
+    field :buyer_note, :string, default: nil
+    field :seller_reply, :string, default: nil
 
     belongs_to :order, Order
 
@@ -16,8 +17,8 @@ defmodule FoodFromHome.Reviews.Review do
   @doc false
   def changeset(review, attrs) do
     review
-    |> cast(attrs, [:stars, :note])
-    |> validate_required([:stars])
+    |> cast(attrs, [:stars, :buyer_note, :seller_reply])
+    |> validate_required([:rating])
     |> unique_constraint(:order_id)
     |> foreign_key_constraint(:order_id)
   end
