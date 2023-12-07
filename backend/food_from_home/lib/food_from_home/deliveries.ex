@@ -14,7 +14,7 @@ defmodule FoodFromHome.Deliveries do
   defdelegate update(order, attrs), to: DeliveryRepo
 
   def find_delivery_from_order!(order), do: DeliveryFromOrder.find!(order)
-  def find_deliveries_from_user(seller_or_deliverer_user, filters), do: DeliveriesFromUser.find(seller_or_deliverer_user, filters)
+  def list_deliveries_from_user(seller_or_deliverer_user, filters), do: DeliveriesFromUser.list(seller_or_deliverer_user, filters)
   def initiate_delivery(order, deliverer_user), do: CreateDeliveryWithSellerPosition.call(order, deliverer_user)
   def add_pickup_time(delivery), do: AddPickupTime.call(delivery)
   def add_delivery_time(delivery), do: AddDeliveryTime.call(delivery)

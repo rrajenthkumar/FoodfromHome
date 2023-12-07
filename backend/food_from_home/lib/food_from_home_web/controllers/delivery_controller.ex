@@ -18,7 +18,7 @@ defmodule FoodFromHomeWeb.DeliveryController do
       |> fetch_query_params()
       |> Utils.convert_map_to_keyword_list()
 
-    deliveries = Deliveries.find_deliveries_from_user(current_seller_or_deliverer_user, filters)
+    deliveries = Deliveries.list_deliveries_from_user(current_seller_or_deliverer_user, filters)
 
     render(conn, :index, deliveries: deliveries)
   end

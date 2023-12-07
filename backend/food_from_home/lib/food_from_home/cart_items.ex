@@ -2,116 +2,12 @@ defmodule FoodFromHome.CartItems do
   @moduledoc """
   The CartItems context.
   """
+  alias FoodFromHome.CartItems.CartItemRepo
+  alias FoodFromHome.CartItems.Finders.CartItemsFromOrder
 
-  import Ecto.Query, warn: false
-  alias FoodFromHome.Repo
+  defdelegate create(order, attrs), to: CartItemRepo
+  defdelegate update(cart_item, attrs), to: CartItemRepo
+  defdelegate delete(cart_item), to: CartItemRepo
 
-  alias FoodFromHome.CartItems.CartItem
-
-  @doc """
-  Returns the list of cart_items.
-
-  ## Examples
-
-      iex> list_cart_items()
-      [%CartItem{}, ...]
-
-  """
-  def list_cart_items do
-    Repo.all(CartItem)
-  end
-
-  @doc """
-  Gets a single cart_item.
-
-  Raises `Ecto.NoResultsError` if the Cart item does not exist.
-
-  ## Examples
-
-      iex> get_cart_item!(123)
-      %CartItem{}
-
-      iex> get_cart_item!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_cart_item!(id), do: Repo.get!(CartItem, id)
-
-  @doc """
-  Creates a cart_item.
-
-  ## Examples
-
-      iex> create_cart_item(%{field: value})
-      {:ok, %CartItem{}}
-
-      iex> create_cart_item(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_cart_item(attrs = %{} \\ %{}) do
-    %CartItem{}
-    |> create_change_cart_item(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a cart_item.
-
-  ## Examples
-
-      iex> update_cart_item(cart_item, %{field: new_value})
-      {:ok, %CartItem{}}
-
-      iex> update_cart_item(cart_item, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_cart_item(%CartItem{} = cart_item, attrs = %{} \\ %{}) do
-    cart_item
-    |> update_change_cart_item(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a cart_item.
-
-  ## Examples
-
-      iex> delete_cart_item(cart_item)
-      {:ok, %CartItem{}}
-
-      iex> delete_cart_item(cart_item)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_cart_item(%CartItem{} = cart_item) do
-    Repo.delete(cart_item)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking cart_item changes.
-
-  ## Examples
-
-      iex> change_cart_item(cart_item)
-      %Ecto.Changeset{data: %CartItem{}}
-
-  """
-  def create_change_cart_item(%CartItem{} = cart_item, attrs \\ %{}) do
-    CartItem.create_changeset(cart_item, attrs)
-  end
-
-    @doc """
-  Returns an `%Ecto.Changeset{}` for tracking cart_item changes.
-
-  ## Examples
-
-      iex> change_cart_item(cart_item)
-      %Ecto.Changeset{data: %CartItem{}}
-
-  """
-  def update_change_cart_item(%CartItem{} = cart_item, attrs \\ %{}) do
-    CartItem.update_changeset(cart_item, attrs)
-  end
+  def list_cart_items_from_order(order), do: CartItemsFromOrder.list(order)
 end

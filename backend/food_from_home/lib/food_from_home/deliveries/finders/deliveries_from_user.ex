@@ -1,5 +1,5 @@
 defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
-@moduledoc """
+  @moduledoc """
   Finder to find deliveries from a seller or deliverer user with applicable filters
   """
   import Ecto.Query, warn: false
@@ -18,7 +18,7 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
 
   """
 
-  def find(%User{id: deliverer_user_id, user_type: :deliverer}, filters) when is_list(filters) do
+  def list(%User{id: deliverer_user_id, user_type: :deliverer}, filters) when is_list(filters) do
     query =
       from(delivery in Delivery,
         where: ^filters,
@@ -27,7 +27,7 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
     Repo.all(query)
   end
 
-  def find(%User{id: seller_user_id, user_type: :seller}, filters) when is_list(filters) do
+  def list(%User{id: seller_user_id, user_type: :seller}, filters) when is_list(filters) do
     query =
       from(delivery in Delivery,
         join: order in assoc(delivery, :order),
