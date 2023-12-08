@@ -15,10 +15,10 @@ defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
 
   ## Examples
 
-      iex> find!(%Order{id: 123, user_type: :seller})
+      iex> find!(%Order{id: 123})
       %User{}
 
-      iex> find!(%Order{id: 456, user_type: seller})
+      iex> find!(%Order{id: 456})
       ** (Ecto.NoResultsError)
 
   """
@@ -27,7 +27,7 @@ defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
       from user in User,
         join: seller in assoc(user, :seller),
         where: seller.id == ^seller_id,
-        preload: [:seller]
+        preload: [seller: seller]
 
     Repo.one!(query)
   end

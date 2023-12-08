@@ -38,35 +38,4 @@ defmodule FoodFromHome.Sellers.SellerRepo do
 
   """
   def get!(seller_id), do: Repo.get!(Seller, seller_id)
-
-  @doc """
-  Updates a seller.
-
-  ## Examples
-
-      iex> update(%Seller{}, %{field: new_value})
-      {:ok, %Seller{}}
-
-      iex> update(%Seller{}, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update(seller = %Seller{}, attrs) do
-    seller
-    |> update_change(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking seller changes during record updation.
-
-  ## Examples
-
-      iex> update_change(seller)
-      %Ecto.Changeset{data: %Seller{}}
-
-  """
-  def update_change(seller = %Seller{}, attrs = %{} \\ %{}) do
-    Seller.update_changeset(seller, attrs)
-  end
 end

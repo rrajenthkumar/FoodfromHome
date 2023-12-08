@@ -15,10 +15,10 @@ defmodule FoodFromHome.Users.Finders.DelivererUserFromOrder do
 
   ## Examples
 
-      iex> find!(%Order{id: 123, user_type: :deliverer})
+      iex> find!(%Order{id: 123})
       %User{}
 
-      iex> find!(%Order{id: 456, user_type: deliverer})
+      iex> find!(%Order{id: 456})
       ** (Ecto.NoResultsError)
 
   """

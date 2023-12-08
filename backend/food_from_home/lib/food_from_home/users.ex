@@ -8,7 +8,6 @@ defmodule FoodFromHome.Users do
   alias FoodFromHome.Users.Finders.SellerUserFromOrder
 
   defdelegate create(attrs), to: UserRepo
-  defdelegate list(filter_params), to: UserRepo
   defdelegate get!(user_id), to: UserRepo
   defdelegate get(user_id), to: UserRepo
   defdelegate update(user, attrs), to: UserRepo

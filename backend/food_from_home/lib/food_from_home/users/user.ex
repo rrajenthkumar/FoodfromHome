@@ -1,5 +1,6 @@
 defmodule FoodFromHome.Users.User do
   use Ecto.Schema
+
   import Ecto.Changeset
 
   alias FoodFromHome.Deliveries.Delivery
@@ -17,7 +18,15 @@ defmodule FoodFromHome.Users.User do
     :user_type,
     :profile_image
   ]
-  @required_create_user_keys [
+  @allowed_update_user_keys [
+    :email_id,
+    :first_name,
+    :last_name,
+    :gender,
+    :phone_number,
+    :profile_image
+  ]
+  @required_keys [
     :email_id,
     :first_name,
     :last_name,
@@ -25,18 +34,6 @@ defmodule FoodFromHome.Users.User do
     :phone_number,
     :user_type
   ]
-  # TO DO: :user_type, :deleted have been allowed so that validate_exclusion can be used on changeset. This solution has to be improved.
-  @allowed_update_user_keys [
-    :email_id,
-    :first_name,
-    :last_name,
-    :gender,
-    :phone_number,
-    :user_type,
-    :deleted,
-    :profile_image
-  ]
-  @required_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number]
   @address_keys [:door_number, :street, :city, :country, :postal_code]
 
   schema "users" do
@@ -71,7 +68,7 @@ defmodule FoodFromHome.Users.User do
   def create_changeset(user = %User{}, attrs = %{user_type: :seller}) do
     user
     |> cast(attrs, @allowed_create_user_keys)
-    |> validate_required(@required_create_user_keys)
+    |> validate_required(@required_keys)
     |> unique_constraint(:unique_active_user_email_constraint,
       name: :unique_active_user_email_index,
       message: "Another active user has the same email id."
@@ -84,7 +81,7 @@ defmodule FoodFromHome.Users.User do
   def create_changeset(user = %User{}, attrs = %{}) do
     user
     |> cast(attrs, @allowed_create_user_keys)
-    |> validate_required(@required_create_user_keys)
+    |> validate_required(@required_keys)
     |> unique_constraint(:unique_active_user_email_constraint,
       name: :unique_active_user_email_index,
       message: "Another active user has the same email id."
@@ -94,18 +91,28 @@ defmodule FoodFromHome.Users.User do
   end
 
   @doc """
-  Changeset function for user updation.
-  Please note that Seller schema data has been disallowed from updating it through User context (though it is created initially through User context).
-  Use Seller context for seller data updation.
+  1. Changeset function for user updation for :seller user type.
+  2. Changeset function for user updation for other user types.
   """
+  def update_changeset(user = %User{user_type: :seller}, attrs = %{}) do
+    user
+    |> cast(attrs, @allowed_update_user_keys)
+    |> validate_required(@required_keys)
+    |> validate_unallowed_fields(attrs)
+    |> unique_constraint(:unique_active_user_email_constraint,
+      name: :unique_active_user_email_index,
+      message: "Another active user has the same email id."
+    )
+    |> validate_format(:email_id, ~r/@/)
+    |> cast_embed(:address, required: true, with: &address_changeset/2)
+    |> cast_assoc(:seller, required: true, with: &Seller.update_changeset/2)
+  end
+
   def update_changeset(user = %User{}, attrs = %{}) do
     user
     |> cast(attrs, @allowed_update_user_keys)
-    |> validate_required(@required_update_user_keys)
-    |> validate_exclusion(:user_type, [:buyer, :seller, :deliverer],
-      message: "user_type field cannot be updated"
-    )
-    |> validate_exclusion(:deleted, [true, false], message: "deleted field cannot be updated")
+    |> validate_required(@required_keys)
+    |> validate_unallowed_fields(attrs)
     |> unique_constraint(:unique_active_user_email_constraint,
       name: :unique_active_user_email_index,
       message: "Another active user has the same email id."
@@ -129,5 +136,15 @@ defmodule FoodFromHome.Users.User do
     address
     |> cast(attrs, @address_keys)
     |> validate_required(@address_keys)
+  end
+
+  defp validate_unallowed_fields(changeset, attrs) do
+    attrs_keys = Map.keys(attrs)
+    unallowed_keys = attrs_keys -- @allowed_update_user_keys
+
+    case Enum.empty?(unallowed_keys) do
+      true -> changeset
+      false -> add_error(changeset, :base, "Unallowed fields: #{unallowed_keys}")
+    end
   end
 end

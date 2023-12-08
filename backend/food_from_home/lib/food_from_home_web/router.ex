@@ -43,8 +43,6 @@ defmodule FoodFromHomeWeb.Router do
         scope "/" do
           pipe_through [FoodFromHomeWeb.IsSellerPlug]
 
-          # Updates a seller
-          put "/:seller_id", SellerController, :update
           # Creates a food menu linked to current seller user
           post "/:seller_id/food-menus", FoodMenuController, :create
           # Updates a food menu linked to current seller user. No linked order must exist.

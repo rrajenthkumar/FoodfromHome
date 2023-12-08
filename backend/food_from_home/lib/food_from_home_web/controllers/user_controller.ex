@@ -4,19 +4,14 @@ defmodule FoodFromHomeWeb.UserController do
   alias FoodFromHome.Users
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
+  alias FoodFromHomeWeb.ErrorHandler
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def index(conn, filter_params = %{}) do
-    users = Users.list(filter_params)
+  def create(conn, %{"user" => attrs}) do
+    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    render(conn, :index, users: users)
-  end
-
-  def create(conn, %{"user" => user_params}) do
-    user_params = Utils.convert_map_string_keys_to_atoms(user_params)
-
-    with {:ok, %User{} = user} <- Users.create(user_params) do
+    with {:ok, %User{} = user} <- Users.create(attrs) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/v1/users/#{user.id}")
@@ -24,27 +19,74 @@ defmodule FoodFromHomeWeb.UserController do
     end
   end
 
-  def show(conn, %{"user_id" => user_id}) do
-    user = Users.get!(user_id)
+  def show(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{"user_id" => user_id}) do
+    case user_id === current_user_id do
+      true ->
+        case Users.get(user_id) do
+          %User{} = user ->
+            render(conn, :show, user: user)
 
-    render(conn, :show, user: user)
-  end
+          nil ->
+            ErrorHandler.handle_error(conn, :not_found, "User not found")
+        end
 
-  def update(conn, %{"user_id" => user_id, "user" => user_params}) do
-    user_params = Utils.convert_map_string_keys_to_atoms(user_params)
-
-    user = Users.get!(user_id)
-
-    with {:ok, %User{} = updated_user} <- Users.update(user, user_params) do
-      render(conn, :show, user: updated_user)
+      false ->
+        ErrorHandler.handle_error(
+          conn,
+          :forbidden,
+          "User is not same as the current user"
+        )
     end
   end
 
-  def delete(conn, %{"user_id" => user_id}) do
-    user = Users.get!(user_id)
+  def update(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{
+        "user_id" => user_id,
+        "user" => attrs
+      }) do
+    case user_id === current_user_id do
+      true ->
+        case Users.get(user_id) do
+          %User{} = user ->
+            attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    with {:ok, %User{} = _soft_deleted_user} <- Users.soft_delete(user) do
-      send_resp(conn, :no_content, "")
+            with {:ok, %User{} = updated_user} <- Users.update(user, attrs) do
+              render(conn, :show, user: updated_user)
+            end
+
+          nil ->
+            ErrorHandler.handle_error(conn, :not_found, "User not found")
+        end
+
+      false ->
+        ErrorHandler.handle_error(
+          conn,
+          :forbidden,
+          "User is not same as the current user"
+        )
+    end
+  end
+
+  def delete(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{
+        "user_id" => user_id
+      }) do
+    case user_id === current_user_id do
+      true ->
+        case Users.get(user_id) do
+          %User{} = user ->
+            with {:ok, %User{} = _soft_deleted_user} <- Users.soft_delete(user) do
+              send_resp(conn, :no_content, "")
+            end
+
+          nil ->
+            ErrorHandler.handle_error(conn, :not_found, "User not found")
+        end
+
+      false ->
+        ErrorHandler.handle_error(
+          conn,
+          :forbidden,
+          "User is not same as the current user"
+        )
     end
   end
 end

@@ -1,4 +1,5 @@
 defmodule FoodFromHomeWeb.UserJSON do
+  alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
 
@@ -27,10 +28,7 @@ defmodule FoodFromHomeWeb.UserJSON do
       last_name: user.last_name,
       profile_image: user.profile_image,
       user_type: user.user_type,
-      seller: %{
-        id: user.seller.id,
-        link: "/sellers/#{user.seller.id}"
-      }
+      seller: data(user.seller)
     }
   end
 
@@ -55,6 +53,15 @@ defmodule FoodFromHomeWeb.UserJSON do
       city: address.city,
       country: address.country,
       postal_code: address.postal_code
+    }
+  end
+
+  defp data(%Seller{} = seller) do
+    %{
+      id: seller.id,
+      illustration: seller.illustration,
+      introduction: seller.introduction,
+      tax_id: seller.tax_id
     }
   end
 end

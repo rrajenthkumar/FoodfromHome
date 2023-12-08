@@ -9,7 +9,6 @@ defmodule FoodFromHome.Sellers do
 
   defdelegate get(seller_id), to: SellerRepo
   defdelegate get!(seller_id), to: SellerRepo
-  defdelegate update(seller, attrs), to: SellerRepo
 
   def list(filters), do: SellersWithUserInfo.list(filters)
 

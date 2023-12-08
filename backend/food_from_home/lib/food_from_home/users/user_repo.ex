@@ -3,17 +3,16 @@ defmodule FoodFromHome.Users.UserRepo do
 
   alias FoodFromHome.Repo
   alias FoodFromHome.Users.User
-  alias FoodFromHome.Utils
 
   @doc """
   Creates an user.
 
   ## Examples
 
-      iex> create_user(%{field: value})
+      iex> create(%{field: value})
       {:ok, %User{}}
 
-      iex> create_user(%{field: bad_value})
+      iex> create(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -39,7 +38,7 @@ defmodule FoodFromHome.Users.UserRepo do
   """
   def get!(user_id) do
     user_id
-    |> get_query()
+    |> query()
     |> Repo.one!()
   end
 
@@ -59,15 +58,17 @@ defmodule FoodFromHome.Users.UserRepo do
   """
   def get(user_id) do
     user_id
-    |> get_query()
+    |> query()
     |> Repo.one()
   end
 
-  defp get_query(user_id) do
+  defp query(user_id) do
     from user in User,
       join: seller in assoc(user, :seller),
-      where: user.id == ^user_id,
-      preload: [:seller]
+      where:
+        user.id == ^user_id and
+          user.deleted == false,
+      preload: [seller: seller]
   end
 
   @doc """
@@ -75,10 +76,10 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> update_user(user, %{field: new_value})
+      iex> update(user, %{field: new_value})
       {:ok, %User{}}
 
-      iex> update_user(user, %{field: bad_value})
+      iex> update(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -93,7 +94,7 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> soft_delete_user(user)
+      iex> soft_delete(user)
       {:ok, %User{}}
 
   """
@@ -101,47 +102,6 @@ defmodule FoodFromHome.Users.UserRepo do
     user
     |> User.soft_delete_changeset()
     |> Repo.update()
-  end
-
-  @doc """
-  Returns a list of users after applying given filters.
-  ## Examples
-
-    iex> list_users(%{user_type = :seller})
-    [%User{}, ...]
-
-  """
-  def list(filter_params = %{} \\ %{}) do
-    filter_params
-    |> Utils.convert_map_to_keyword_list()
-    |> list_query()
-    |> Repo.all()
-  end
-
-  defp list_query(_filters = []) do
-    from user in User,
-      join: seller in assoc(user, :seller),
-      where: user.deleted == false,
-      preload: [:seller]
-  end
-
-  defp list_query(filters) when is_list(filters) do
-    {include_deleted, other_filters} = Keyword.pop(filters, :include_deleted, "false")
-
-    case include_deleted do
-      "true" ->
-        from user in User,
-          join: seller in assoc(user, :seller),
-          where: ^other_filters,
-          preload: [:seller]
-
-      _ ->
-        from user in User,
-          join: seller in assoc(user, :seller),
-          where: ^other_filters,
-          where: user.deleted == false,
-          preload: [:seller]
-    end
   end
 
   @doc """
