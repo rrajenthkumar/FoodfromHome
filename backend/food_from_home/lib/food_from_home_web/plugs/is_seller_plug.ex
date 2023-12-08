@@ -19,7 +19,11 @@ defmodule FoodFromHomeWeb.IsSellerPlug do
         conn
 
       _ ->
-        ErrorHandler.handle_error(conn, :forbidden, "Route accessible only to users of type :seller")
+        ErrorHandler.handle_error(
+          conn,
+          :forbidden,
+          "Route accessible only to users of type :seller"
+        )
     end
   end
 end

@@ -39,7 +39,11 @@ defmodule FoodFromHomeWeb.OrderController do
             render(conn, :show, order: order)
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
@@ -64,7 +68,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
@@ -96,7 +104,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
@@ -128,7 +140,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
@@ -140,7 +156,11 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => _order_id,
         "order" => %{"status" => :cancelled}
       }) do
-    ErrorHandler.handle_error(conn, :forbidden, "Only a seller user is allowed to cancel an order")
+    ErrorHandler.handle_error(
+      conn,
+      :forbidden,
+      "Only a seller user is allowed to cancel an order"
+    )
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{
@@ -156,7 +176,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
@@ -188,7 +212,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
@@ -220,7 +248,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
@@ -251,7 +283,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
         end
 
       nil ->
