@@ -78,6 +78,8 @@ defmodule FoodFromHomeWeb.Router do
           put "/:order_id", OrderController, :update
           # Lists cart items from an order linked to current buyer, seller or deliverer user
           get "/:order_id/cart_items", CartItemController, :index
+          # Gets a cart item with food menu preload from an order linked to current buyer, seller or deliverer user
+          get "/:order_id/cart_items/:cart_item_id", CartItemController, :index
           # To get the review of an order linked to current buyer, seller or deliverer user.
           get "/:order_id/review", ReviewController, :show
 
