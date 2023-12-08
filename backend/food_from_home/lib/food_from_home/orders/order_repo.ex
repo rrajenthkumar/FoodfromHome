@@ -79,14 +79,14 @@ defmodule FoodFromHome.Orders.OrderRepo do
   @doc """
   Gets an order using order_id.
 
-  Returns 'nil' if the Order does not exist.
+  Returns 'nil' if the order does not exist.
 
   ## Examples
 
-      iex> get_order(123)
+      iex> get(123)
       %Order{}
 
-      iex> get_order(456)
+      iex> get(456)
       nil
 
   """
@@ -102,14 +102,14 @@ defmodule FoodFromHome.Orders.OrderRepo do
   @doc """
   Gets an order using order_id.
 
-  Raises `Ecto.NoResultsError` if the Order does not exist.
+  Raises `Ecto.NoResultsError` if the order does not exist.
 
   ## Examples
 
-      iex> get_order!(123)
+      iex> get!(123)
       %Order{}
 
-      iex> get_order!(456)
+      iex> get!(456)
       ** (Ecto.NoResultsError)
 
   """

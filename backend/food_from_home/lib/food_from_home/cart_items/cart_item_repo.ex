@@ -1,9 +1,9 @@
 defmodule FoodFromHome.CartItems.CartItemRepo do
   import Ecto.Query, warn: false
 
-  alias FoodFromHome.Repo
   alias FoodFromHome.CartItems.CartItem
   alias FoodFromHome.Orders.Order
+  alias FoodFromHome.Repo
 
   @doc """
   Creates a cart_item with an order.
@@ -22,6 +22,44 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
     |> Ecto.build_assoc(:cart_items, attrs)
     |> change_cart_item()
     |> Repo.update()
+  end
+
+  @doc """
+  Gets a cart item using cart_item_id.
+
+  Returns 'nil' if the cart item does not exist.
+
+  ## Examples
+
+      iex> get(123)
+      %CartItem{}
+
+      iex> get(456)
+      nil
+
+  """
+  def get(cart_item_id) when is_integer(cart_item_id) do
+    cart_item_id
+    |> Repo.get(CartItem)
+  end
+
+  @doc """
+  Gets a cart item using cart_item_id.
+
+  Raises `Ecto.NoResultsError` if the cart item does not exist.
+
+  ## Examples
+
+      iex> get(123)
+      %CartItem{}
+
+      iex> get(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get!(cart_item_id) when is_integer(cart_item_id) do
+    cart_item_id
+    |> Repo.get!(CartItem)
   end
 
   @doc """
@@ -67,7 +105,7 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
       %Ecto.Changeset{data: %CartItem{}}
 
   """
-  def change_cart_item(%CartItem{} = cart_item, attrs \\ %{}) do
+  def change_cart_item(cart_item = %CartItem{}, attrs = %{} \\ %{}) do
     CartItem.create_changeset(cart_item, attrs)
   end
 end

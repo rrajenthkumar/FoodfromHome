@@ -90,12 +90,11 @@ defmodule FoodFromHomeWeb.Router do
             # Deletes an order linked to current buyer user along with cart items
             # Route to be used when the cart is emptied
             delete "/:order_id", OrderController, :delete
-            # Creates a subsequent cart item for an existing order linked to current buyer user. Order must be of 'open' status.
+            # Creates a cart item for an existing order linked to current buyer user. Order must be of 'open' status.
             post "/:order_id/cart_items", CartItemController, :create
             # Updates a cart item for an order linked to current buyer user. Order must be of 'open' status.
             put "/:order_id/cart_items/:cart_item_id", CartItemController, :update
             # Deletes a cart item for an order linked to current buyer user. Order must be of 'open' status.
-            # When it's the last cart item, the related order is also deleted.
             delete "/:order_id/cart_items/:cart_item_id", CartItemController, :delete
             # To create a review for an order linked to current buyer user. Order must be in 'delivered' status.
             post "/:order_id/review", ReviewController, :create

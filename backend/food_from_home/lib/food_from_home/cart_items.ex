@@ -6,6 +6,8 @@ defmodule FoodFromHome.CartItems do
   alias FoodFromHome.CartItems.Finders.CartItemsFromOrder
 
   defdelegate create(order, attrs), to: CartItemRepo
+  defdelegate get(cart_item_id), to: CartItemRepo
+  defdelegate get!(cart_item_id), to: CartItemRepo
   defdelegate update(cart_item, attrs), to: CartItemRepo
   defdelegate delete(cart_item), to: CartItemRepo
 
