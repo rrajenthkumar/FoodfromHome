@@ -90,14 +90,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
       nil
 
   """
-  def get(order_id) when is_integer(order_id) do
-    order_id
-    |> Repo.get(Order)
-    |> case do
-      nil -> nil
-      order -> Repo.preload([:delivery, :review, cart_items: [:food_menus]])
-    end
-  end
+  def get(order_id) when is_integer(order_id), do: Repo.get(Order, order_id)
 
   @doc """
   Gets an order using order_id.
@@ -113,11 +106,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
       ** (Ecto.NoResultsError)
 
   """
-  def get!(order_id) when is_integer(order_id) do
-    order_id
-    |> Repo.get!(Order)
-    |> Repo.preload([:delivery, :review, cart_items: [:food_menus]])
-  end
+  def get!(order_id) when is_integer(order_id), do: Repo.get!(Order, order_id)
 
   @doc """
   Updates an order.

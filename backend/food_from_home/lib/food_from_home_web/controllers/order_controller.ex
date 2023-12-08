@@ -33,29 +33,33 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def show(conn = %{assigns: %{current_user: %User{} = current_user}}, %{"order_id" => order_id}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          render(conn, :show, order: order, related_users: get_related_users(order))
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+    case Orders.find_with_preloads(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            render(conn, :show, order: order)
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
   # User type check is needed here as there is no user type check in router as every user can perform some kind of update based on his user type
   def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id, "order" => %{"delivery_address" => delivery_address}}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          delivery_address = Utils.convert_map_string_keys_to_atoms(delivery_address)
+    case Orders.get(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            delivery_address = Utils.convert_map_string_keys_to_atoms(delivery_address)
 
-          with {:ok, %Order{} = order} <- Orders.update_delivery_address(order, delivery_address) do
-            render(conn, :show, order: order)
-          end
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+            with {:ok, %Order{} = order} <- Orders.update_delivery_address(order, delivery_address) do
+              render(conn, :show, order: order)
+            end
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -64,15 +68,17 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :ready_for_pickup}}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          with {:ok, %Order{} = order} <- Orders.mark_as_ready_for_pickup(order) do
-            render(conn, :show, order: order)
-          end
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+    case Orders.get(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            with {:ok, %Order{} = order} <- Orders.mark_as_ready_for_pickup(order) do
+              render(conn, :show, order: order)
+            end
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -81,15 +87,17 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :cancelled, "seller_remark" => seller_remark}}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          with {:ok, %Order{} = order} <- Orders.cancel(order, seller_remark) do
-            render(conn, :show, order: order)
-          end
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+    case Orders.get(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            with {:ok, %Order{} = order} <- Orders.cancel(order, seller_remark) do
+              render(conn, :show, order: order)
+            end
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -98,15 +106,17 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :reserved_for_pickup}}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          with {:ok, %Order{} = order} <- Orders.reserve_for_pickup(order, current_user) do
-            render(conn, :show, order: order)
-          end
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+    case Orders.get(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            with {:ok, %Order{} = order} <- Orders.reserve_for_pickup(order, current_user) do
+              render(conn, :show, order: order)
+            end
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -115,15 +125,17 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :on_the_way}}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          with {:ok, %Order{} = order} <- Orders.mark_as_on_the_way(order) do
-            render(conn, :show, order: order)
-          end
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+    case Orders.get(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            with {:ok, %Order{} = order} <- Orders.mark_as_on_the_way(order) do
+              render(conn, :show, order: order)
+            end
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -132,15 +144,17 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{"order_id" => order_id, "order" => %{"status" => :delivered}}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          with {:ok, %Order{} = order} <- Orders.mark_as_delivered(order) do
-            render(conn, :show, order: order)
-          end
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+    case Orders.get(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            with {:ok, %Order{} = order} <- Orders.mark_as_delivered(order) do
+              render(conn, :show, order: order)
+            end
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -149,30 +163,17 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id}) do
-    with %Order{} = order <- Orders.get!(order_id) do
-      case Orders.is_order_related_to_user?(order, current_user) do
-        true ->
-          with {:ok, %Order{}} <- Orders.delete(order_id) do
-            send_resp(conn, :no_content, "")
-          end
-        false ->
-          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
-      end
+    case Orders.get(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, current_user) do
+          true ->
+            with {:ok, %Order{}} <- Orders.delete(order_id) do
+              send_resp(conn, :no_content, "")
+            end
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+        end
+      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
     end
-  end
-
-  defp get_related_users(order = %Order{status: status}) when status in [:open, :confirmed, :cancelled, :ready_for_delivery]do
-    seller_user = Users.find_seller_user_from_order!(order)
-    buyer_user = Users.find_buyer_user_from_order!(order)
-
-    {seller_user, buyer_user, nil}
-  end
-
-  defp get_related_users(order = %Order{}) do
-    seller_user = Users.find_seller_user_from_order!(order)
-    buyer_user = Users.find_buyer_user_from_order!(order)
-    deliverer_user = Users.find_deliverer_user_from_order!(order)
-
-    {seller_user, buyer_user, deliverer_user}
   end
 end

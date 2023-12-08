@@ -2,6 +2,7 @@ defmodule FoodFromHome.Orders do
   @moduledoc """
   The Orders context.
   """
+  alias FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId
   alias FoodFromHome.Orders.OrderRepo
   alias FoodFromHome.Orders.Services.IsOrderRelatedToUser
   alias FoodFromHome.Orders.Services.SetReadyForPickupStatus
@@ -20,6 +21,7 @@ defmodule FoodFromHome.Orders do
   # Used by CartItems.Services.DeleteLastCartItemAndDeleteRelatedOpenOrder
   defdelegate delete(order), to: OrderRepo
 
+  def find_with_preloads(order_id), do: OrderWithPreloadsFromOrderId.find(order_id)
   def update_delivery_address(order, delivery_address), do: UpdateDeliveryAddress.call(order, delivery_address)
   def mark_as_ready_for_pickup(order), do: SetReadyForPickupStatus.call(order)
   # Used by payment module after payment is successful
