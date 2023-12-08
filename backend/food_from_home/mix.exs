@@ -49,7 +49,8 @@ defmodule FoodFromHome.MixProject do
       {:ueberauth, "~> 0.10.5"},
       {:ueberauth_auth0, "~> 2.1"},
       {:oauth2, "~> 2.1"},
-      {:httpoison, "~> 2.2"}
+      {:httpoison, "~> 2.2"},
+      {:dialyxir, "~> 1.4"}
     ]
   end
 
