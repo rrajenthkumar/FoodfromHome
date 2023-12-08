@@ -19,10 +19,10 @@ defmodule FoodFromHomeWeb.AuthenticationPlug do
   end
 
   def call(conn = %{assigns: %{current_user: nil}}, _default) do
-    ErrorHandler.handle_error(conn, "401", "No current user found")
+    ErrorHandler.handle_error(conn, :unauthorized, "No current user found")
   end
 
   def call(conn, _default) do
-    ErrorHandler.handle_error(conn, "401", "No current user found")
+    ErrorHandler.handle_error(conn, :unauthorized, "No current user found")
   end
 end

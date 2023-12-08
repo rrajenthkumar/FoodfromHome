@@ -24,7 +24,7 @@ defmodule FoodFromHomeWeb.IsSellerOrDelivererPlug do
       _ ->
         ErrorHandler.handle_error(
           conn,
-          "403",
+          :forbidden,
           "Route accessible only to users of type :seller or :deliverer"
         )
     end

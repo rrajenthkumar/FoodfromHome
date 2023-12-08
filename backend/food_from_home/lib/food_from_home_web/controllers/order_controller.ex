@@ -39,11 +39,11 @@ defmodule FoodFromHomeWeb.OrderController do
             render(conn, :show, order: order)
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -64,11 +64,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -78,7 +78,7 @@ defmodule FoodFromHomeWeb.OrderController do
       }) do
     ErrorHandler.handle_error(
       conn,
-      "403",
+      :forbidden,
       "Only a buyer user is permitted to update the delivery address"
     )
   end
@@ -96,11 +96,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -110,7 +110,7 @@ defmodule FoodFromHomeWeb.OrderController do
       }) do
     ErrorHandler.handle_error(
       conn,
-      "403",
+      :forbidden,
       "Only a seller user is allowed to mark an order as ready for pickup"
     )
   end
@@ -128,11 +128,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -140,7 +140,7 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => _order_id,
         "order" => %{"status" => :cancelled}
       }) do
-    ErrorHandler.handle_error(conn, "403", "Only a seller user is allowed to cancel an order")
+    ErrorHandler.handle_error(conn, :forbidden, "Only a seller user is allowed to cancel an order")
   end
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{
@@ -156,11 +156,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -170,7 +170,7 @@ defmodule FoodFromHomeWeb.OrderController do
       }) do
     ErrorHandler.handle_error(
       conn,
-      "403",
+      :forbidden,
       "Only a deliverer user is allowed to reserve an order for pickup"
     )
   end
@@ -188,11 +188,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -202,7 +202,7 @@ defmodule FoodFromHomeWeb.OrderController do
       }) do
     ErrorHandler.handle_error(
       conn,
-      "403",
+      :forbidden,
       "Only a deliverer user is allowed to mark an order as on the way"
     )
   end
@@ -220,11 +220,11 @@ defmodule FoodFromHomeWeb.OrderController do
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -234,7 +234,7 @@ defmodule FoodFromHomeWeb.OrderController do
       }) do
     ErrorHandler.handle_error(
       conn,
-      "403",
+      :forbidden,
       "Only a deliverer user is allowed to mark an order as delivered"
     )
   end
@@ -246,16 +246,16 @@ defmodule FoodFromHomeWeb.OrderController do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
-            with {:ok, %Order{}} <- Orders.delete(order_id) do
+            with {:ok, %Order{}} <- Orders.delete(order) do
               send_resp(conn, :no_content, "")
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order is not related to the current user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 end

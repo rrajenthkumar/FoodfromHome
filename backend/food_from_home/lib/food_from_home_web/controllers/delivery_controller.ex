@@ -33,7 +33,7 @@ defmodule FoodFromHomeWeb.DeliveryController do
         render(conn, :show, delivery: delivery)
 
       false ->
-        ErrorHandler.handle_error(conn, "403", "Delivery is not related to the current user")
+        ErrorHandler.handle_error(conn, :forbidden, "Delivery is not related to the current user")
     end
   end
 
@@ -50,7 +50,7 @@ defmodule FoodFromHomeWeb.DeliveryController do
         end
 
       false ->
-        ErrorHandler.handle_error(conn, "403", "Delivery is not related to the current user")
+        ErrorHandler.handle_error(conn, :forbidden, "Delivery is not related to the current user")
     end
   end
 

@@ -40,7 +40,7 @@ defmodule FoodFromHomeWeb.SellerController do
         end
 
       false ->
-        ErrorHandler.handle_error(conn, "403", "Seller is not related to the current user")
+        ErrorHandler.handle_error(conn, :forbidden, "Seller is not related to the current user")
     end
   end
 

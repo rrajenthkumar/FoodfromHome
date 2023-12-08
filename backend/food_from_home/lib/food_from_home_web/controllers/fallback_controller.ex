@@ -13,10 +13,12 @@ defmodule FoodFromHomeWeb.FallbackController do
     |> render(:"422", detail: "Ecto.Changeset error")
   end
 
-  def call(conn, {:error, status, error_detail}) do
+  def call(conn, {:error, error_status, error_detail}) do
+    error_status_code = Plug.Conn.Status.code(error_status)
+
     conn
-    |> put_status(status)
+    |> put_status(error_status)
     |> put_view(json: FoodFromHomeWeb.ErrorJSON)
-    |> render(:"#{status}", detail: error_detail)
+    |> render(:"#{error_status_code}", detail: error_detail)
   end
 end

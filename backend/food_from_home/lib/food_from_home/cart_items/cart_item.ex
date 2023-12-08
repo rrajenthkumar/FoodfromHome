@@ -23,8 +23,8 @@ defmodule FoodFromHome.CartItems.CartItem do
   @doc false
   def changeset(cart_item, attrs) do
     cart_item
-    |> cast(attrs, [@allowed_keys])
-    |> validate_required([@required_keys])
+    |> cast(attrs, @allowed_keys)
+    |> validate_required(@required_keys)
     |> validate_remaining_quantity()
     |> unique_constraint(:unique_food_menu_id_order_id_combo_constraint,
       name: :unique_food_menu_id_order_id_combo_index,

@@ -29,7 +29,7 @@ defmodule FoodFromHomeWeb.ReviewController do
         render(conn, :index, reviews: reviews)
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Seller not found")
+        ErrorHandler.handle_error(conn, :not_found, "Seller not found")
     end
   end
 
@@ -55,17 +55,17 @@ defmodule FoodFromHomeWeb.ReviewController do
               another_status ->
                 ErrorHandler.handle_error(
                   conn,
-                  "403",
+                  :forbidden,
                   "Order is in #{another_status} status. Review can be added only for a delivered order."
                 )
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -79,15 +79,15 @@ defmodule FoodFromHomeWeb.ReviewController do
                 render(conn, :show, review: review)
 
               nil ->
-                ErrorHandler.handle_error(conn, "404", "Review not found")
+                ErrorHandler.handle_error(conn, :not_found, "Review not found")
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -112,21 +112,21 @@ defmodule FoodFromHomeWeb.ReviewController do
                   false ->
                     ErrorHandler.handle_error(
                       conn,
-                      "403",
+                      :forbidden,
                       "Review cannot be edited as the seller has already replied or the review is older than 3 months"
                     )
                 end
 
               nil ->
-                ErrorHandler.handle_error(conn, "404", "Review not found")
+                ErrorHandler.handle_error(conn, :not_found, "Review not found")
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -147,15 +147,15 @@ defmodule FoodFromHomeWeb.ReviewController do
                 end
 
               nil ->
-                ErrorHandler.handle_error(conn, "404", "Review not found")
+                ErrorHandler.handle_error(conn, :not_found, "Review not found")
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -177,26 +177,26 @@ defmodule FoodFromHomeWeb.ReviewController do
                   false ->
                     ErrorHandler.handle_error(
                       conn,
-                      "403",
+                      :forbidden,
                       "Review cannot be deleted as the the seller has already replied or the review is older than 3 months"
                     )
                 end
 
               nil ->
-                ErrorHandler.handle_error(conn, "404", "Review not found")
+                ErrorHandler.handle_error(conn, :not_found, "Review not found")
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
   defp review_not_older_than_3_months?(review_inserted_at) do
-    review_creation_date_with_time = DateTime.from_naive(review_inserted_at, "Etc/UTC")
+    {:ok, review_creation_date_with_time} = DateTime.from_naive(review_inserted_at, "Etc/UTC")
     current_date_with_time = DateTime.utc_now()
 
     # To check if the difference is greater than 90 days

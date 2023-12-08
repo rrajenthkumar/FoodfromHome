@@ -30,7 +30,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         end
 
       false ->
-        ErrorHandler.handle_error(conn, "403", "Seller id does not belong to the current user")
+        ErrorHandler.handle_error(conn, :forbidden, "Seller id does not belong to the current user")
     end
   end
 
@@ -65,7 +65,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         end
 
       false ->
-        ErrorHandler.handle_error(conn, "403", "Seller id does not belong to the current user")
+        ErrorHandler.handle_error(conn, :forbidden, "Seller id does not belong to the current user")
     end
   end
 
@@ -80,7 +80,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         end
 
       false ->
-        ErrorHandler.handle_error(conn, "403", "Seller id does not belong to the current user")
+        ErrorHandler.handle_error(conn, :forbidden, "Seller id does not belong to the current user")
     end
   end
 

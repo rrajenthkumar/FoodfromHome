@@ -37,17 +37,17 @@ defmodule FoodFromHomeWeb.CartItemController do
               another_status ->
                 ErrorHandler.handle_error(
                   conn,
-                  "403",
+                  :forbidden,
                   "Order is in #{another_status} status. Cart item can be added only for an open order."
                 )
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -61,11 +61,11 @@ defmodule FoodFromHomeWeb.CartItemController do
             render(conn, :index, cart_items: cart_items)
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -82,15 +82,15 @@ defmodule FoodFromHomeWeb.CartItemController do
                 render(conn, :show, cart_item: cart_item)
 
               nil ->
-                ErrorHandler.handle_error(conn, "404", "Cart item not found")
+                ErrorHandler.handle_error(conn, :not_found, "Cart item not found")
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -114,23 +114,23 @@ defmodule FoodFromHomeWeb.CartItemController do
                     end
 
                   nil ->
-                    ErrorHandler.handle_error(conn, "404", "Cart item not found")
+                    ErrorHandler.handle_error(conn, :not_found, "Cart item not found")
                 end
 
               another_status ->
                 ErrorHandler.handle_error(
                   conn,
-                  "403",
+                  :forbidden,
                   "Order is in #{another_status} status. Cart item can be updated only for an open order."
                 )
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 
@@ -151,23 +151,23 @@ defmodule FoodFromHomeWeb.CartItemController do
                     end
 
                   nil ->
-                    ErrorHandler.handle_error(conn, "404", "Cart item not found")
+                    ErrorHandler.handle_error(conn, :not_found, "Cart item not found")
                 end
 
               another_status ->
                 ErrorHandler.handle_error(
                   conn,
-                  "403",
+                  :forbidden,
                   "Order is in #{another_status} status. Cart item can be deleted only for an open order."
                 )
             end
 
           false ->
-            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
         end
 
       nil ->
-        ErrorHandler.handle_error(conn, "404", "Order not found")
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
     end
   end
 end
