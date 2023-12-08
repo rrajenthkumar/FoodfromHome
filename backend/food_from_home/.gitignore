@@ -26,6 +26,5 @@ erl_crash.dump
 food_from_home-*.tar
 
 # Ignore configuration files
-config/
-.config/
+/config/
 
