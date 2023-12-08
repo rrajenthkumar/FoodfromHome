@@ -30,17 +30,44 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> get_user!(123)
+      iex> get!(123)
       %User{}
 
-      iex> get_user!(456)
+      iex> get!(456)
       ** (Ecto.NoResultsError)
 
   """
   def get!(user_id) do
-    User
-    |> Repo.get!(user_id)
-    |> Repo.preload(:seller)
+    user_id
+    |> get_query()
+    |> Repo.one!()
+  end
+
+  @doc """
+  Gets a single user.
+
+  Returns 'nil' if the User does not exist.
+
+  ## Examples
+
+      iex> get(123)
+      %User{}
+
+      iex> get(456)
+      nil
+
+  """
+  def get(user_id) do
+    user_id
+    |> get_query()
+    |> Repo.one()
+  end
+
+  defp get_query(user_id) do
+    from user in User,
+    join: seller in assoc(user, :seller),
+    where: user.id ==^user_id,
+    preload: [:seller]
   end
 
   @doc """
@@ -87,26 +114,31 @@ defmodule FoodFromHome.Users.UserRepo do
   def list(filter_params = %{} \\ %{}) do
     filter_params
     |> Utils.convert_map_to_keyword_list()
-    |> get_query()
+    |> list_query()
     |> Repo.all()
-    |> Repo.preload(:seller)
   end
 
-  defp get_query(_filters = []) do
-    from(user in User,
-      where: user.deleted == false)
+  defp list_query(_filters = []) do
+    from user in User,
+      join: seller in assoc(user, :seller),
+      where: user.deleted == false,
+      preload: [:seller]
   end
 
-  defp get_query(filters) when is_list(filters) do
+  defp list_query(filters) when is_list(filters) do
     {include_deleted, other_filters} = Keyword.pop(filters, :include_deleted, "false")
     case include_deleted do
       "true" ->
-        from(user in User,
-          where: ^other_filters)
-      _ ->
-        from(user in User,
+        from user in User,
+          join: seller in assoc(user, :seller),
           where: ^other_filters,
-          where: user.deleted == false)
+          preload: [:seller]
+      _ ->
+        from user in User,
+          join: seller in assoc(user, :seller),
+          where: ^other_filters,
+          where: user.deleted == false,
+          preload: [:seller]
     end
   end
 

@@ -10,6 +10,7 @@ defmodule FoodFromHome.Users do
   defdelegate create(attrs), to: UserRepo
   defdelegate list(filter_params), to: UserRepo
   defdelegate get!(user_id), to: UserRepo
+  defdelegate get(user_id), to: UserRepo
   defdelegate update(user, attrs), to: UserRepo
   defdelegate soft_delete(user), to: UserRepo
 
