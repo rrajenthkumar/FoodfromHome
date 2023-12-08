@@ -2,6 +2,7 @@ defmodule FoodFromHome.CartItems.CartItem do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias FoodFromHome.CartItems.CartItem
   alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Orders.Order

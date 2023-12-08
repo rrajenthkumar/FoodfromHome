@@ -5,7 +5,7 @@ defmodule FoodFromHome.Reviews.Review do
   alias FoodFromHome.Orders.Order
 
   schema "reviews" do
-    field :rating, Ecto.Enum, values: [1, 2, 3, 4, 5]
+    field :rating, Ecto.Enum, values: [:"1", :"2", :"3", :"4", :"5"]
     field :buyer_note, :string, default: nil
     field :seller_reply, :string, default: nil
 

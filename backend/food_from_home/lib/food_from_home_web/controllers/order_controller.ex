@@ -3,7 +3,6 @@ defmodule FoodFromHomeWeb.OrderController do
 
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
-  alias FoodFromHome.Users
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
   alias FoodFromHomeWeb.ErrorHandler

@@ -3,6 +3,8 @@ defmodule FoodFromHomeWeb.CartItemController do
 
   alias FoodFromHome.CartItems
   alias FoodFromHome.CartItems.CartItem
+  alias FoodFromHome.Orders
+  alias FoodFromHome.Orders.Order
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
   alias FoodFromHomeWeb.ErrorHandler
@@ -18,7 +20,7 @@ defmodule FoodFromHomeWeb.CartItemController do
               :open ->
                 attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-                with {:ok, %CartItem{id: cart_item_id} = cart_item} <- CartItems.create(attrs) do
+                with {:ok, %CartItem{id: cart_item_id} = cart_item} <- CartItems.create(order, attrs) do
                   conn
                   |> put_status(:created)
                   |> put_resp_header("location", ~p"/api/v1/orders/#{order_id}/cart_items/#{cart_item_id}")
@@ -99,7 +101,7 @@ defmodule FoodFromHomeWeb.CartItemController do
               :open ->
                 case CartItems.get(cart_item_id) do
                   %CartItem{} = cart_item ->
-                    with {:ok, %CartItem{}} <- CartItems.delete_cart_item(cart_item) do
+                    with {:ok, %CartItem{}} <- CartItems.delete(cart_item) do
                       send_resp(conn, :no_content, "")
                     end
                   nil ->

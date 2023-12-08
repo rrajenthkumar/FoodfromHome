@@ -32,7 +32,7 @@ defmodule FoodFromHomeWeb.OrderJSON do
   end
 
   #To render order details with preloads
-  defp data(order = %Order{seller: %Seller{} = seller, seller_user: %User{} = seller_user, buyer_user: %User{} = buyer_user, cart_items: cart_items, delivery: %Delivery{} = delivery, deliverer_user: %user{} = deliverer_user, review: %Review{} = review}) do
+  defp data(order = %Order{seller: {%Seller{} = seller, seller_user: %User{} = seller_user}, buyer_user: %User{} = buyer_user, cart_items: cart_items, delivery: {%Delivery{} = delivery, deliverer_user: %User{} = deliverer_user}, review: %Review{} = review}) do
     %{
       id: order.id,
       date: order.inserted_at,

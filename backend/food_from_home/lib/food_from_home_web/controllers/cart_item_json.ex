@@ -1,5 +1,6 @@
 defmodule FoodFromHomeWeb.CartItemJSON do
   alias FoodFromHome.CartItems.CartItem
+  alias FoodFromHome.FoodMenus.FoodMenu
 
   @doc """
   Renders a list of cart_items.

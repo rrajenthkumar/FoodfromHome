@@ -12,16 +12,16 @@ defmodule FoodFromHome.Orders.Services.IsOrderRelatedToUser do
   @doc """
   Returns a boolean result
   """
-  defp check?(%Order{seller_id: order_seller_id}, user = %User{user_type: :seller}) do
+  def check?(%Order{seller_id: order_seller_id}, user = %User{user_type: :seller}) do
     %Seller{id: user_seller_id} = Sellers.find_seller_from_user!(user)
     order_seller_id === user_seller_id
   end
 
-  defp check?(%Order{buyer_user_id: order_buyer_user_id}, %User{id: user_id, user_type: :buyer}) do
+  def check?(%Order{buyer_user_id: order_buyer_user_id}, %User{id: user_id, user_type: :buyer}) do
     order_buyer_user_id === user_id
   end
 
-  defp check?(order = %Order{}, %User{id: user_id, user_type: :deliverer}) do
+  def check?(order = %Order{}, %User{id: user_id, user_type: :deliverer}) do
     %Delivery{deliverer_user_id: order_deliverer_user_id} = Deliveries.find_delivery_from_order!(order)
     order_deliverer_user_id === user_id
   end

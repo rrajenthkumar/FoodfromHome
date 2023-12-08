@@ -106,6 +106,6 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
 
   """
   def change_cart_item(cart_item = %CartItem{}, attrs = %{} \\ %{}) do
-    CartItem.create_changeset(cart_item, attrs)
+    CartItem.changeset(cart_item, attrs)
   end
 end

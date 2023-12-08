@@ -1,6 +1,8 @@
 defmodule FoodFromHomeWeb.ReviewController do
   use FoodFromHomeWeb, :controller
 
+  import Ecto.Query, warn: false
+
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Reviews
@@ -21,7 +23,7 @@ defmodule FoodFromHomeWeb.ReviewController do
           |> fetch_query_params()
           |> Utils.convert_map_to_keyword_list()
 
-        reviews = Reviews.list(seller, filters)
+        reviews = Reviews.list_reviews_from_seller(seller, filters)
         render(conn, :index, reviews: reviews)
       nil -> ErrorHandler.handle_error(conn, "404", "Seller not found")
     end
@@ -135,8 +137,8 @@ defmodule FoodFromHomeWeb.ReviewController do
     end
   end
 
-  defp review_not_older_than_3_months?(review_inserted_at = %Ecto.NaiveDateTime{}) do
-    review_creation_date_with_time = DateTime.to_utc(review_inserted_at)
+  defp review_not_older_than_3_months?(review_inserted_at) do
+    review_creation_date_with_time = DateTime.from_naive(review_inserted_at, "Etc/UTC")
     current_date_with_time = DateTime.utc_now()
 
     #To check if the difference is greater than 90 days
