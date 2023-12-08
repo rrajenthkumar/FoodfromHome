@@ -76,14 +76,20 @@ defmodule FoodFromHomeWeb.Router do
           # Updates order linked to current buyer, seller or deliverer user
           # Status update can be done based on the type of user and current status
           put "/:order_id", OrderController, :update
+          # Lists cart items from an order linked to current buyer, seller or deliverer user
+          get "/:order_id/cart_items", CartItemController, :index
           # To get the review of an order linked to current buyer, seller or deliverer user.
           get "/:order_id/review", ReviewController, :show
 
           scope "/" do
             pipe_through [FoodFromHomeWeb.IsBuyerPlug]
 
-            # Creates an order linked to current buyer user along with the first cart item
+            # Creates an order linked to current buyer user along with a cart item
+            # Route to be used when the first cart item is added
             post "/", OrderController, :create
+            # Deletes an order linked to current buyer user along with cart items
+            # Route to be used when the cart is emptied
+            delete "/:order_id", OrderController, :delete
             # Creates a subsequent cart item for an existing order linked to current buyer user. Order must be of 'open' status.
             post "/:order_id/cart_items", CartItemController, :create
             # Updates a cart item for an order linked to current buyer user. Order must be of 'open' status.

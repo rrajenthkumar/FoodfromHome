@@ -138,7 +138,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
   end
 
   @doc """
-  Deletes an open order.
+  Deletes an open order along with cart items.
 
   ## Examples
 

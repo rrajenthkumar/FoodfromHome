@@ -42,7 +42,7 @@ defmodule FoodFromHome.Orders.Order do
 
     belongs_to :seller, Seller
     belongs_to :buyer_user, User, foreign_key: :buyer_user_id
-    has_many :cart_items, CartItem
+    has_many :cart_items, CartItem, on_delete: :delete_all
     has_one :delivery, Delivery
     has_one :review, Review
 

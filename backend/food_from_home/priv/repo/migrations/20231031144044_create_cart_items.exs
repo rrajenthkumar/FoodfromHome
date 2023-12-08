@@ -5,7 +5,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateCartItems do
     create table(:cart_items) do
       add :count, :integer
       add :remark, :text
-      add :order_id, references(:orders, on_delete: :nothing)
+      add :order_id, references(:orders, on_delete: :delete_all)
       add :food_menu_id, references(:food_menus, on_delete: :nothing)
 
       timestamps()

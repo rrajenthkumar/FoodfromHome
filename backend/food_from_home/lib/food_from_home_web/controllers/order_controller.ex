@@ -43,6 +43,7 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
+  # User type check is needed here as there is no user type check in router as every user can perform some kind of update based on his user type
   def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id, "order" => %{"delivery_address" => delivery_address}}) do
     with %Order{} = order <- Orders.get!(order_id) do
       case Orders.is_order_related_to_user?(order, current_user) do
@@ -145,6 +146,19 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{"order_id" => _order_id, "order" => %{"status" => :delivered}}) do
     ErrorHandler.handle_error(conn, "403", "Only a deliverer user is allowed to mark an order as delivered")
+  end
+
+  def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id}) do
+    with %Order{} = order <- Orders.get!(order_id) do
+      case Orders.is_order_related_to_user?(order, current_user) do
+        true ->
+          with {:ok, %Order{}} <- Orders.delete(order_id) do
+            send_resp(conn, :no_content, "")
+          end
+        false ->
+          ErrorHandler.handle_error(conn, "403", "Order is not related to the current user")
+      end
+    end
   end
 
   defp get_related_users(order = %Order{status: status}) when status in [:open, :confirmed, :cancelled, :ready_for_delivery]do
