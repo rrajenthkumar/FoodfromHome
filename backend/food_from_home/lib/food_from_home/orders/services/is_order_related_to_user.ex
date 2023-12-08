@@ -22,7 +22,9 @@ defmodule FoodFromHome.Orders.Services.IsOrderRelatedToUser do
   end
 
   def check?(order = %Order{}, %User{id: user_id, user_type: :deliverer}) do
-    %Delivery{deliverer_user_id: order_deliverer_user_id} = Deliveries.find_delivery_from_order!(order)
+    %Delivery{deliverer_user_id: order_deliverer_user_id} =
+      Deliveries.find_delivery_from_order!(order)
+
     order_deliverer_user_id === user_id
   end
 end

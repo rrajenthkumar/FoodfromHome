@@ -6,11 +6,17 @@ defmodule FoodFromHome.Orders do
   alias FoodFromHome.Orders.OrderRepo
   alias FoodFromHome.Orders.Services.IsOrderRelatedToUser
   alias FoodFromHome.Orders.Services.SetReadyForPickupStatus
+
   alias FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndProduceOrderConfirmedEvent
+
   alias FoodFromHome.Orders.Services.SetCancelledStatusAndAddSellerRemarkAndProduceOrderCancelledEvent
+
   alias FoodFromHome.Orders.Services.SetReservedForPickupStatusAndCreateDelivery
+
   alias FoodFromHome.Orders.Services.SetOnTheWayStatusAndUpdateDeliveryAndProduceDeliveryStartedEvent
+
   alias FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent
+
   alias FoodFromHome.Orders.Services.UpdateDeliveryAddress
 
   defdelegate create(buyer_user_id, attrs), to: OrderRepo
@@ -22,13 +28,27 @@ defmodule FoodFromHome.Orders do
   defdelegate delete(order), to: OrderRepo
 
   def find_with_preloads(order_id), do: OrderWithPreloadsFromOrderId.find(order_id)
-  def update_delivery_address(order, delivery_address), do: UpdateDeliveryAddress.call(order, delivery_address)
+
+  def update_delivery_address(order, delivery_address),
+    do: UpdateDeliveryAddress.call(order, delivery_address)
+
   def mark_as_ready_for_pickup(order), do: SetReadyForPickupStatus.call(order)
   # Used by payment module after payment is successful
-  def confirm(order, invoice_link), do: SetConfirmedStatusAndAddInvoiceLinkAndProduceOrderConfirmedEvent.call(order, invoice_link)
-  def cancel(order, seller_remark), do: SetCancelledStatusAndAddSellerRemarkAndProduceOrderCancelledEvent.call(order, seller_remark)
-  def reserve_for_pickup(order, deliverer_user), do: SetReservedForPickupStatusAndCreateDelivery.call(order, deliverer_user)
-  def mark_as_on_the_way(order), do: SetOnTheWayStatusAndUpdateDeliveryAndProduceDeliveryStartedEvent.call(order)
-  def mark_as_delivered(order), do: SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent.call(order)
+  def confirm(order, invoice_link),
+    do: SetConfirmedStatusAndAddInvoiceLinkAndProduceOrderConfirmedEvent.call(order, invoice_link)
+
+  def cancel(order, seller_remark),
+    do:
+      SetCancelledStatusAndAddSellerRemarkAndProduceOrderCancelledEvent.call(order, seller_remark)
+
+  def reserve_for_pickup(order, deliverer_user),
+    do: SetReservedForPickupStatusAndCreateDelivery.call(order, deliverer_user)
+
+  def mark_as_on_the_way(order),
+    do: SetOnTheWayStatusAndUpdateDeliveryAndProduceDeliveryStartedEvent.call(order)
+
+  def mark_as_delivered(order),
+    do: SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent.call(order)
+
   def is_order_related_to_user?(order, user), do: IsOrderRelatedToUser.check?(order, user)
 end

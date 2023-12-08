@@ -24,7 +24,8 @@ defmodule FoodFromHome.Reviews.Finders.ReviewsFromSeller do
         join: order in assoc(review, :order),
         join: seller in assoc(order, :seller),
         where: ^filters,
-        where: seller.id == ^seller_id)
+        where: seller.id == ^seller_id
+      )
 
     Repo.all(query)
   end

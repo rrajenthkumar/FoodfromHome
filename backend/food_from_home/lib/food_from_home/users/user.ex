@@ -8,10 +8,34 @@ defmodule FoodFromHome.Users.User do
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
 
-  @allowed_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :profile_image]
-  @required_create_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type]
-  #TO DO: :user_type, :deleted have been allowed so that validate_exclusion can be used on changeset. This solution has to be improved.
-  @allowed_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number, :user_type, :deleted, :profile_image]
+  @allowed_create_user_keys [
+    :email_id,
+    :first_name,
+    :last_name,
+    :gender,
+    :phone_number,
+    :user_type,
+    :profile_image
+  ]
+  @required_create_user_keys [
+    :email_id,
+    :first_name,
+    :last_name,
+    :gender,
+    :phone_number,
+    :user_type
+  ]
+  # TO DO: :user_type, :deleted have been allowed so that validate_exclusion can be used on changeset. This solution has to be improved.
+  @allowed_update_user_keys [
+    :email_id,
+    :first_name,
+    :last_name,
+    :gender,
+    :phone_number,
+    :user_type,
+    :deleted,
+    :profile_image
+  ]
   @required_update_user_keys [:email_id, :first_name, :last_name, :gender, :phone_number]
   @address_keys [:door_number, :street, :city, :country, :postal_code]
 
@@ -48,7 +72,10 @@ defmodule FoodFromHome.Users.User do
     user
     |> cast(attrs, @allowed_create_user_keys)
     |> validate_required(@required_create_user_keys)
-    |> unique_constraint(:unique_active_user_email_constraint, name: :unique_active_user_email_index, message: "Another active user has the same email id.")
+    |> unique_constraint(:unique_active_user_email_constraint,
+      name: :unique_active_user_email_index,
+      message: "Another active user has the same email id."
+    )
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
     |> cast_assoc(:seller, required: true, with: &Seller.create_changeset/2)
@@ -58,7 +85,10 @@ defmodule FoodFromHome.Users.User do
     user
     |> cast(attrs, @allowed_create_user_keys)
     |> validate_required(@required_create_user_keys)
-    |> unique_constraint(:unique_active_user_email_constraint, name: :unique_active_user_email_index, message: "Another active user has the same email id.")
+    |> unique_constraint(:unique_active_user_email_constraint,
+      name: :unique_active_user_email_index,
+      message: "Another active user has the same email id."
+    )
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
   end
@@ -72,9 +102,14 @@ defmodule FoodFromHome.Users.User do
     user
     |> cast(attrs, @allowed_update_user_keys)
     |> validate_required(@required_update_user_keys)
-    |> validate_exclusion(:user_type, [:buyer, :seller, :deliverer], message: "user_type field cannot be updated")
+    |> validate_exclusion(:user_type, [:buyer, :seller, :deliverer],
+      message: "user_type field cannot be updated"
+    )
     |> validate_exclusion(:deleted, [true, false], message: "deleted field cannot be updated")
-    |> unique_constraint(:unique_active_user_email_constraint, name: :unique_active_user_email_index, message: "Another active user has the same email id.")
+    |> unique_constraint(:unique_active_user_email_constraint,
+      name: :unique_active_user_email_index,
+      message: "Another active user has the same email id."
+    )
     |> validate_format(:email_id, ~r/@/)
     |> cast_embed(:address, required: true, with: &address_changeset/2)
   end
@@ -90,7 +125,7 @@ defmodule FoodFromHome.Users.User do
   @doc """
   Changeset function for Address schema.
   """
-  def address_changeset(address= %Address{}, attrs = %{}) do
+  def address_changeset(address = %Address{}, attrs = %{}) do
     address
     |> cast(attrs, @address_keys)
     |> validate_required(@address_keys)

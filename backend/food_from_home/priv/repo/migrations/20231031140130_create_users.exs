@@ -17,6 +17,10 @@ defmodule FoodFromHome.Repo.Migrations.CreateUsers do
     end
 
     create index(:users, [:deleted])
-    create unique_index(:users, [:email_id], where: "deleted is false", name: :unique_active_user_email_index)
+
+    create unique_index(:users, [:email_id],
+             where: "deleted is false",
+             name: :unique_active_user_email_index
+           )
   end
 end

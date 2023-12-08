@@ -15,7 +15,9 @@ defmodule FoodFromHomeWeb.ReviewController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def index(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{"seller_id" => seller_id}) do
+  def index(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{
+        "seller_id" => seller_id
+      }) do
     case Sellers.get(seller_id) do
       %Seller{} = seller ->
         filters =
@@ -25,11 +27,16 @@ defmodule FoodFromHomeWeb.ReviewController do
 
         reviews = Reviews.list_reviews_from_seller(seller, filters)
         render(conn, :index, reviews: reviews)
-      nil -> ErrorHandler.handle_error(conn, "404", "Seller not found")
+
+      nil ->
+        ErrorHandler.handle_error(conn, "404", "Seller not found")
     end
   end
 
-  def create(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id, "review" => attrs}) do
+  def create(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+        "order_id" => order_id,
+        "review" => attrs
+      }) do
     case Orders.get(order_id) do
       %Order{status: order_status} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
@@ -44,12 +51,21 @@ defmodule FoodFromHomeWeb.ReviewController do
                   |> put_resp_header("location", ~p"/api/v1/orders/#{order_id}/review")
                   |> render(:show, review: review)
                 end
+
               another_status ->
-                ErrorHandler.handle_error(conn, "403", "Order is in #{another_status} status. Review can be added only for a delivered order.")
+                ErrorHandler.handle_error(
+                  conn,
+                  "403",
+                  "Order is in #{another_status} status. Review can be added only for a delivered order."
+                )
             end
-          false -> ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
         end
-      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
+
+      nil ->
+        ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -61,15 +77,24 @@ defmodule FoodFromHomeWeb.ReviewController do
             case Reviews.find_review_from_order(order) do
               %Review{} = review ->
                 render(conn, :show, review: review)
-              nil -> ErrorHandler.handle_error(conn, "404", "Review not found")
+
+              nil ->
+                ErrorHandler.handle_error(conn, "404", "Review not found")
             end
-          false -> ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
         end
-      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
+
+      nil ->
+        ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id, "review" => attrs}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+        "order_id" => order_id,
+        "review" => attrs
+      }) do
     case Orders.get(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
@@ -83,18 +108,32 @@ defmodule FoodFromHomeWeb.ReviewController do
                     with {:ok, %Review{} = review} <- Reviews.update(review, attrs) do
                       render(conn, :show, review: review)
                     end
+
                   false ->
-                    ErrorHandler.handle_error(conn, "403", "Review cannot be edited as the seller has already replied or the review is older than 3 months")
+                    ErrorHandler.handle_error(
+                      conn,
+                      "403",
+                      "Review cannot be edited as the seller has already replied or the review is older than 3 months"
+                    )
                 end
-              nil -> ErrorHandler.handle_error(conn, "404", "Review not found")
+
+              nil ->
+                ErrorHandler.handle_error(conn, "404", "Review not found")
             end
-          false -> ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
         end
-      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
+
+      nil ->
+        ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{"order_id" => order_id, "review" => attrs}) do
+  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
+        "order_id" => order_id,
+        "review" => attrs
+      }) do
     case Orders.get(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
@@ -106,15 +145,23 @@ defmodule FoodFromHomeWeb.ReviewController do
                 with {:ok, %Review{} = review} <- Reviews.update(review, attrs) do
                   render(conn, :show, review: review)
                 end
-              nil -> ErrorHandler.handle_error(conn, "404", "Review not found")
+
+              nil ->
+                ErrorHandler.handle_error(conn, "404", "Review not found")
             end
-          false -> ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
         end
-      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
+
+      nil ->
+        ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
-  def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{"order_id" => order_id}) do
+  def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+        "order_id" => order_id
+      }) do
     case Orders.get(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
@@ -126,14 +173,25 @@ defmodule FoodFromHomeWeb.ReviewController do
                     with {:ok, %Review{}} <- Reviews.delete(review) do
                       send_resp(conn, :no_content, "")
                     end
+
                   false ->
-                    ErrorHandler.handle_error(conn, "403", "Review cannot be deleted as the the seller has already replied or the review is older than 3 months")
+                    ErrorHandler.handle_error(
+                      conn,
+                      "403",
+                      "Review cannot be deleted as the the seller has already replied or the review is older than 3 months"
+                    )
                 end
-              nil -> ErrorHandler.handle_error(conn, "404", "Review not found")
+
+              nil ->
+                ErrorHandler.handle_error(conn, "404", "Review not found")
             end
-          false -> ErrorHandler.handle_error(conn, "403", "Order not related to the user")
+
+          false ->
+            ErrorHandler.handle_error(conn, "403", "Order not related to the user")
         end
-      nil -> ErrorHandler.handle_error(conn, "404", "Order not found")
+
+      nil ->
+        ErrorHandler.handle_error(conn, "404", "Order not found")
     end
   end
 
@@ -141,7 +199,7 @@ defmodule FoodFromHomeWeb.ReviewController do
     review_creation_date_with_time = DateTime.from_naive(review_inserted_at, "Etc/UTC")
     current_date_with_time = DateTime.utc_now()
 
-    #To check if the difference is greater than 90 days
+    # To check if the difference is greater than 90 days
     DateTime.diff(review_creation_date_with_time, current_date_with_time) <= 90 * 24 * 60 * 60
   end
 end

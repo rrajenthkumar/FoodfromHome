@@ -32,13 +32,13 @@ defmodule FoodFromHome.Sellers.Seller do
     |> foreign_key_constraint(:seller_user_id)
   end
 
-    @doc false
-    def update_changeset(seller, attrs) do
-      seller
-      |> cast(attrs, @allowed_update_seller_keys)
-      |> validate_required(@required_seller_keys)
-      |> unique_constraint(:seller_user_id)
-      |> unique_constraint(:tax_id)
-      |> foreign_key_constraint(:seller_user_id)
-    end
+  @doc false
+  def update_changeset(seller, attrs) do
+    seller
+    |> cast(attrs, @allowed_update_seller_keys)
+    |> validate_required(@required_seller_keys)
+    |> unique_constraint(:seller_user_id)
+    |> unique_constraint(:tax_id)
+    |> foreign_key_constraint(:seller_user_id)
+  end
 end

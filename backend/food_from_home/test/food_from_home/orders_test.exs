@@ -21,7 +21,12 @@ defmodule FoodFromHome.OrdersTest do
     end
 
     test "create_order/1 with valid data creates a order" do
-      valid_attrs = %{date: ~U[2023-10-30 14:37:00Z], delivery_address: %{}, invoice_link: "some invoice_link", status: :open}
+      valid_attrs = %{
+        date: ~U[2023-10-30 14:37:00Z],
+        delivery_address: %{},
+        invoice_link: "some invoice_link",
+        status: :open
+      }
 
       assert {:ok, %Order{} = order} = Orders.create_order(valid_attrs)
       assert order.date == ~U[2023-10-30 14:37:00Z]
@@ -36,7 +41,13 @@ defmodule FoodFromHome.OrdersTest do
 
     test "update_order/2 with valid data updates the order" do
       order = order_fixture()
-      update_attrs = %{date: ~U[2023-10-31 14:37:00Z], delivery_address: %{}, invoice_link: "some updated invoice_link", status: :confirmed}
+
+      update_attrs = %{
+        date: ~U[2023-10-31 14:37:00Z],
+        delivery_address: %{},
+        invoice_link: "some updated invoice_link",
+        status: :confirmed
+      }
 
       assert {:ok, %Order{} = order} = Orders.update_order(order, update_attrs)
       assert order.date == ~U[2023-10-31 14:37:00Z]

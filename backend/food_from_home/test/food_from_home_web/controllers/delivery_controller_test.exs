@@ -17,7 +17,12 @@ defmodule FoodFromHomeWeb.DeliveryControllerTest do
     picked_up_at: ~U[2023-11-03 08:23:00Z],
     current_position: %Geo.Point{coordinates: {10, -90}, srid: 5420}
   }
-  @invalid_attrs %{delivered_at: nil, distance_travelled_in_kms: nil, picked_up_at: nil, current_position: nil}
+  @invalid_attrs %{
+    delivered_at: nil,
+    distance_travelled_in_kms: nil,
+    picked_up_at: nil,
+    current_position: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -55,7 +60,10 @@ defmodule FoodFromHomeWeb.DeliveryControllerTest do
   describe "update delivery" do
     setup [:create_delivery]
 
-    test "renders delivery when data is valid", %{conn: conn, delivery: %Delivery{id: id} = delivery} do
+    test "renders delivery when data is valid", %{
+      conn: conn,
+      delivery: %Delivery{id: id} = delivery
+    } do
       conn = put(conn, ~p"/api/deliveries/#{delivery}", delivery: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

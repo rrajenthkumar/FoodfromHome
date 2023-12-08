@@ -22,12 +22,12 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
       attrs
       |> Enum.into(%{
         address: %{
-                  door_number: "10A",
-                  street: "XYZ Street",
-                  city: "Darmstadt",
-                  country: "Germany",
-                  postal_code: "12345"
-                  },
+          door_number: "10A",
+          street: "XYZ Street",
+          city: "Darmstadt",
+          country: "Germany",
+          postal_code: "12345"
+        },
         phone_number: "+4912345678991",
         email_id: unique_email_id(),
         first_name: "John",

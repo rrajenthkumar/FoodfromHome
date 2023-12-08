@@ -14,7 +14,14 @@ defmodule FoodFromHome.Sellers.Finders.SellerWithUserInfoAndActiveMenus do
         join: seller_user in assoc(seller, :seller_user),
         join: food_menu in assoc(seller, :food_menus),
         where: seller.id == ^seller_id,
-        preload: [seller_user: seller_user, food_menus: ^from(food_menu in FoodMenu, where: food_menu.valid_until >= ^DateTime.utc_now() and food_menu.remaining_quantity > 0)]
+        preload: [
+          seller_user: seller_user,
+          food_menus:
+            ^from(food_menu in FoodMenu,
+              where:
+                food_menu.valid_until >= ^DateTime.utc_now() and food_menu.remaining_quantity > 0
+            )
+        ]
 
     Repo.one!(query)
   end

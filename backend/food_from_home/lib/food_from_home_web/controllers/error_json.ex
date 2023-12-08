@@ -10,7 +10,12 @@ defmodule FoodFromHomeWeb.ErrorJSON do
   # the template name. For example, "404.json" becomes
   # "Not Found".
   def render(template, _assigns = %{detail: error_detail}) do
-    %{errors: %{status: Phoenix.Controller.status_message_from_template(template), detail: error_detail}}
+    %{
+      errors: %{
+        status: Phoenix.Controller.status_message_from_template(template),
+        detail: error_detail
+      }
+    }
   end
 
   def render(template, _assigns) do

@@ -49,7 +49,10 @@ defmodule FoodFromHomeWeb.CartItemControllerTest do
   describe "update cart_item" do
     setup [:create_cart_item]
 
-    test "renders cart_item when data is valid", %{conn: conn, cart_item: %CartItem{id: id} = cart_item} do
+    test "renders cart_item when data is valid", %{
+      conn: conn,
+      cart_item: %CartItem{id: id} = cart_item
+    } do
       conn = put(conn, ~p"/api/cart_items/#{cart_item}", cart_item: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

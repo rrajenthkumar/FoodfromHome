@@ -11,7 +11,10 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def create(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => attrs, "seller_id" => seller_id}) do
+  def create(conn = %{assigns: %{current_user: current_user}}, %{
+        "food_menu" => attrs,
+        "seller_id" => seller_id
+      }) do
     attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
     case seller_id_belongs_to_current_user?(current_user, seller_id) do
@@ -19,9 +22,13 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create(seller_id, attrs) do
           conn
           |> put_status(:created)
-          |> put_resp_header("location", ~p"/api/v1/sellers/#{seller_id}/food-menus/#{food_menu.id}")
+          |> put_resp_header(
+            "location",
+            ~p"/api/v1/sellers/#{seller_id}/food-menus/#{food_menu.id}"
+          )
           |> render(:show, food_menu: food_menu)
         end
+
       false ->
         ErrorHandler.handle_error(conn, "403", "Seller id does not belong to the current user")
     end
@@ -44,7 +51,11 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  def update(conn = %{assigns: %{current_user: current_user}}, %{"food_menu" => attrs, "seller_id" => seller_id, "food_menu_id" => food_menu_id}) do
+  def update(conn = %{assigns: %{current_user: current_user}}, %{
+        "food_menu" => attrs,
+        "seller_id" => seller_id,
+        "food_menu_id" => food_menu_id
+      }) do
     attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
     case seller_id_belongs_to_current_user?(current_user, seller_id) do
@@ -52,17 +63,22 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.update(food_menu_id, attrs) do
           render(conn, :show, food_menu: food_menu)
         end
+
       false ->
         ErrorHandler.handle_error(conn, "403", "Seller id does not belong to the current user")
     end
   end
 
-  def delete(conn = %{assigns: %{current_user: current_user}}, %{"seller_id" => seller_id, "food_menu_id" => food_menu_id}) do
+  def delete(conn = %{assigns: %{current_user: current_user}}, %{
+        "seller_id" => seller_id,
+        "food_menu_id" => food_menu_id
+      }) do
     case seller_id_belongs_to_current_user?(current_user, seller_id) do
       true ->
         with {:ok, %FoodMenu{}} <- FoodMenus.delete(food_menu_id) do
           send_resp(conn, :no_content, "")
         end
+
       false ->
         ErrorHandler.handle_error(conn, "403", "Seller id does not belong to the current user")
     end

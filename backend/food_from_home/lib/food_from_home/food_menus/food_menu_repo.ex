@@ -50,12 +50,16 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
             where: ^other_filters,
             where: food_menu.seller_id == ^seller_id,
             where: food_menu.remaining_quantity > 0,
-            where: food_menu.valid_until >= ^DateTime.utc_now())
+            where: food_menu.valid_until >= ^DateTime.utc_now()
+          )
+
         "false" ->
           from(food_menu in FoodMenu,
             where: ^other_filters,
-            where: food_menu.seller_id == ^seller_id)
+            where: food_menu.seller_id == ^seller_id
+          )
       end
+
     Repo.all(query)
   end
 

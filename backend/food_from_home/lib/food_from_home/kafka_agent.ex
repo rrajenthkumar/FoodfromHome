@@ -13,8 +13,7 @@ defmodule FoodFromHome.KafkaAgent do
   9. order cancelled"
   """
 
-  #alias FoodFromHome.KafkaAgent.Producers
+  # alias FoodFromHome.KafkaAgent.Producers
 
-  #defdelegate produce_menu_viewed_message(menu_id), to: Producers
-
+  # defdelegate produce_menu_viewed_message(menu_id), to: Producers
 end

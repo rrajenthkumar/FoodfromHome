@@ -25,7 +25,8 @@ defmodule FoodFromHome.Users.Finders.BuyerUserFromOrder do
   def find!(%Order{buyer_user_id: buyer_user_id}) do
     query =
       from(user in User,
-        where: user.id == ^buyer_user_id)
+        where: user.id == ^buyer_user_id
+      )
 
     Repo.one!(query)
   end

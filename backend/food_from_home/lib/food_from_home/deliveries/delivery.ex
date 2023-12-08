@@ -9,7 +9,12 @@ defmodule FoodFromHome.Deliveries.Delivery do
 
   @allowed_create_delivery_keys [:deliverer_user_id, :current_position]
   @required_create_delivery_keys [:deliverer_user_id, :current_position]
-  @allowed_update_delivery_keys [:picked_up_at, :current_position, :distance_travelled_in_kms, :delivered_at]
+  @allowed_update_delivery_keys [
+    :picked_up_at,
+    :current_position,
+    :distance_travelled_in_kms,
+    :delivered_at
+  ]
 
   schema "deliveries" do
     field :picked_up_at, :utc_datetime, default: nil

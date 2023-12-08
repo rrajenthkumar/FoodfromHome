@@ -9,15 +9,15 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepoFixtures do
   @doc """
   Generate a food_menu.
   """
-  def food_menu_fixture(attrs\\ %{}, seller_id\\ nil) do
-
-
+  def food_menu_fixture(attrs \\ %{}, seller_id \\ nil) do
     seller_id =
       case seller_id do
         nil ->
           seller = SellerRepoFixtures.seller_fixture()
           seller.id
-        seller_id -> seller_id
+
+        seller_id ->
+          seller_id
       end
 
     {:ok, food_menu} =

@@ -26,7 +26,8 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
     default_delivery_address_map = Map.from_struct(default_delivery_address)
 
-    attrs_with_default_delivery_address =  Map.put(attrs, :delivery_address, default_delivery_address_map)
+    attrs_with_default_delivery_address =
+      Map.put(attrs, :delivery_address, default_delivery_address_map)
 
     buyer_user
     |> Ecto.build_assoc(:orders, attrs_with_default_delivery_address)
@@ -51,7 +52,8 @@ defmodule FoodFromHome.Orders.OrderRepo do
     query =
       from(order in Order,
         where: ^filters,
-        where: order.seller_id == ^seller_id)
+        where: order.seller_id == ^seller_id
+      )
 
     Repo.all(query)
   end
@@ -60,12 +62,14 @@ defmodule FoodFromHome.Orders.OrderRepo do
     query =
       from(order in Order,
         where: ^filters,
-        where: order.buyer_user_id == ^user_id)
+        where: order.buyer_user_id == ^user_id
+      )
 
     Repo.all(query)
   end
 
-  def list(%User{user_type: :deliverer, address: %Address{city: deliverer_city}}, filters) when is_list(filters) do
+  def list(%User{user_type: :deliverer, address: %Address{city: deliverer_city}}, filters)
+      when is_list(filters) do
     query =
       from order in Order,
         join: delivery_address in assoc(order, :delivery_address),

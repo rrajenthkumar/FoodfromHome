@@ -10,6 +10,7 @@ defmodule FoodFromHome.Orders.Services.UpdateDeliveryAddress do
   end
 
   def call(%Order{status: another_status}, delivery_address) when is_map(delivery_address) do
-    {:error, 403, "Order in #{another_status} status. Address can be changed for only an order of :open status"}
+    {:error, 403,
+     "Order in #{another_status} status. Address can be changed for only an order of :open status"}
   end
 end

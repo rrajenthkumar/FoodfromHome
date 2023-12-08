@@ -65,9 +65,9 @@ defmodule FoodFromHome.Users.UserRepo do
 
   defp get_query(user_id) do
     from user in User,
-    join: seller in assoc(user, :seller),
-    where: user.id ==^user_id,
-    preload: [:seller]
+      join: seller in assoc(user, :seller),
+      where: user.id == ^user_id,
+      preload: [:seller]
   end
 
   @doc """
@@ -83,9 +83,9 @@ defmodule FoodFromHome.Users.UserRepo do
 
   """
   def update(user = %User{}, attrs = %{}) do
-      user
-      |> change_update_user(attrs)
-      |> Repo.update()
+    user
+    |> change_update_user(attrs)
+    |> Repo.update()
   end
 
   @doc """
@@ -98,9 +98,9 @@ defmodule FoodFromHome.Users.UserRepo do
 
   """
   def soft_delete(user = %User{}) do
-      user
-      |> User.soft_delete_changeset()
-      |> Repo.update()
+    user
+    |> User.soft_delete_changeset()
+    |> Repo.update()
   end
 
   @doc """
@@ -127,12 +127,14 @@ defmodule FoodFromHome.Users.UserRepo do
 
   defp list_query(filters) when is_list(filters) do
     {include_deleted, other_filters} = Keyword.pop(filters, :include_deleted, "false")
+
     case include_deleted do
       "true" ->
         from user in User,
           join: seller in assoc(user, :seller),
           where: ^other_filters,
           preload: [:seller]
+
       _ ->
         from user in User,
           join: seller in assoc(user, :seller),
@@ -155,7 +157,7 @@ defmodule FoodFromHome.Users.UserRepo do
     User.create_changeset(user, attrs)
   end
 
-    @doc """
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes during user updation.
 
   ## Examples

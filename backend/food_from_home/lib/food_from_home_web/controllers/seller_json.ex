@@ -18,7 +18,8 @@ defmodule FoodFromHomeWeb.SellerJSON do
     %{data: data(seller)}
   end
 
-  defp data(%Seller{seller_user: %User{} = seller_user, food_menus: food_menus} = seller) when is_list(food_menus) do
+  defp data(%Seller{seller_user: %User{} = seller_user, food_menus: food_menus} = seller)
+       when is_list(food_menus) do
     %{
       id: seller.id,
       illustration: seller.illustration,

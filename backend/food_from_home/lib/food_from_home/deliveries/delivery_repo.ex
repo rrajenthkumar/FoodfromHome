@@ -17,7 +17,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(order = %Order{}, attrs = %{}\\ %{}) do
+  def create(order = %Order{}, attrs = %{} \\ %{}) do
     order
     |> Ecto.build_assoc(:delivery, attrs)
     |> change_create()
@@ -41,11 +41,10 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
   def get_with_order_id!(order_id) when is_integer(order_id) do
     query =
       from delivery in Delivery,
-      where: delivery.order_id == ^order_id
+        where: delivery.order_id == ^order_id
 
     Repo.one!(query)
   end
-
 
   @doc """
   Updates a delivery.
@@ -60,7 +59,6 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
 
   """
   def update(delivery = %Delivery{}, attrs = %{}) do
-
     delivery
     |> change_update(attrs)
     |> Repo.update()
@@ -75,7 +73,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       %Ecto.Changeset{data: %Delivery{}}
 
   """
-  def change_create(%Delivery{} = delivery, attrs = %{}\\ %{}) do
+  def change_create(%Delivery{} = delivery, attrs = %{} \\ %{}) do
     Delivery.create_changeset(delivery, attrs)
   end
 
@@ -88,7 +86,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       %Ecto.Changeset{data: %Delivery{}}
 
   """
-  def change_update(%Delivery{} = delivery, attrs = %{}\\ %{}) do
+  def change_update(%Delivery{} = delivery, attrs = %{} \\ %{}) do
     Delivery.update_changeset(delivery, attrs)
   end
 end

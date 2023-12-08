@@ -23,7 +23,8 @@ defmodule FoodFromHome.CartItems.Finders.CartItemsFromOrder do
         join: order in assoc(cart_item, :order),
         join: food_menu in assoc(cart_item, :food_menu),
         where: order.id == ^order_id,
-        preload: [food_menu: food_menu])
+        preload: [food_menu: food_menu]
+      )
 
     Repo.all(query)
   end

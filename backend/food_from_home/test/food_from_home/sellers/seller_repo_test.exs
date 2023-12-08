@@ -18,7 +18,11 @@ defmodule FoodFromHome.Sellers.SellerRepoTest do
     end
 
     test "create_seller/1 with valid data creates a seller" do
-      valid_attrs = %{illustration: "some illustration", introduction: "some introduction", tax_id: "some tax_id"}
+      valid_attrs = %{
+        illustration: "some illustration",
+        introduction: "some introduction",
+        tax_id: "some tax_id"
+      }
 
       assert {:ok, %Seller{} = seller} = SellerRepo.create_seller(valid_attrs)
       assert seller.illustration == "some illustration"
@@ -32,7 +36,12 @@ defmodule FoodFromHome.Sellers.SellerRepoTest do
 
     test "update_seller/2 with valid data updates the seller" do
       seller = seller_fixture()
-      update_attrs = %{illustration: "some updated illustration", introduction: "some updated introduction", tax_id: "some updated tax_id"}
+
+      update_attrs = %{
+        illustration: "some updated illustration",
+        introduction: "some updated introduction",
+        tax_id: "some updated tax_id"
+      }
 
       assert {:ok, %Seller{} = seller} = SellerRepo.update_seller(seller, update_attrs)
       assert seller.illustration == "some updated illustration"

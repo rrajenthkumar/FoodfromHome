@@ -26,7 +26,8 @@ defmodule FoodFromHome.Sellers.Finders.SellerFromUser do
     query =
       from(seller in Seller,
         join: user in assoc(seller, :seller_user),
-        where: user.id == ^user_id)
+        where: user.id == ^user_id
+      )
 
     Repo.one!(query)
   end

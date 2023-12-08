@@ -12,6 +12,9 @@ defmodule FoodFromHome.Sellers do
   defdelegate update(seller, attrs), to: SellerRepo
 
   def list(filters), do: SellersWithUserInfo.list(filters)
-  def get_with_user_info_and_active_menus!(seller_id), do: SellerWithUserInfoAndActiveMenus.find!(seller_id)
+
+  def get_with_user_info_and_active_menus!(seller_id),
+    do: SellerWithUserInfoAndActiveMenus.find!(seller_id)
+
   def find_seller_from_user!(user), do: SellerFromUser.find!(user)
 end

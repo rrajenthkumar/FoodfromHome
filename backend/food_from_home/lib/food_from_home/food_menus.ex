@@ -10,5 +10,4 @@ defmodule FoodFromHome.FoodMenus do
   defdelegate get!(food_menu_id), to: FoodMenuRepo
   defdelegate update(food_menu_id, attrs), to: FoodMenuRepo
   defdelegate delete(food_menu_id), to: FoodMenuRepo
-
 end

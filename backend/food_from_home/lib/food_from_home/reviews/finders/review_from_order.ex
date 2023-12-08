@@ -26,7 +26,8 @@ defmodule FoodFromHome.Reviews.Finders.ReviewFromOrder do
     query =
       from(review in Review,
         join: order in assoc(review, :order),
-        where: order.id == ^order_id)
+        where: order.id == ^order_id
+      )
 
     Repo.one(query)
   end

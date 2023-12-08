@@ -1,5 +1,5 @@
 defmodule FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId do
-@moduledoc """
+  @moduledoc """
   Finder to find an order from order_id with seller user, buyer user, deliverer user, cart items, food menus, delivery and review preloads
   """
   import Ecto.Query, warn: false
@@ -33,7 +33,14 @@ defmodule FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId do
         join: deliverer_user in assoc(delivery, :deliverer_user),
         join: review in assoc(order, :review),
         where: order.id == ^order_id,
-        preload: [seller: {seller, seller_user: seller_user}, buyer_user: buyer_user, cart_items: {cart_item, food_menu: food_menu}, delivery: {delivery, deliverer_user: deliverer_user}, review: review])
+        preload: [
+          seller: {seller, seller_user: seller_user},
+          buyer_user: buyer_user,
+          cart_items: {cart_item, food_menu: food_menu},
+          delivery: {delivery, deliverer_user: deliverer_user},
+          review: review
+        ]
+      )
 
     Repo.one(query)
   end

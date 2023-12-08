@@ -22,7 +22,8 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
     query =
       from(delivery in Delivery,
         where: ^filters,
-        where: delivery.deliverer_user_id == ^deliverer_user_id)
+        where: delivery.deliverer_user_id == ^deliverer_user_id
+      )
 
     Repo.all(query)
   end
@@ -34,7 +35,8 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
         join: seller in assoc(order, :seller),
         join: user in assoc(seller, :deliverer_user),
         where: ^filters,
-        where: user.id == ^seller_user_id)
+        where: user.id == ^seller_user_id
+      )
 
     Repo.all(query)
   end

@@ -9,9 +9,42 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers.Seller
 
-  @allowed_create_keys [:seller_id, :name, :description, :menu_illustration, :ingredients, :allergens, :price, :rebate, :valid_until, :preparation_time_in_minutes, :remaining_quantity]
-  @required_keys [:seller_id, :name, :description, :menu_illustration, :ingredients, :price, :valid_until, :preparation_time_in_minutes, :remaining_quantity]
-  @allowed_update_keys [:name, :description, :menu_illustration, :ingredients, :allergens, :price, :rebate, :valid_until, :preparation_time_in_minutes, :remaining_quantity]
+  @allowed_create_keys [
+    :seller_id,
+    :name,
+    :description,
+    :menu_illustration,
+    :ingredients,
+    :allergens,
+    :price,
+    :rebate,
+    :valid_until,
+    :preparation_time_in_minutes,
+    :remaining_quantity
+  ]
+  @required_keys [
+    :seller_id,
+    :name,
+    :description,
+    :menu_illustration,
+    :ingredients,
+    :price,
+    :valid_until,
+    :preparation_time_in_minutes,
+    :remaining_quantity
+  ]
+  @allowed_update_keys [
+    :name,
+    :description,
+    :menu_illustration,
+    :ingredients,
+    :allergens,
+    :price,
+    :rebate,
+    :valid_until,
+    :preparation_time_in_minutes,
+    :remaining_quantity
+  ]
 
   schema "food_menus" do
     field :name, :string
@@ -42,7 +75,11 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     food_menu
     |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
-    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint, name: :unique_food_menu_name_per_seller_per_valid_until_index, message: "Another active food menu of the same name exists for this seller for the same validity")
+    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint,
+      name: :unique_food_menu_name_per_seller_per_valid_until_index,
+      message:
+        "Another active food menu of the same name exists for this seller for the same validity"
+    )
     |> foreign_key_constraint(:seller_id)
     |> cast_embed(:rebate, with: &rebate_changeset/2)
   end
@@ -55,7 +92,10 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_keys)
     |> validate_no_associated_cart_items()
-    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint, name: :unique_food_menu_name_per_seller_per_valid_until_index, message: "Another food menu of the same name exists for this seller for the same validity")
+    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint,
+      name: :unique_food_menu_name_per_seller_per_valid_until_index,
+      message: "Another food menu of the same name exists for this seller for the same validity"
+    )
     |> foreign_key_constraint(:seller_id)
     |> cast_embed(:rebate, with: &rebate_changeset/2)
   end
@@ -69,7 +109,9 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> validate_required([:count, :discount_percentage])
   end
 
-  defp validate_no_associated_cart_items(changeset = %Ecto.Changeset{data: %FoodMenu{} = food_menu}) do
+  defp validate_no_associated_cart_items(
+         changeset = %Ecto.Changeset{data: %FoodMenu{} = food_menu}
+       ) do
     query =
       from cart_item in CartItem,
         where: cart_item.food_menu_id == ^food_menu.id

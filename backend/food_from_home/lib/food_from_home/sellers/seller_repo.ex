@@ -52,7 +52,6 @@ defmodule FoodFromHome.Sellers.SellerRepo do
 
   """
   def update(seller = %Seller{}, attrs) do
-
     seller
     |> update_change(attrs)
     |> Repo.update()

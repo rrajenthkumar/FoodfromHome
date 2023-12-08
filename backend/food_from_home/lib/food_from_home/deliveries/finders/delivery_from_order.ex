@@ -26,7 +26,8 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveryFromOrder do
     query =
       from(delivery in Delivery,
         join: order in assoc(delivery, :order),
-        where: order.id == ^order_id)
+        where: order.id == ^order_id
+      )
 
     Repo.one!(query)
   end

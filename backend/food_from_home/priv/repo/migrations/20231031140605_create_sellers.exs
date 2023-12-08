@@ -8,7 +8,6 @@ defmodule FoodFromHome.Repo.Migrations.CreateSellers do
       add :introduction, :text
       add :tax_id, :string
 
-
       timestamps()
     end
 

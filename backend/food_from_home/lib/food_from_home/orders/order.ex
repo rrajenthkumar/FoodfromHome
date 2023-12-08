@@ -28,7 +28,18 @@ defmodule FoodFromHome.Orders.Order do
   @delivery_address_keys [:door_number, :street, :city, :country, :postal_code]
 
   schema "orders" do
-    field :status, Ecto.Enum, values: [:open, :confirmed, :ready_for_pickup, :reserved_for_pickup, :on_the_way, :delivered, :cancelled], default: :open
+    field :status, Ecto.Enum,
+      values: [
+        :open,
+        :confirmed,
+        :ready_for_pickup,
+        :reserved_for_pickup,
+        :on_the_way,
+        :delivered,
+        :cancelled
+      ],
+      default: :open
+
     field :invoice_link, :string, default: nil
     field :seller_remark, :string, default: nil
 
@@ -57,7 +68,10 @@ defmodule FoodFromHome.Orders.Order do
     |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
     |> unique_constraint(:invoice_link)
-    |> unique_constraint(:unique_open_order_per_buyer_constraint, name: :unique_open_order_per_buyer_index, message: "A buyer can have only one open order at a time.")
+    |> unique_constraint(:unique_open_order_per_buyer_constraint,
+      name: :unique_open_order_per_buyer_index,
+      message: "A buyer can have only one open order at a time."
+    )
     |> foreign_key_constraint(:seller_id)
     |> foreign_key_constraint(:buyer_user_id)
     |> cast_embed(:delivery_address, required: true, with: &delivery_address_changeset/2)
@@ -73,7 +87,10 @@ defmodule FoodFromHome.Orders.Order do
     |> validate_required(@required_keys)
     |> validate_status_change()
     |> unique_constraint(:invoice_link)
-    |> unique_constraint(:unique_open_order_per_buyer_constraint, name: :unique_open_order_per_buyer_index, message: "Only one open order is allowed per buyer.")
+    |> unique_constraint(:unique_open_order_per_buyer_constraint,
+      name: :unique_open_order_per_buyer_index,
+      message: "Only one open order is allowed per buyer."
+    )
     |> foreign_key_constraint(:seller_id)
     |> foreign_key_constraint(:buyer_user_id)
     |> cast_embed(:delivery_address, with: &delivery_address_changeset/2)
@@ -82,53 +99,104 @@ defmodule FoodFromHome.Orders.Order do
   @doc """
   Changeset function for delivery address schema.
   """
-  def delivery_address_changeset(delivery_address= %DeliveryAddress{}, attrs = %{}) do
+  def delivery_address_changeset(delivery_address = %DeliveryAddress{}, attrs = %{}) do
     delivery_address
     |> cast(attrs, @delivery_address_keys)
     |> validate_required(@delivery_address_keys)
   end
 
-  defp validate_status_change(changeset = %Ecto.Changeset{data: %Order{status: :open}, changes: %{status: new_status}}) do
+  defp validate_status_change(
+         changeset = %Ecto.Changeset{data: %Order{status: :open}, changes: %{status: new_status}}
+       ) do
     if new_status == :confirmed do
       changeset
     else
-      add_error(changeset, :status, "The status cannot be updated to #{new_status} from :open status.")
+      add_error(
+        changeset,
+        :status,
+        "The status cannot be updated to #{new_status} from :open status."
+      )
     end
   end
 
-  defp validate_status_change(changeset = %Ecto.Changeset{data: %Order{status: :confirmed}, changes: %{status: new_status}}) do
+  defp validate_status_change(
+         changeset = %Ecto.Changeset{
+           data: %Order{status: :confirmed},
+           changes: %{status: new_status}
+         }
+       ) do
     if new_status == :ready_for_pickup or new_status == :cancelled do
       changeset
     else
-      add_error(changeset, :status, "The status cannot be updated to #{new_status} from :confirmed status.")
+      add_error(
+        changeset,
+        :status,
+        "The status cannot be updated to #{new_status} from :confirmed status."
+      )
     end
   end
 
-  defp validate_status_change(changeset = %Ecto.Changeset{data: %Order{status: :cancelled}, changes: %{status: new_status}}) do
-    add_error(changeset, :status, "The status cannot be updated to #{new_status} from :cancelled status.")
+  defp validate_status_change(
+         changeset = %Ecto.Changeset{
+           data: %Order{status: :cancelled},
+           changes: %{status: new_status}
+         }
+       ) do
+    add_error(
+      changeset,
+      :status,
+      "The status cannot be updated to #{new_status} from :cancelled status."
+    )
   end
 
-  defp validate_status_change(changeset = %Ecto.Changeset{data: %Order{status: :ready_for_pickup}, changes: %{status: new_status}}) do
+  defp validate_status_change(
+         changeset = %Ecto.Changeset{
+           data: %Order{status: :ready_for_pickup},
+           changes: %{status: new_status}
+         }
+       ) do
     if new_status == :reserved_for_pickup do
       changeset
     else
-      add_error(changeset, :status, "The status cannot be updated to #{new_status} from :ready_for_pickup status.")
+      add_error(
+        changeset,
+        :status,
+        "The status cannot be updated to #{new_status} from :ready_for_pickup status."
+      )
     end
   end
 
-  defp validate_status_change(changeset = %Ecto.Changeset{data: %Order{status: :reserved_for_pickup}, changes: %{status: new_status}}) do
+  defp validate_status_change(
+         changeset = %Ecto.Changeset{
+           data: %Order{status: :reserved_for_pickup},
+           changes: %{status: new_status}
+         }
+       ) do
     if new_status == :on_the_way do
       changeset
     else
-      add_error(changeset, :status, "The status cannot be updated to #{new_status} from :reserved_for_pickup status.")
+      add_error(
+        changeset,
+        :status,
+        "The status cannot be updated to #{new_status} from :reserved_for_pickup status."
+      )
     end
   end
 
-  defp validate_status_change(changeset = %Ecto.Changeset{data: %Order{status: :on_the_way}, changes: %{status: new_status}}) do
+  defp validate_status_change(
+         changeset = %Ecto.Changeset{
+           data: %Order{status: :on_the_way},
+           changes: %{status: new_status}
+         }
+       ) do
     if new_status == :delivered do
       changeset
     else
-      add_error(changeset, :status, "The status cannot be updated to #{new_status} from :on_the_way status.")
+      add_error(
+        changeset,
+        :status,
+        "The status cannot be updated to #{new_status} from :on_the_way status."
+      )
     end
   end
 end

@@ -8,7 +8,12 @@ defmodule FoodFromHome.DeliveriesTest do
 
     import FoodFromHome.DeliveriesFixtures
 
-    @invalid_attrs %{delivered_at: nil, distance_travelled_in_kms: nil, picked_up_at: nil, current_position: nil}
+    @invalid_attrs %{
+      delivered_at: nil,
+      distance_travelled_in_kms: nil,
+      picked_up_at: nil,
+      current_position: nil
+    }
 
     test "list_deliveries/0 returns all deliveries" do
       delivery = delivery_fixture()
@@ -21,7 +26,12 @@ defmodule FoodFromHome.DeliveriesTest do
     end
 
     test "create_delivery/1 with valid data creates a delivery" do
-      valid_attrs = %{delivered_at: ~U[2023-11-02 08:23:00Z], distance_travelled_in_kms: "120.5", picked_up_at: ~U[2023-11-02 08:23:00Z], current_position: %Geo.Point{coordinates: {30, -90}, srid: 4326}}
+      valid_attrs = %{
+        delivered_at: ~U[2023-11-02 08:23:00Z],
+        distance_travelled_in_kms: "120.5",
+        picked_up_at: ~U[2023-11-02 08:23:00Z],
+        current_position: %Geo.Point{coordinates: {30, -90}, srid: 4326}
+      }
 
       assert {:ok, %Delivery{} = delivery} = Deliveries.create_delivery(valid_attrs)
       assert delivery.delivered_at == ~U[2023-11-02 08:23:00Z]
@@ -36,7 +46,13 @@ defmodule FoodFromHome.DeliveriesTest do
 
     test "update_delivery/2 with valid data updates the delivery" do
       delivery = delivery_fixture()
-      update_attrs = %{delivered_at: ~U[2023-11-03 08:23:00Z], distance_travelled_in_kms: "456.7", picked_up_at: ~U[2023-11-03 08:23:00Z], current_position: %Geo.Point{coordinates: {70, -40}, srid: 4100}}
+
+      update_attrs = %{
+        delivered_at: ~U[2023-11-03 08:23:00Z],
+        distance_travelled_in_kms: "456.7",
+        picked_up_at: ~U[2023-11-03 08:23:00Z],
+        current_position: %Geo.Point{coordinates: {70, -40}, srid: 4100}
+      }
 
       assert {:ok, %Delivery{} = delivery} = Deliveries.update_delivery(delivery, update_attrs)
       assert delivery.delivered_at == ~U[2023-11-03 08:23:00Z]

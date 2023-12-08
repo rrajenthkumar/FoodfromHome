@@ -17,10 +17,16 @@ defmodule FoodFromHomeWeb.IsSellerOrDelivererPlug do
     case user_type do
       :seller ->
         conn
+
       :deliverer ->
         conn
+
       _ ->
-        ErrorHandler.handle_error(conn, "403", "Route accessible only to users of type :seller or :deliverer")
+        ErrorHandler.handle_error(
+          conn,
+          "403",
+          "Route accessible only to users of type :seller or :deliverer"
+        )
     end
   end
 end
