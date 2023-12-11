@@ -46,6 +46,9 @@ defmodule FoodFromHomeWeb.Router do
 
           # Creates a food menu linked to current seller user
           post "/:seller_id/food-menus", FoodMenuController, :create
+
+          # Lists only own food menus based on query parameters with limited fields for current seller user
+          get "/:seller_id/food-menus", FoodMenuController, :index
           # Updates a food menu linked to current seller user. No linked order must exist.
           put "/:seller_id/food-menus/:food_menu_id", FoodMenuController, :update
           # Deletes a food menu linked to current seller user. No linked order must exist.
@@ -55,9 +58,6 @@ defmodule FoodFromHomeWeb.Router do
         scope "/" do
           pipe_through [FoodFromHomeWeb.IsSellerOrBuyerPlug]
 
-          # Lists food menus of a seller based on query parameters with limited fields for current buyer user
-          # Lists only own food menus based on query parameters with limited fields for current seller user
-          get "/:seller_id/food-menus", FoodMenuController, :index
           # Gets food menu with food_menu_id for current buyer user
           # Gets only own food menu with food_menu_id for current seller user
           get "/:seller_id/food-menus/:food_menu_id", FoodMenuController, :show

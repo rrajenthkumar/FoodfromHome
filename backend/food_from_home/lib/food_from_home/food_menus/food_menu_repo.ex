@@ -4,7 +4,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   import Ecto.Query, warn: false
 
-  alias FoodFromHome.FoodMenus.Finders.AssociatedCartitemsCount
+  alias FoodFromHome.FoodMenus.Finders.AssociatedCartitems
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers.Seller
@@ -108,11 +108,20 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       iex> update_food_menu(%FoodMenu{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
+      iex> delete_food_menu(%FoodMenu{}, %{field: new_value})
+      {:error, 403, "An associated cart item exists"}
+
   """
   def update_food_menu(food_menu = %FoodMenu{}, attrs) when is_map(attrs) do
-    food_menu
-    |> update_change(attrs)
-    |> Repo.update()
+    case AssociatedCartitems.check?(food_menu) do
+      true ->
+        {:error, 403, "An associated cart item exists"}
+
+      false ->
+        food_menu
+        |> update_change(attrs)
+        |> Repo.update()
+    end
   end
 
   @doc """
@@ -121,17 +130,17 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   ## Examples
 
-      iex> delete_food_menu(12345)
+      iex> delete_food_menu(%FoodMenu{})
       {:ok, %FoodMenu{}}
 
-      iex> delete_food_menu(12345)
+      iex> delete_food_menu(%FoodMenu{})
       {:error, 403, "An associated cart item exists"}
 
   """
   def delete_food_menu(food_menu = %FoodMenu{}) do
-    case AssociatedCartitemsCount.get(food_menu) > 0 do
-      true -> Repo.delete(food_menu)
-      false -> {:error, 403, "An associated cart item exists"}
+    case AssociatedCartitems.check?(food_menu) do
+      true -> {:error, 403, "An associated cart item exists"}
+      false -> Repo.delete(food_menu)
     end
   end
 

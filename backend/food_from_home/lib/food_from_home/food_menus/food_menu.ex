@@ -9,7 +9,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   import Ecto.Changeset
 
   alias FoodFromHome.CartItems.CartItem
-  alias FoodFromHome.FoodMenus.Finders.AssociatedCartitemsCount
+  alias FoodFromHome.FoodMenus.Finders.AssociatedCartitems
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.FoodMenus.FoodMenu.Rebate
   alias FoodFromHome.Sellers.Seller
@@ -116,7 +116,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   defp validate_no_associated_cart_items(
          changeset = %Ecto.Changeset{data: %FoodMenu{} = food_menu}
        ) do
-    if AssociatedCartitemsCount.get(food_menu) > 0 do
+    if AssociatedCartitems.check?(food_menu) do
       add_error(changeset, :base, "Cannot update a food menu with an associated cart item.")
     else
       changeset

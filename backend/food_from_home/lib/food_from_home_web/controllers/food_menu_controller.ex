@@ -11,7 +11,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def create(conn = %{assigns: %{current_user: current_user}}, %{
+  def create(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
         "food_menu" => attrs,
         "seller_id" => seller_id
       }) do
@@ -48,7 +48,9 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  def index(conn = %{assigns: %{current_user: current_user}}, %{"seller_id" => seller_id}) do
+  def index(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
+        "seller_id" => seller_id
+      }) do
     case Sellers.get_seller(seller_id) do
       %Seller{} = seller ->
         case seller_belongs_to_current_user?(current_user, seller) do
@@ -79,37 +81,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  def show(conn = %{assigns: %{current_user: current_user}}, %{
-        "seller_id" => seller_id,
-        "food_menu_id" => food_menu_id
-      }) do
-    case Sellers.get_seller(seller_id) do
-      %Seller{} = seller ->
-        case seller_belongs_to_current_user?(current_user, seller) do
-          true ->
-            with %FoodMenu{} = food_menu <- FoodMenus.get_food_menu!(food_menu_id) do
-              render(conn, :show, food_menu: food_menu)
-            end
-
-          false ->
-            ErrorHandler.handle_error(
-              conn,
-              :forbidden,
-              "Seller does not belong to the current user"
-            )
-        end
-
-      nil ->
-        ErrorHandler.handle_error(
-          conn,
-          :not_found,
-          "Seller not found"
-        )
-    end
-  end
-
-  def update(conn = %{assigns: %{current_user: current_user}}, %{
-        "food_menu" => attrs,
+  def show(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
@@ -119,11 +91,16 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           true ->
             case FoodMenus.get_food_menu(food_menu_id) do
               %FoodMenu{} = food_menu ->
-                attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+                case food_menu_belongs_to_seller?(seller, food_menu) do
+                  true ->
+                    render(conn, :show, food_menu: food_menu)
 
-                with {:ok, %FoodMenu{} = food_menu} <-
-                       FoodMenus.update_food_menu(food_menu, attrs) do
-                  render(conn, :show, food_menu: food_menu)
+                  false ->
+                    ErrorHandler.handle_error(
+                      conn,
+                      :forbidden,
+                      "Food menu does not belong to the seller"
+                    )
                 end
 
               nil ->
@@ -151,7 +128,45 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  def delete(conn = %{assigns: %{current_user: current_user}}, %{
+  def show(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{
+        "seller_id" => seller_id,
+        "food_menu_id" => food_menu_id
+      }) do
+    case Sellers.get_seller(seller_id) do
+      %Seller{} = seller ->
+        case FoodMenus.get_food_menu(food_menu_id) do
+          %FoodMenu{} = food_menu ->
+            case food_menu_belongs_to_seller?(seller, food_menu) do
+              true ->
+                render(conn, :show, food_menu: food_menu)
+
+              false ->
+                ErrorHandler.handle_error(
+                  conn,
+                  :forbidden,
+                  "Food menu does not belong to the seller"
+                )
+            end
+
+          nil ->
+            ErrorHandler.handle_error(
+              conn,
+              :not_found,
+              "Food menu not found"
+            )
+        end
+
+      nil ->
+        ErrorHandler.handle_error(
+          conn,
+          :not_found,
+          "Seller not found"
+        )
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
+        "food_menu" => attrs,
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
@@ -161,8 +176,70 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           true ->
             case FoodMenus.get_food_menu(food_menu_id) do
               %FoodMenu{} = food_menu ->
-                with {:ok, %FoodMenu{}} <- FoodMenus.delete_food_menu(food_menu) do
-                  send_resp(conn, :no_content, "")
+                case food_menu_belongs_to_seller?(seller, food_menu) do
+                  true ->
+                    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+
+                    with {:ok, %FoodMenu{} = food_menu} <-
+                           FoodMenus.update_food_menu(food_menu, attrs) do
+                      render(conn, :show, food_menu: food_menu)
+                    end
+
+                  false ->
+                    ErrorHandler.handle_error(
+                      conn,
+                      :forbidden,
+                      "Food menu does not belong to the seller"
+                    )
+                end
+
+              nil ->
+                ErrorHandler.handle_error(
+                  conn,
+                  :not_found,
+                  "Food menu not found"
+                )
+            end
+
+          false ->
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Seller does not belong to the current user"
+            )
+        end
+
+      nil ->
+        ErrorHandler.handle_error(
+          conn,
+          :not_found,
+          "Seller not found"
+        )
+    end
+  end
+
+  def delete(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
+        "seller_id" => seller_id,
+        "food_menu_id" => food_menu_id
+      }) do
+    case Sellers.get_seller(seller_id) do
+      %Seller{} = seller ->
+        case seller_belongs_to_current_user?(current_user, seller) do
+          true ->
+            case FoodMenus.get_food_menu(food_menu_id) do
+              %FoodMenu{} = food_menu ->
+                case food_menu_belongs_to_seller?(seller, food_menu) do
+                  true ->
+                    with {:ok, %FoodMenu{}} <- FoodMenus.delete_food_menu(food_menu) do
+                      send_resp(conn, :no_content, "")
+                    end
+
+                  false ->
+                    ErrorHandler.handle_error(
+                      conn,
+                      :forbidden,
+                      "Food menu does not belong to the seller"
+                    )
                 end
 
               nil ->
@@ -194,5 +271,11 @@ defmodule FoodFromHomeWeb.FoodMenuController do
          seller_user_id: seller_user_id
        }) do
     seller_user_id === current_user_id
+  end
+
+  defp food_menu_belongs_to_seller?(%Seller{id: seller_id}, %FoodMenu{
+         seller_id: food_menu_seller_id
+       }) do
+    seller_id === food_menu_seller_id
   end
 end
