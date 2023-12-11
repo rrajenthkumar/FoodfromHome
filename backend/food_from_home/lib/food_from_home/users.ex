@@ -13,5 +13,5 @@ defmodule FoodFromHome.Users do
   defdelegate update_user(user, attrs), to: UserRepo
   defdelegate soft_delete_user(user), to: UserRepo
 
-  def find_seller_user_from_order!(order), do: SellerUserFromOrder.find!(order)
+  def get_seller_user_from_order!(order), do: SellerUserFromOrder.get!(order)
 end

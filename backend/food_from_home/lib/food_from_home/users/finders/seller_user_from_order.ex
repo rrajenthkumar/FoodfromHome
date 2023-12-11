@@ -15,14 +15,14 @@ defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
 
   ## Examples
 
-      iex> find!(%Order{id: 123})
+      iex> get!(%Order{id: 123})
       %User{}
 
-      iex> find!(%Order{id: 456})
+      iex> get!(%Order{id: 456})
       ** (Ecto.NoResultsError)
 
   """
-  def find!(%Order{seller_id: seller_id}) do
+  def get!(%Order{seller_id: seller_id}) do
     query =
       from user in User,
         join: seller in assoc(user, :seller),

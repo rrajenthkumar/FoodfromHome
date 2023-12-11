@@ -14,7 +14,7 @@ defmodule FoodFromHome.Deliveries.Services.InitiateDelivery do
           user_type: :deliverer
         }
       ) do
-    %User{geoposition: seller_geoposition} = Users.find_seller_user_from_order!(order)
+    %User{geoposition: seller_geoposition} = Users.get_seller_user_from_order!(order)
 
     Deliveries.create(order, %{
       deliverer_user_id: deliverer_user_id,
