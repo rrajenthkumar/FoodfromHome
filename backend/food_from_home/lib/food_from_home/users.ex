@@ -7,13 +7,11 @@ defmodule FoodFromHome.Users do
   alias FoodFromHome.Users.Finders.DelivererUserFromOrder
   alias FoodFromHome.Users.Finders.SellerUserFromOrder
 
-  defdelegate create(attrs), to: UserRepo
-  defdelegate get!(user_id), to: UserRepo
-  defdelegate get(user_id), to: UserRepo
-  defdelegate update(user, attrs), to: UserRepo
-  defdelegate soft_delete(user), to: UserRepo
+  defdelegate create_user(attrs), to: UserRepo
+  defdelegate get_user!(user_id), to: UserRepo
+  defdelegate get_user(user_id), to: UserRepo
+  defdelegate update_user(user, attrs), to: UserRepo
+  defdelegate soft_delete_user(user), to: UserRepo
 
-  def find_buyer_user_from_order!(order), do: BuyerUserFromOrder.find!(order)
-  def find_deliverer_user_from_order!(order), do: DelivererUserFromOrder.find!(order)
   def find_seller_user_from_order!(order), do: SellerUserFromOrder.find!(order)
 end

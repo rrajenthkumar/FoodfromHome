@@ -1,4 +1,4 @@
-defmodule FoodFromHome.GoogleGeocoding do
+defmodule FoodFromHome.Geocoding do
   @moduledoc """
   Module to manage the position of a deliverer on google maps
   """

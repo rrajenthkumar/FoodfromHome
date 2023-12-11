@@ -3,7 +3,7 @@ defmodule FoodFromHome.Deliveries.Services.CreateDeliveryWithSellerPosition do
   Creates a new delivery with seller position as current position
   """
   alias FoodFromHome.Deliveries
-  alias FoodFromHome.GoogleGeocoding
+  alias FoodFromHome.Geocoding
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users
@@ -14,7 +14,7 @@ defmodule FoodFromHome.Deliveries.Services.CreateDeliveryWithSellerPosition do
       }) do
     %User{address: seller_address} = Users.find_seller_user_from_order!(order)
 
-    case GoogleGeocoding.get_position(seller_address) do
+    case Geocoding.get_position(seller_address) do
       {:ok, %Geo.Point{} = seller_position} ->
         Deliveries.create(order, %{
           deliverer_user_id: deliverer_user_id,

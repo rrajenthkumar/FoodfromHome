@@ -23,7 +23,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   """
   def create(buyer_user_id, attrs) when is_integer(buyer_user_id) and is_map(attrs) do
-    buyer_user = %User{address: default_delivery_address} = Users.get!(buyer_user_id)
+    buyer_user = %User{address: default_delivery_address} = Users.get_user!(buyer_user_id)
 
     default_delivery_address_map = Map.from_struct(default_delivery_address)
 

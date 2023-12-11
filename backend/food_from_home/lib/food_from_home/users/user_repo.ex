@@ -10,14 +10,14 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> create(%{field: value})
+      iex> create_user(%{field: value})
       {:ok, %User{}}
 
-      iex> create(%{field: bad_value})
+      iex> create_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(attrs = %{}) do
+  def create_user(attrs = %{}) do
     %User{}
     |> change_create_user(attrs)
     |> Repo.insert()
@@ -30,14 +30,14 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> get!(123)
+      iex> get_user!(123)
       %User{}
 
-      iex> get!(456)
+      iex> get_user!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get!(user_id) do
+  def get_user!(user_id) do
     user_id
     |> query()
     |> Repo.one!()
@@ -50,14 +50,14 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> get(123)
+      iex> get_user(123)
       %User{}
 
-      iex> get(456)
+      iex> get_user(456)
       nil
 
   """
-  def get(user_id) do
+  def get_user(user_id) do
     user_id
     |> query()
     |> Repo.one()
@@ -77,14 +77,14 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> update(user, %{field: new_value})
+      iex> update_user(user, %{field: new_value})
       {:ok, %User{}}
 
-      iex> update(user, %{field: bad_value})
+      iex> update_user(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(user = %User{}, attrs = %{}) do
+  def update_user(user = %User{}, attrs = %{}) do
     user
     |> change_update_user(attrs)
     |> Repo.update()
@@ -95,11 +95,11 @@ defmodule FoodFromHome.Users.UserRepo do
 
   ## Examples
 
-      iex> soft_delete(user)
+      iex> soft_delete_user(user)
       {:ok, %User{}}
 
   """
-  def soft_delete(user = %User{}) do
+  def soft_delete_user(user = %User{}) do
     user
     |> User.soft_delete_changeset()
     |> Repo.update()

@@ -5,7 +5,7 @@ defmodule FoodFromHomeWeb.UserController do
   alias FoodFromHome.Users.User.Address
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
-  alias FoodFromHome.GoogleGeocoding
+  alias FoodFromHome.Geocoding
   alias FoodFromHomeWeb.ErrorHandler
 
   action_fallback FoodFromHomeWeb.FallbackController
@@ -16,7 +16,7 @@ defmodule FoodFromHomeWeb.UserController do
       |> Utils.convert_map_string_keys_to_atoms()
       |> add_geoposition()
 
-    with {:ok, %User{} = user} <- Users.create(attrs) do
+    with {:ok, %User{} = user} <- Users.create_user(attrs) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/v1/users/#{user.id}")
@@ -27,7 +27,7 @@ defmodule FoodFromHomeWeb.UserController do
   def show(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{"user_id" => user_id}) do
     case user_id === current_user_id do
       true ->
-        case Users.get(user_id) do
+        case Users.get_user(user_id) do
           %User{} = user ->
             render(conn, :show, user: user)
 
@@ -50,14 +50,14 @@ defmodule FoodFromHomeWeb.UserController do
       }) do
     case user_id === current_user_id do
       true ->
-        case Users.get(user_id) do
+        case Users.get_user(user_id) do
           %User{} = user ->
             attrs =
               attrs
               |> Utils.convert_map_string_keys_to_atoms()
               |> add_geoposition()
 
-            with {:ok, %User{} = updated_user} <- Users.update(user, attrs) do
+            with {:ok, %User{} = updated_user} <- Users.update_user(user, attrs) do
               render(conn, :show, user: updated_user)
             end
 
@@ -80,11 +80,11 @@ defmodule FoodFromHomeWeb.UserController do
       }) do
     case user_id === current_user_id do
       true ->
-        case Users.get(user_id) do
+        case Users.get_user(user_id) do
           %User{} = user ->
             attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-            with {:ok, %User{} = updated_user} <- Users.update(user, attrs) do
+            with {:ok, %User{} = updated_user} <- Users.update_user(user, attrs) do
               render(conn, :show, user: updated_user)
             end
 
@@ -106,9 +106,9 @@ defmodule FoodFromHomeWeb.UserController do
       }) do
     case user_id === current_user_id do
       true ->
-        case Users.get(user_id) do
+        case Users.get_user(user_id) do
           %User{} = user ->
-            with {:ok, %User{} = _soft_deleted_user} <- Users.soft_delete(user) do
+            with {:ok, %User{} = _soft_deleted_user} <- Users.soft_delete_user(user) do
               send_resp(conn, :no_content, "")
             end
 
@@ -131,7 +131,7 @@ defmodule FoodFromHomeWeb.UserController do
     geoposition =
       Address
       |> struct!(address)
-      |> GoogleGeocoding.get_position()
+      |> Geocoding.get_position()
 
     Map.put(attrs, :geoposition, geoposition)
   end
