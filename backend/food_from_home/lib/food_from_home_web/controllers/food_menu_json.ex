@@ -1,4 +1,5 @@
 defmodule FoodFromHomeWeb.FoodMenuJSON do
+  alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
 
   @doc """
@@ -21,7 +22,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
       menu_illustration: food_menu.menu_illustration,
       name: food_menu.name,
       price: food_menu.price,
-      rebate: food_menu.rebate
+      rebate: data(food_menu.rebate)
     }
   end
 
@@ -35,8 +36,17 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
       menu_illustration: food_menu.menu_illustration,
       name: food_menu.name,
       price: food_menu.price,
-      rebate: food_menu.rebate,
-      preparation_time_in_minutes: food_menu.preparation_time_in_minutes
+      rebate: data(food_menu.rebate),
+      preparation_time_in_minutes: food_menu.preparation_time_in_minutes,
+      has_associated_cart_items?: FoodMenus.has_associated_cart_items?(food_menu),
+      remaining_quantity: remaining_quantity
+    }
+  end
+
+  defp data(rebate = %Rebate{}) do
+    %{
+      count: rebate.count,
+      discount_percentage: rebate.discount_percentage
     }
   end
 end
