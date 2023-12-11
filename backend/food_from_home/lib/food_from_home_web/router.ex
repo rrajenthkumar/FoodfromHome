@@ -31,9 +31,9 @@ defmodule FoodFromHomeWeb.Router do
         scope "/" do
           pipe_through [FoodFromHomeWeb.IsBuyerPlug]
 
-          # Lists sellers with limited fields (along with user info) based on query parameters (to search based on location, text etc) for current buyer user
+          # Lists sellers with limited fields (along with average rating and user info) based on query parameters (to search based on location, text etc) for current buyer user
           get "/", SellerController, :index
-          # Gets a seller (along with user info and food menu) for current buyer user
+          # Gets a seller (along with average rating, user info and available food menus) for current buyer user
           get "/:seller_id", SellerController, :show
 
           # Lists reviews of a seller based on query parameters with limited fields for current buyer user

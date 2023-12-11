@@ -46,8 +46,8 @@ defmodule FoodFromHome.CartItems.CartItem do
     else
       add_error(
         changeset,
-        :base,
-        "Remaining quantity of the selected food menu is not sufficient"
+        :count,
+        "Remaining quantity of the selected food menu is not sufficient fo fulfil the requested cart item count"
       )
     end
   end

@@ -1,5 +1,6 @@
 defmodule FoodFromHomeWeb.SellerJSON do
   alias FoodFromHome.FoodMenus.FoodMenu
+  alias FoodFromHome.Reviews
   alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
@@ -18,13 +19,15 @@ defmodule FoodFromHomeWeb.SellerJSON do
     %{data: data(seller)}
   end
 
-  defp data(seller = %Seller{seller_user: %User{} = seller_user, food_menus: food_menus}) do
+  defp data(seller = %Seller{seller_user: %User{} = seller_user, food_menus: food_menus})
+       when is_list(food_menus) do
     %{
       id: seller.id,
       nickname: seller.nickname,
       illustration: seller.illustration,
       introduction: seller.introduction,
       tax_id: seller.tax_id,
+      average_rating: Reviews.get_average_rating_from_seller(seller),
       seller_user: data(seller_user),
       available_food_menus: for(food_menu <- food_menus, do: data(food_menu))
     }
@@ -32,7 +35,7 @@ defmodule FoodFromHomeWeb.SellerJSON do
 
   defp data(seller_user = %User{}) do
     %{
-      id: seller_user.id,
+      seller_user_id: seller_user.id,
       address: data(seller_user.address),
       phone_number: seller_user.phone_number,
       email_id: seller_user.email_id,
@@ -45,7 +48,7 @@ defmodule FoodFromHomeWeb.SellerJSON do
 
   defp data(%FoodMenu{} = food_menu) do
     %{
-      id: food_menu.id,
+      food_menu_id: food_menu.id,
       menu_illustration: food_menu.menu_illustration,
       name: food_menu.name,
       price: food_menu.price,
@@ -63,12 +66,13 @@ defmodule FoodFromHomeWeb.SellerJSON do
     }
   end
 
-  defp limited_data(%Seller{} = seller) do
+  defp limited_data(seller = %Seller{}) do
     %{
       id: seller.id,
       nickname: seller.nickname,
       illustration: seller.illustration,
-      introduction: seller.introduction
+      introduction: seller.introduction,
+      average_rating: Reviews.get_average_rating_from_seller(seller)
     }
   end
 end

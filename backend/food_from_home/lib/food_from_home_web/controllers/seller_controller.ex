@@ -16,6 +16,7 @@ defmodule FoodFromHomeWeb.SellerController do
       |> Utils.convert_map_to_keyword_list()
 
     sellers = Sellers.list_sellers_with_user_info(filters)
+
     render(conn, :index, sellers: sellers)
   end
 
