@@ -4,11 +4,9 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   import Ecto.Query, warn: false
 
-  alias FoodFromHome.CartItems.CartItem
   alias FoodFromHome.FoodMenus.Finders.AssociatedCartitemsCount
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Repo
-  alias FoodFromHome.Sellers
   alias FoodFromHome.Sellers.Seller
 
   @doc """
@@ -41,7 +39,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   """
 
-  def list_food_menu(seller = %Seller{id: seller_id}, filters) when is_list(filters) do
+  def list_food_menu(%Seller{id: seller_id}, filters) when is_list(filters) do
     {active, other_filters} = Keyword.pop(filters, :active, "false")
 
     query =
@@ -78,7 +76,8 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       nil
 
   """
-  def get_food_menu(food_menu_id) when is_integer(food_menu_id), do: Repo.get(FoodMenu, food_menu_id)
+  def get_food_menu(food_menu_id) when is_integer(food_menu_id),
+    do: Repo.get(FoodMenu, food_menu_id)
 
   @doc """
   Gets a food menu with food_menu_id.
@@ -94,7 +93,8 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       ** (Ecto.NoResultsError)
 
   """
-  def get_food_menu!(food_menu_id) when is_integer(food_menu_id), do: Repo.get!(FoodMenu, food_menu_id)
+  def get_food_menu!(food_menu_id) when is_integer(food_menu_id),
+    do: Repo.get!(FoodMenu, food_menu_id)
 
   @doc """
   Updates a food menu.

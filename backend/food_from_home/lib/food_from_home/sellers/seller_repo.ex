@@ -21,7 +21,7 @@ defmodule FoodFromHome.Sellers.SellerRepo do
       nil
 
   """
-  def get_seller(seller_id) when is_integer(seller_id) , do: Repo.get(Seller, seller_id)
+  def get_seller(seller_id) when is_integer(seller_id), do: Repo.get(Seller, seller_id)
 
   @doc """
   Gets a single seller.
@@ -37,5 +37,5 @@ defmodule FoodFromHome.Sellers.SellerRepo do
       ** (Ecto.NoResultsError)
 
   """
-  def get_seller!(seller_id) when is_integer(seller_id) , do: Repo.get!(Seller, seller_id)
+  def get_seller!(seller_id) when is_integer(seller_id), do: Repo.get!(Seller, seller_id)
 end

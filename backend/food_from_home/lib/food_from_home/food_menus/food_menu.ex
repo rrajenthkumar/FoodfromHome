@@ -12,7 +12,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   alias FoodFromHome.FoodMenus.Finders.AssociatedCartitemsCount
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.FoodMenus.FoodMenu.Rebate
-  alias FoodFromHome.Repo
   alias FoodFromHome.Sellers.Seller
 
   @allowed_create_keys [
@@ -98,7 +97,8 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> validate_no_associated_cart_items()
     |> unique_constraint(:unique_food_menu_name_per_seller_per_validity_date_constraint,
       name: :unique_food_menu_name_per_seller_per_validity_date_index,
-      message: "Another food menu of the same name exists for this seller for the same validity date"
+      message:
+        "Another food menu of the same name exists for this seller for the same validity date"
     )
     |> foreign_key_constraint(:seller_id)
     |> cast_embed(:rebate, with: &rebate_changeset/2)

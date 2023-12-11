@@ -20,6 +20,8 @@ defmodule FoodFromHome.Repo.Migrations.CreateFoodMenus do
 
     create index(:food_menus, [:seller_id])
 
-    execute("CREATE UNIQUE INDEX unique_food_menu_name_per_seller_per_validity_date_index ON food_menus (seller_id, name, DATE(valid_until));")
+    execute(
+      "CREATE UNIQUE INDEX unique_food_menu_name_per_seller_per_validity_date_index ON food_menus (seller_id, name, DATE(valid_until));"
+    )
   end
 end
