@@ -1,11 +1,11 @@
-defmodule FoodFromHome.Users.Services.CreateUserWithGeoposition do
+defmodule FoodFromHome.Users.Services.GetGeopositionAndCreateUser do
   @moduledoc false
-  alias FoodFromHome.Users
+  alias FoodFromHome.Users.UserRepo
   alias FoodFromHome.Users.Utils
 
   def call(attrs = %{address: _address}) do
     attrs
     |> Utils.add_geoposition_to_attrs()
-    |> Users.create_user()
+    |> UserRepo.create_user()
   end
 end

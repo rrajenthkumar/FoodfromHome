@@ -11,7 +11,7 @@ defmodule FoodFromHomeWeb.UserController do
   def create(conn, %{"user" => attrs}) do
     attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    with {:ok, %User{} = user} <- Users.create_user_with_geoposition(attrs) do
+    with {:ok, %User{} = user} <- Users.get_geoposition_and_create_user(attrs) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/v1/users/#{user.id}")
@@ -49,7 +49,8 @@ defmodule FoodFromHomeWeb.UserController do
           %User{} = user ->
             attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-            with {:ok, %User{} = updated_user} <- Users.update_user_with_geoposition(user, attrs) do
+            with {:ok, %User{} = updated_user} <-
+                   Users.get_updated_geoposition_and_update_user(user, attrs) do
               render(conn, :show, user: updated_user)
             end
 
