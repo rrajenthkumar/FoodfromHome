@@ -1,9 +1,9 @@
 defmodule FoodFromHome.FoodMenus.FoodMenu do
   @moduledoc """
   The FoodMenu schema
-  Every seller can have multiple foodmenus that he can sell.
-  Every foodmenu is available for sale until the 'valid_until' date/time and until remaining_quantity is > 0.
-  Every time a foodmenu is sold 'remaining_quantity' value is decremented.
+  Every seller can have multiple food menus that he can sell.
+  Every food menu is available for sale until the 'valid_until' date/time and until remaining_quantity is > 0.
+  Every time a food menu is sold 'remaining_quantity' value is decremented.
   """
   use Ecto.Schema
   import Ecto.Changeset

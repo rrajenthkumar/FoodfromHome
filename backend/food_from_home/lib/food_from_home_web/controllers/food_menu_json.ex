@@ -2,14 +2,14 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
   alias FoodFromHome.FoodMenus.FoodMenu
 
   @doc """
-  Renders a list of food_menus with limited details.
+  Renders a list of food menus with limited details.
   """
   def index(%{food_menus: food_menus}) do
     %{data: for(food_menu <- food_menus, do: limited_data(food_menu))}
   end
 
   @doc """
-  Renders a single food_menu with more details.
+  Renders a single food menu with more details.
   """
   def show(%{food_menu: food_menu}) do
     %{data: data(food_menu)}

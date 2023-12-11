@@ -37,7 +37,7 @@ defmodule FoodFromHome.Users.UserRepo do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(user_id) do
+  def get_user!(user_id) when is_integer(user_id) do
     user_id
     |> query()
     |> Repo.one!()
@@ -57,13 +57,13 @@ defmodule FoodFromHome.Users.UserRepo do
       nil
 
   """
-  def get_user(user_id) do
+  def get_user(user_id) when is_integer(user_id) do
     user_id
     |> query()
     |> Repo.one()
   end
 
-  defp query(user_id) do
+  defp query(user_id) when is_integer(user_id) do
     from user in User,
       join: seller in assoc(user, :seller),
       where:

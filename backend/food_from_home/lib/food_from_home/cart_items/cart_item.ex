@@ -40,7 +40,7 @@ defmodule FoodFromHome.CartItems.CartItem do
            data: %CartItem{food_menu_id: food_menu_id, count: required_food_menu_count}
          }
        ) do
-    %FoodMenu{remaining_quantity: food_menu_remaining_quantity} = FoodMenus.get!(food_menu_id)
+    %FoodMenu{remaining_quantity: food_menu_remaining_quantity} = FoodMenus.get_food_menu!(food_menu_id)
 
     if food_menu_remaining_quantity - required_food_menu_count >= 0 do
       changeset
