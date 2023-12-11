@@ -1,6 +1,6 @@
 defmodule FoodFromHome.Sellers.Finders.SellersWithUserInfo do
   @moduledoc """
-  Lists sellers along with user info based on filters
+  Finder to list sellers along with user info based on filters
   """
   import Ecto.Query, warn: false
 

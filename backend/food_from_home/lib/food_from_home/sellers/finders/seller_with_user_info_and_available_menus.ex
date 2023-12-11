@@ -1,6 +1,6 @@
-defmodule FoodFromHome.Sellers.Finders.SellerWithUserInfoAndActiveMenus do
+defmodule FoodFromHome.Sellers.Finders.SellerWithUserInfoAndAvailableMenus do
   @moduledoc """
-  Gets a seller along with user details and active (valid_until >= now), available (remaining_quantity > 0) food menus
+  Finder to get a seller along with user details and available (vaild & remaining_quantity > 0) food menus
   """
   import Ecto.Query, warn: false
 
@@ -8,7 +8,7 @@ defmodule FoodFromHome.Sellers.Finders.SellerWithUserInfoAndActiveMenus do
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers.Seller
 
-  def find!(seller_id) when is_integer(seller_id) do
+  def get(seller_id) when is_integer(seller_id) do
     query =
       from seller in Seller,
         join: seller_user in assoc(seller, :seller_user),
@@ -23,6 +23,6 @@ defmodule FoodFromHome.Sellers.Finders.SellerWithUserInfoAndActiveMenus do
             )
         ]
 
-    Repo.one!(query)
+    Repo.one(query)
   end
 end

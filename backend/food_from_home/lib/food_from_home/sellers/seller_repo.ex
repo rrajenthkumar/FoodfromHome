@@ -14,14 +14,14 @@ defmodule FoodFromHome.Sellers.SellerRepo do
 
   ## Examples
 
-      iex> get(123)
+      iex> get_seller(123)
       %Seller{}
 
-      iex> get(456)
+      iex> get_seller(456)
       nil
 
   """
-  def get(seller_id), do: Repo.get(Seller, seller_id)
+  def get_seller(seller_id), do: Repo.get(Seller, seller_id)
 
   @doc """
   Gets a single seller.
@@ -30,12 +30,12 @@ defmodule FoodFromHome.Sellers.SellerRepo do
 
   ## Examples
 
-      iex> get!(123)
+      iex> get_seller!(123)
       %Seller{}
 
-      iex> get!(456)
+      iex> get_seller!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get!(seller_id), do: Repo.get!(Seller, seller_id)
+  def get_seller!(seller_id), do: Repo.get!(Seller, seller_id)
 end

@@ -18,7 +18,7 @@ defmodule FoodFromHomeWeb.ReviewController do
   def index(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{
         "seller_id" => seller_id
       }) do
-    case Sellers.get(seller_id) do
+    case Sellers.get_seller(seller_id) do
       %Seller{} = seller ->
         filters =
           conn

@@ -1,4 +1,8 @@
 defmodule FoodFromHome.Sellers.Seller do
+  @moduledoc """
+  ## Seller schema
+  When an user is of type **:seller** an associated seller record is created with seller specific details.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,11 +10,12 @@ defmodule FoodFromHome.Sellers.Seller do
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Users.User
 
-  @required_seller_keys [:introduction, :tax_id]
-  @allowed_create_seller_keys [:illustration, :introduction, :tax_id]
-  @allowed_update_seller_keys [:illustration, :introduction]
+  @allowed_create_seller_keys [:nickname, :illustration, :introduction, :tax_id]
+  @allowed_update_seller_keys [:nickname, :illustration, :introduction]
+  @required_seller_keys [:nickname, :introduction, :tax_id]
 
   schema "sellers" do
+    field :nickname, :string
     field :illustration, :binary, default: nil
     field :introduction, :string
     field :tax_id, :string

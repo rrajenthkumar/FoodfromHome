@@ -97,7 +97,16 @@ defmodule FoodFromHomeWeb.FoodMenuController do
   end
 
   defp seller_id_belongs_to_current_user?(_current_user = %User{id: current_user_id}, seller_id) do
-    %Seller{seller_user_id: seller_user_id} = Sellers.get!(seller_id)
-    seller_user_id === current_user_id
+    case Sellers.get_seller(seller_id) do
+      %Seller{seller_user_id: seller_user_id} ->
+        seller_user_id === current_user_id
+
+      nil ->
+        ErrorHandler.handle_error(
+          conn,
+          :not_found,
+          "Seller not found"
+        )
+    end
   end
 end

@@ -23,7 +23,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   def create(seller_id, attrs) when is_integer(seller_id) and is_map(attrs) do
     seller_id
-    |> Sellers.get!()
+    |> Sellers.get_seller!()
     |> Ecto.build_assoc(:food_menus, attrs)
     |> create_change()
     |> Repo.insert()

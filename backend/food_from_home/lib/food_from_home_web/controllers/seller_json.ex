@@ -12,33 +12,25 @@ defmodule FoodFromHomeWeb.SellerJSON do
   end
 
   @doc """
-  Renders a single seller with user and food menu details if available.
+  Renders a single seller with user and available food menu details.
   """
   def show(%{seller: seller}) do
     %{data: data(seller)}
   end
 
-  defp data(%Seller{seller_user: %User{} = seller_user, food_menus: food_menus} = seller)
-       when is_list(food_menus) do
+  defp data(seller = %Seller{seller_user: %User{} = seller_user, food_menus: food_menus}) do
     %{
       id: seller.id,
+      nickname: seller.nickname,
       illustration: seller.illustration,
       introduction: seller.introduction,
-      user: data(seller_user),
-      food_menus: for(food_menu <- food_menus, do: limited_data(food_menu))
+      tax_id: seller.tax_id,
+      seller_user: data(seller_user),
+      available_food_menus: for(food_menu <- food_menus, do: data(food_menu))
     }
   end
 
-  # To show seller after updation of fields
-  defp data(%Seller{} = seller) do
-    %{
-      id: seller.id,
-      illustration: seller.illustration,
-      introduction: seller.introduction
-    }
-  end
-
-  defp data(%User{} = seller_user) do
+  defp data(seller_user = %User{}) do
     %{
       id: seller_user.id,
       address: data(seller_user.address),
@@ -48,6 +40,16 @@ defmodule FoodFromHomeWeb.SellerJSON do
       gender: seller_user.gender,
       last_name: seller_user.last_name,
       profile_image: seller_user.profile_image
+    }
+  end
+
+  defp data(%FoodMenu{} = food_menu) do
+    %{
+      id: food_menu.id,
+      menu_illustration: food_menu.menu_illustration,
+      name: food_menu.name,
+      price: food_menu.price,
+      rebate: food_menu.rebate
     }
   end
 
@@ -64,29 +66,9 @@ defmodule FoodFromHomeWeb.SellerJSON do
   defp limited_data(%Seller{} = seller) do
     %{
       id: seller.id,
+      nickname: seller.nickname,
       illustration: seller.illustration,
-      introduction: seller.introduction,
-      user: limited_data(seller.seller_user)
-    }
-  end
-
-  defp limited_data(%User{} = seller_user) do
-    %{
-      id: seller_user.id,
-      first_name: seller_user.first_name,
-      gender: seller_user.gender,
-      last_name: seller_user.last_name,
-      profile_image: seller_user.profile_image
-    }
-  end
-
-  defp limited_data(%FoodMenu{} = food_menu) do
-    %{
-      id: food_menu.id,
-      menu_illustration: food_menu.menu_illustration,
-      name: food_menu.name,
-      price: food_menu.price,
-      rebate: food_menu.rebate
+      introduction: seller.introduction
     }
   end
 end

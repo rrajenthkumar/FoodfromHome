@@ -13,7 +13,7 @@ defmodule FoodFromHome.Orders.Services.IsOrderRelatedToUser do
   Returns a boolean result
   """
   def check?(%Order{seller_id: order_seller_id}, user = %User{user_type: :seller}) do
-    %Seller{id: user_seller_id} = Sellers.find_seller_from_user!(user)
+    %Seller{id: user_seller_id} = Sellers.get_seller_from_user!(user)
     order_seller_id === user_seller_id
   end
 

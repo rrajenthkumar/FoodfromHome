@@ -153,7 +153,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert seller.tax_id == "xyz12345678"
 
       assert UserRepo.get!(user.id) == user
-      assert Sellers.get!(seller.id) == seller
+      assert Sellers.get_seller!(seller.id) == seller
     end
 
     test "with invalid user data returns error changeset" do

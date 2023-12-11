@@ -47,7 +47,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
   """
 
   def list(user = %User{user_type: :seller}, filters) when is_list(filters) do
-    %Seller{id: seller_id} = Sellers.find_seller_from_user!(user)
+    %Seller{id: seller_id} = Sellers.get_seller_from_user!(user)
 
     query =
       from(order in Order,
