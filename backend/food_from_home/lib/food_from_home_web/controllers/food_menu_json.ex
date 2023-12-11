@@ -1,6 +1,7 @@
 defmodule FoodFromHomeWeb.FoodMenuJSON do
   alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
+  alias FoodFromHome.FoodMenus.FoodMenu.Rebate
 
   @doc """
   Renders a list of food menus with limited details.
@@ -39,7 +40,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
       rebate: data(food_menu.rebate),
       preparation_time_in_minutes: food_menu.preparation_time_in_minutes,
       has_associated_cart_items?: FoodMenus.has_associated_cart_items?(food_menu),
-      remaining_quantity: remaining_quantity
+      remaining_quantity: food_menu.remaining_quantity
     }
   end
 
