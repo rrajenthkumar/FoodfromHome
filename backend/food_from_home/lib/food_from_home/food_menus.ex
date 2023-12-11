@@ -1,6 +1,7 @@
 defmodule FoodFromHome.FoodMenus do
   @moduledoc """
   The FoodMenus context.
+  Interface to all FoodMenu related methods for other contexts.
   """
   alias FoodFromHome.FoodMenus.FoodMenuRepo
 

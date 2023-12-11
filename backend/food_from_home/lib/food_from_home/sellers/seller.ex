@@ -1,7 +1,7 @@
 defmodule FoodFromHome.Sellers.Seller do
   @moduledoc """
-  ## Seller schema
-  When an user is of type **:seller** an associated seller record is created with seller specific details.
+  The Seller schema
+  When an user is of type :seller an associated seller record is created with seller specific details.
   """
   use Ecto.Schema
   import Ecto.Changeset
@@ -27,7 +27,9 @@ defmodule FoodFromHome.Sellers.Seller do
     timestamps()
   end
 
-  @doc false
+  @doc """
+  Changeset for a new seller record creation
+  """
   def create_changeset(seller, attrs) do
     seller
     |> cast(attrs, @allowed_create_seller_keys)
@@ -37,7 +39,9 @@ defmodule FoodFromHome.Sellers.Seller do
     |> foreign_key_constraint(:seller_user_id)
   end
 
-  @doc false
+  @doc """
+  Changeset for seller record updation
+  """
   def update_changeset(seller, attrs) do
     seller
     |> cast(attrs, @allowed_update_seller_keys)

@@ -1,6 +1,6 @@
 defmodule FoodFromHome.Sellers do
   @moduledoc """
-  The Seller context.
+  The Sellers context.
   Interface to all Seller related methods for other contexts.
   """
   alias FoodFromHome.Sellers.Finders.SellersWithUserInfo

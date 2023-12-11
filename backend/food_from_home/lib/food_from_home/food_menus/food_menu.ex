@@ -1,17 +1,21 @@
 defmodule FoodFromHome.FoodMenus.FoodMenu do
-  @moduledoc false
+  @moduledoc """
+  The FoodMenu schema
+  Every seller can have multiple foodmenus that he can sell.
+  Every foodmenu is available for sale until the 'valid_until' date/time and until remaining_quantity is > 0.
+  Every time a foodmenu is sold 'remaining_quantity' value is decremented.
+  """
   use Ecto.Schema
   import Ecto.Changeset
-  import Ecto.Query, warn: false
 
   alias FoodFromHome.CartItems.CartItem
+  alias FoodFromHome.FoodMenus.Finders.AssociatedCartitemsCount
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.FoodMenus.FoodMenu.Rebate
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers.Seller
 
   @allowed_create_keys [
-    :seller_id,
     :name,
     :description,
     :menu_illustration,
@@ -24,7 +28,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     :remaining_quantity
   ]
   @required_keys [
-    :seller_id,
     :name,
     :description,
     :menu_illustration,
@@ -70,16 +73,16 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   end
 
   @doc """
-  Changeset for new food menu record creation
+  Changeset for a new food menu record creation
   """
   def create_changeset(food_menu, attrs) do
     food_menu
     |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
-    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint,
-      name: :unique_food_menu_name_per_seller_per_valid_until_index,
+    |> unique_constraint(:unique_food_menu_name_per_seller_per_validity_date_constraint,
+      name: :unique_food_menu_name_per_seller_per_validity_date_index,
       message:
-        "Another active food menu of the same name exists for this seller for the same validity"
+        "Another food menu of the same name exists for this seller for the same validity date"
     )
     |> foreign_key_constraint(:seller_id)
     |> cast_embed(:rebate, with: &rebate_changeset/2)
@@ -93,9 +96,9 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_keys)
     |> validate_no_associated_cart_items()
-    |> unique_constraint(:unique_food_menu_name_per_seller_per_valid_until_constraint,
-      name: :unique_food_menu_name_per_seller_per_valid_until_index,
-      message: "Another food menu of the same name exists for this seller for the same validity"
+    |> unique_constraint(:unique_food_menu_name_per_seller_per_validity_date_constraint,
+      name: :unique_food_menu_name_per_seller_per_validity_date_index,
+      message: "Another food menu of the same name exists for this seller for the same validity date"
     )
     |> foreign_key_constraint(:seller_id)
     |> cast_embed(:rebate, with: &rebate_changeset/2)
@@ -113,13 +116,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   defp validate_no_associated_cart_items(
          changeset = %Ecto.Changeset{data: %FoodMenu{} = food_menu}
        ) do
-    query =
-      from cart_item in CartItem,
-        where: cart_item.food_menu_id == ^food_menu.id
-
-    cart_item_count = Repo.aggregate(query, :count, :id)
-
-    if cart_item_count > 0 do
+    if AssociatedCartitemsCount.get(food_menu) > 0 do
       add_error(changeset, :base, "Cannot update a food menu with an associated cart item.")
     else
       changeset

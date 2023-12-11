@@ -1,5 +1,8 @@
 defmodule FoodFromHome.Users.User do
-  @moduledoc false
+  @moduledoc """
+  The User schema
+  When a new user registers an User is created.
+  """
   use Ecto.Schema
 
   import Ecto.Changeset
