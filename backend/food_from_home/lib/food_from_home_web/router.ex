@@ -33,6 +33,7 @@ defmodule FoodFromHomeWeb.Router do
 
           # Lists sellers with limited fields (along with average rating and user info) based on query parameters (to search based on location, text etc) for current buyer user
           get "/", SellerController, :index
+
           # Gets a seller (along with average rating, user info and available food menus) for current buyer user
           get "/:seller_id", SellerController, :show
 
@@ -77,6 +78,7 @@ defmodule FoodFromHomeWeb.Router do
 
           # Lists cart items from an order linked to current buyer, seller or deliverer user
           get "/:order_id/cart_items", CartItemController, :index
+
           # Gets a cart item with food menu preload from an order linked to current buyer, seller or deliverer user
           get "/:order_id/cart_items/:cart_item_id", CartItemController, :index
 
@@ -95,13 +97,16 @@ defmodule FoodFromHomeWeb.Router do
 
             # Creates a cart item for an existing order linked to current buyer user. Order must be of 'open' status.
             post "/:order_id/cart_items", CartItemController, :create
+
             # Updates a cart item for an order linked to current buyer user. Order must be of 'open' status.
             put "/:order_id/cart_items/:cart_item_id", CartItemController, :update
+
             # Deletes a cart item for an order linked to current buyer user. Order must be of 'open' status.
             delete "/:order_id/cart_items/:cart_item_id", CartItemController, :delete
 
             # To create a review for an order linked to current buyer user. Order must be in 'delivered' status.
             post "/:order_id/review", ReviewController, :create
+
             # To delete a review for an order linked to current buyer user. Delivery should not be more than a month old.
             # Once reply has been added the review cannot be deleted.
             delete "/:order_id/review", ReviewController, :delete
