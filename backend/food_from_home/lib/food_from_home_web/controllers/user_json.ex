@@ -21,6 +21,7 @@ defmodule FoodFromHomeWeb.UserJSON do
     %{
       id: user.id,
       address: data(user.address),
+      geoposition: data(user.geoposition),
       phone_number: user.phone_number,
       email_id: user.email_id,
       first_name: user.first_name,
@@ -36,6 +37,7 @@ defmodule FoodFromHomeWeb.UserJSON do
     %{
       id: user.id,
       address: data(user.address),
+      geoposition: data(user.geoposition),
       phone_number: user.phone_number,
       email_id: user.email_id,
       first_name: user.first_name,
@@ -53,6 +55,13 @@ defmodule FoodFromHomeWeb.UserJSON do
       city: address.city,
       country: address.country,
       postal_code: address.postal_code
+    }
+  end
+
+  defp data(geoposition = %Geo.Point{}) do
+    %{
+      latitude: geoposition.coordinates.latitude,
+      longitude: geoposition.coordinates.longitude
     }
   end
 

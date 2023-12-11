@@ -2,14 +2,19 @@ defmodule FoodFromHomeWeb.UserController do
   use FoodFromHomeWeb, :controller
 
   alias FoodFromHome.Users
+  alias FoodFromHome.Users.User.Address
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
+  alias FoodFromHome.GoogleGeocoding
   alias FoodFromHomeWeb.ErrorHandler
 
   action_fallback FoodFromHomeWeb.FallbackController
 
   def create(conn, %{"user" => attrs}) do
-    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+    attrs =
+      attrs
+      |> Utils.convert_map_string_keys_to_atoms()
+      |> add_geoposition()
 
     with {:ok, %User{} = user} <- Users.create(attrs) do
       conn
@@ -25,6 +30,36 @@ defmodule FoodFromHomeWeb.UserController do
         case Users.get(user_id) do
           %User{} = user ->
             render(conn, :show, user: user)
+
+          nil ->
+            ErrorHandler.handle_error(conn, :not_found, "User not found")
+        end
+
+      false ->
+        ErrorHandler.handle_error(
+          conn,
+          :forbidden,
+          "User is not same as the current user"
+        )
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{
+        "user_id" => user_id,
+        "user" => %{"address" => _address} = attrs
+      }) do
+    case user_id === current_user_id do
+      true ->
+        case Users.get(user_id) do
+          %User{} = user ->
+            attrs =
+              attrs
+              |> Utils.convert_map_string_keys_to_atoms()
+              |> add_geoposition()
+
+            with {:ok, %User{} = updated_user} <- Users.update(user, attrs) do
+              render(conn, :show, user: updated_user)
+            end
 
           nil ->
             ErrorHandler.handle_error(conn, :not_found, "User not found")
@@ -88,5 +123,16 @@ defmodule FoodFromHomeWeb.UserController do
           "User is not same as the current user"
         )
     end
+  end
+
+  defp add_geoposition(attrs) when is_map(attrs) do
+    address = Map.get(attrs, :address)
+
+    geoposition =
+      Address
+      |> struct!(address)
+      |> GoogleGeocoding.get_position()
+
+    Map.put(attrs, :geoposition, geoposition)
   end
 end

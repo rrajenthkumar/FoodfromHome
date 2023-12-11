@@ -6,6 +6,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Users.User
   alias FoodFromHome.Deliveries.Delivery
+  alias Geo.PostGIS.Geometry
 
   @allowed_create_delivery_keys [:deliverer_user_id, :current_position]
   @required_create_delivery_keys [:deliverer_user_id, :current_position]
@@ -18,7 +19,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
 
   schema "deliveries" do
     field :picked_up_at, :utc_datetime, default: nil
-    field :current_position, Geo.PostGIS.Geometry
+    field :current_position, Geometry
     field :delivered_at, :utc_datetime, default: nil
     field :distance_travelled_in_kms, :decimal, default: nil
 

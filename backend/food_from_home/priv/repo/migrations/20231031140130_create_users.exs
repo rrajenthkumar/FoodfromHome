@@ -11,6 +11,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateUsers do
       add :gender, :string
       add :profile_image, :binary, default: nil
       add :user_type, :string
+      add :geoposition, :geometry
       add :deleted, :boolean, default: false
 
       timestamps()

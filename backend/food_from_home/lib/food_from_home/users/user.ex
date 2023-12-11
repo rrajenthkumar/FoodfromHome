@@ -8,6 +8,7 @@ defmodule FoodFromHome.Users.User do
   alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
+  alias Geo.PostGIS.Geometry
 
   @allowed_create_user_keys [
     :email_id,
@@ -16,7 +17,8 @@ defmodule FoodFromHome.Users.User do
     :gender,
     :phone_number,
     :user_type,
-    :profile_image
+    :profile_image,
+    :geoposition
   ]
   @allowed_update_user_keys [
     :email_id,
@@ -24,7 +26,8 @@ defmodule FoodFromHome.Users.User do
     :last_name,
     :gender,
     :phone_number,
-    :profile_image
+    :profile_image,
+    :geoposition
   ]
   @required_keys [
     :email_id,
@@ -32,7 +35,8 @@ defmodule FoodFromHome.Users.User do
     :last_name,
     :gender,
     :phone_number,
-    :user_type
+    :user_type,
+    :geoposition
   ]
   @address_keys [:door_number, :street, :city, :country, :postal_code]
 
@@ -44,6 +48,7 @@ defmodule FoodFromHome.Users.User do
     field :phone_number, :string
     field :user_type, Ecto.Enum, values: [:buyer, :seller, :deliverer]
     field :profile_image, :binary, default: nil
+    field :geoposition, Geometry
     field :deleted, :boolean, default: false
 
     embeds_one :address, Address, on_replace: :update do
