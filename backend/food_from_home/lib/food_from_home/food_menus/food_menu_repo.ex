@@ -146,7 +146,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       %Ecto.Changeset{data: %FoodMenu{}}
 
   """
-  def create_change(%FoodMenu{} = food_menu, attrs = %{} \\ %{}) do
+  def create_change(food_menu = %FoodMenu{}, attrs = %{} \\ %{}) do
     FoodMenu.create_changeset(food_menu, attrs)
   end
 
@@ -159,11 +159,11 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       %Ecto.Changeset{data: %FoodMenu{}}
 
   """
-  def update_change(%FoodMenu{} = food_menu, attrs = %{} \\ %{}) do
+  def update_change(food_menu = %FoodMenu{}, attrs = %{} \\ %{}) do
     FoodMenu.update_changeset(food_menu, attrs)
   end
 
-  defp no_associated_cart_items?(%FoodMenu{} = food_menu) do
+  defp no_associated_cart_items?(food_menu = %FoodMenu{}) do
     query =
       from cart_item in CartItem,
         where: cart_item.food_menu_id == ^food_menu.id

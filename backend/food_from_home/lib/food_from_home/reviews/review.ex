@@ -1,4 +1,5 @@
 defmodule FoodFromHome.Reviews.Review do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
 

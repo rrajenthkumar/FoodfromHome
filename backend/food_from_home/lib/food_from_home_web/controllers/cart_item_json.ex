@@ -17,7 +17,7 @@ defmodule FoodFromHomeWeb.CartItemJSON do
   end
 
   # When there is a food_menu preload
-  defp data(%CartItem{food_menu: %FoodMenu{}} = cart_item) do
+  defp data(cart_item = %CartItem{food_menu: %FoodMenu{}}) do
     %{
       id: cart_item.id,
       count: cart_item.count,
@@ -26,7 +26,7 @@ defmodule FoodFromHomeWeb.CartItemJSON do
     }
   end
 
-  defp data(%CartItem{} = cart_item) do
+  defp data(cart_item = %CartItem{}) do
     %{
       id: cart_item.id,
       count: cart_item.count,
@@ -34,7 +34,7 @@ defmodule FoodFromHomeWeb.CartItemJSON do
     }
   end
 
-  defp limited_data(%FoodMenu{} = food_menu) do
+  defp limited_data(food_menu = %FoodMenu{}) do
     %{
       id: food_menu.id,
       name: food_menu.name,

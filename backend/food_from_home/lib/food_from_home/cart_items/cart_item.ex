@@ -1,4 +1,5 @@
 defmodule FoodFromHome.CartItems.CartItem do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
 

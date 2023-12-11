@@ -1,4 +1,5 @@
 defmodule FoodFromHome.Reviews.ReviewRepo do
+  @moduledoc false
   import Ecto.Query, warn: false
 
   alias FoodFromHome.Orders.Order
@@ -67,7 +68,7 @@ defmodule FoodFromHome.Reviews.ReviewRepo do
       %Ecto.Changeset{data: %Review{}}
 
   """
-  def change(%Review{} = review, attrs \\ %{}) do
+  def change(review = %Review{}, attrs \\ %{}) do
     Review.changeset(review, attrs)
   end
 end

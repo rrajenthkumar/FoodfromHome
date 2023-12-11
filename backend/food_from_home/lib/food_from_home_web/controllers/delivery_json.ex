@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.DeliveryJSON do
     %{data: data(delivery)}
   end
 
-  defp data(%Delivery{} = delivery) do
+  defp data(delivery = %Delivery{}) do
     %{
       id: delivery.id,
       order_id: delivery.order_id,

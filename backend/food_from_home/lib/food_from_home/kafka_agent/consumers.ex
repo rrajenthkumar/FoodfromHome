@@ -3,8 +3,7 @@ defmodule FoodFromHome.KafkaAgent.Consumers do
   All Kafka consumer functions
   """
   def handle_messages(messages) do
-    for %{key: key, value: value} = message <- messages do
-      IO.inspect(message)
+    for %{key: key, value: value} = _message <- messages do
       IO.puts("#{key}: #{value}")
     end
 

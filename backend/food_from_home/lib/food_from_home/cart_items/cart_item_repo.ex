@@ -1,4 +1,5 @@
 defmodule FoodFromHome.CartItems.CartItemRepo do
+  @moduledoc false
   import Ecto.Query, warn: false
 
   alias FoodFromHome.CartItems.CartItem

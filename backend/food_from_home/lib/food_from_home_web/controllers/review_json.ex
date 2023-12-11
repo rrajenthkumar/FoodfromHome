@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.ReviewJSON do
     %{data: data(review)}
   end
 
-  defp data(%Review{} = review) do
+  defp data(review = %Review{}) do
     %{
       id: review.id,
       rating: review.rating,

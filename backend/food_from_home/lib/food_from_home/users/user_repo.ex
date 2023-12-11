@@ -1,4 +1,5 @@
 defmodule FoodFromHome.Users.UserRepo do
+  @moduledoc false
   import Ecto.Query, warn: false
 
   alias FoodFromHome.Repo

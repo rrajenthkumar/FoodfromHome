@@ -1,4 +1,5 @@
 defmodule FoodFromHome.Deliveries.DeliveryRepo do
+  @moduledoc false
   import Ecto.Query, warn: false
 
   alias FoodFromHome.Deliveries.Delivery
@@ -73,7 +74,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       %Ecto.Changeset{data: %Delivery{}}
 
   """
-  def change_create(%Delivery{} = delivery, attrs = %{} \\ %{}) do
+  def change_create(delivery = %Delivery{}, attrs = %{} \\ %{}) do
     Delivery.create_changeset(delivery, attrs)
   end
 
@@ -86,7 +87,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       %Ecto.Changeset{data: %Delivery{}}
 
   """
-  def change_update(%Delivery{} = delivery, attrs = %{} \\ %{}) do
+  def change_update(delivery = %Delivery{}, attrs = %{} \\ %{}) do
     Delivery.update_changeset(delivery, attrs)
   end
 end

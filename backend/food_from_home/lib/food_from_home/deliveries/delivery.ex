@@ -1,4 +1,5 @@
 defmodule FoodFromHome.Deliveries.Delivery do
+  @moduledoc false
   use Ecto.Schema
 
   import Ecto.Changeset

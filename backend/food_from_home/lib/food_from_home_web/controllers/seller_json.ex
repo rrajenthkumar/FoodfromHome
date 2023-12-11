@@ -46,7 +46,7 @@ defmodule FoodFromHomeWeb.SellerJSON do
     }
   end
 
-  defp data(%FoodMenu{} = food_menu) do
+  defp data(food_menu = %FoodMenu{}) do
     %{
       food_menu_id: food_menu.id,
       menu_illustration: food_menu.menu_illustration,

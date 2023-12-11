@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
     %{data: data(food_menu)}
   end
 
-  defp limited_data(%FoodMenu{} = food_menu) do
+  defp limited_data(food_menu = %FoodMenu{}) do
     %{
       id: food_menu.id,
       menu_illustration: food_menu.menu_illustration,
@@ -25,7 +25,7 @@ defmodule FoodFromHomeWeb.FoodMenuJSON do
     }
   end
 
-  defp data(%FoodMenu{} = food_menu) do
+  defp data(food_menu = %FoodMenu{}) do
     %{
       id: food_menu.id,
       seller_id: food_menu.seller_id,

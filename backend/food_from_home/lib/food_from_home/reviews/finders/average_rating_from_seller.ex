@@ -1,4 +1,5 @@
 defmodule FoodFromHome.Reviews.Finders.AverageRatingFromSeller do
+  @moduledoc false
   import Ecto.Query, warn: false
 
   alias FoodFromHome.Reviews.Review

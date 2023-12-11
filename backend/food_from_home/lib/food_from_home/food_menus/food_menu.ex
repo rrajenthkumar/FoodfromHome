@@ -1,4 +1,5 @@
 defmodule FoodFromHome.FoodMenus.FoodMenu do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
