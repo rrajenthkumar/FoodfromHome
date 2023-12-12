@@ -16,6 +16,9 @@ defmodule FoodFromHome.Reviews.Finders.AverageRatingFromSeller do
 
     query
     |> Repo.one()
-    |> Float.round()
+    |> case do
+      nil -> nil
+      average_rating -> Float.round(average_rating)
+    end
   end
 end

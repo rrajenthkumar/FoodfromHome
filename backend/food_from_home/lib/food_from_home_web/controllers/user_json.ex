@@ -67,7 +67,7 @@ defmodule FoodFromHomeWeb.UserJSON do
 
   defp data(seller = %Seller{}) do
     %{
-      id: seller.id,
+      seller_id: seller.id,
       illustration: seller.illustration,
       introduction: seller.introduction,
       tax_id: seller.tax_id
