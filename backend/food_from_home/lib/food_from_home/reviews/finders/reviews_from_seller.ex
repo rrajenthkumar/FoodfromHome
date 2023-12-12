@@ -1,6 +1,6 @@
 defmodule FoodFromHome.Reviews.Finders.ReviewsFromSeller do
   @moduledoc """
-  Finder to list deliveries from a seller with applicable filters
+  To list deliveries from a seller with applicable filters
   """
   import Ecto.Query, warn: false
 

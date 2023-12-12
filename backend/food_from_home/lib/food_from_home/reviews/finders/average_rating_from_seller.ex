@@ -1,10 +1,12 @@
 defmodule FoodFromHome.Reviews.Finders.AverageRatingFromSeller do
-  @moduledoc false
+  @moduledoc """
+  To find the average rating for a seller from the reviews of his orders
+  """
   import Ecto.Query, warn: false
 
+  alias FoodFromHome.Repo
   alias FoodFromHome.Reviews.Review
   alias FoodFromHome.Sellers.Seller
-  alias FoodFromHome.Repo
 
   def get(%Seller{id: seller_id}) do
     query =

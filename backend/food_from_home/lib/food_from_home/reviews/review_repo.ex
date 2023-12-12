@@ -18,7 +18,7 @@ defmodule FoodFromHome.Reviews.ReviewRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(order = %Order{}, attrs \\ %{}) do
+  def create(order = %Order{}, attrs) when is_map(attrs) do
     order
     |> Ecto.build_assoc(:review, attrs)
     |> change()
@@ -37,7 +37,7 @@ defmodule FoodFromHome.Reviews.ReviewRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(review = %Review{}, attrs) do
+  def update(review = %Review{}, attrs) when is_map(attrs) do
     review
     |> change(attrs)
     |> Repo.update()
@@ -68,7 +68,7 @@ defmodule FoodFromHome.Reviews.ReviewRepo do
       %Ecto.Changeset{data: %Review{}}
 
   """
-  def change(review = %Review{}, attrs \\ %{}) do
+  def change(review = %Review{}, attrs = %{} \\ %{}) do
     Review.changeset(review, attrs)
   end
 end

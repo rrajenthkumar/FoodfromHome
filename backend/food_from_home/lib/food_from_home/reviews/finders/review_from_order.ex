@@ -1,12 +1,13 @@
 defmodule FoodFromHome.Reviews.Finders.ReviewFromOrder do
   @moduledoc """
-  Finder to find a review from an order
+  To get a review from an order
   """
   import Ecto.Query, warn: false
 
-  alias FoodFromHome.Reviews.Review
+
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Repo
+  alias FoodFromHome.Reviews.Review
 
   @doc """
   Gets a review linked to an order.
@@ -22,7 +23,7 @@ defmodule FoodFromHome.Reviews.Finders.ReviewFromOrder do
     nil
 
   """
-  def find(%Order{id: order_id}) do
+  def get(%Order{id: order_id}) do
     query =
       from(review in Review,
         join: order in assoc(review, :order),

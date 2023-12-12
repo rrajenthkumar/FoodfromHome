@@ -1,5 +1,9 @@
 defmodule FoodFromHome.Reviews.Review do
-  @moduledoc false
+  @moduledoc """
+  The Review schema
+  After an order is delivered a buyer can add a review to the order and a seller can add a reply to a review.
+  A Review cannot be updated or deleted after the seller replies to a review or if the review is older than 3 months.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -39,7 +43,7 @@ defmodule FoodFromHome.Reviews.Review do
         add_error(
           changeset,
           :rating,
-          "Rating must have one of the following values : 1, 2, 3, 4, 5."
+          "Rating must have one of the following values : 1, 2, 3, 4, 5"
         )
     end
   end
