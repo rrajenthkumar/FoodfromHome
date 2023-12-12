@@ -19,102 +19,73 @@ defmodule FoodFromHomeWeb.UserController do
     end
   end
 
-  def show(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{"user_id" => user_id}) do
-    case user_id === current_user_id do
-      true ->
-        case Users.get_user(user_id) do
-          %User{} = user ->
-            render(conn, :show, user: user)
-
-          nil ->
-            ErrorHandler.handle_error(conn, :not_found, "User not found")
-        end
-
-      false ->
-        ErrorHandler.handle_error(
-          conn,
-          :forbidden,
-          "User is not the current user"
-        )
+  def show(conn, %{"user_id" => user_id}) do
+    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+      render(conn, :show, user: user)
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{
+  def update(conn, %{
         "user_id" => user_id,
         "user" => %{"address" => _address} = attrs
       }) do
-    case user_id === current_user_id do
-      true ->
-        case Users.get_user(user_id) do
-          %User{} = user ->
-            attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-            with {:ok, %User{} = updated_user} <-
-                   Users.get_updated_geoposition_and_update_user(user, attrs) do
-              render(conn, :show, user: updated_user)
-            end
-
-          nil ->
-            ErrorHandler.handle_error(conn, :not_found, "User not found")
-        end
-
-      false ->
-        ErrorHandler.handle_error(
-          conn,
-          :forbidden,
-          "User is not the current user"
-        )
+      with {:ok, %User{} = updated_user} <-
+             Users.get_updated_geoposition_and_update_user(user, attrs) do
+        render(conn, :show, user: updated_user)
+      end
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{
+  def update(conn, %{
         "user_id" => user_id,
         "user" => attrs
       }) do
-    case user_id === current_user_id do
-      true ->
-        case Users.get_user(user_id) do
-          %User{} = user ->
-            attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-            with {:ok, %User{} = updated_user} <- Users.update_user(user, attrs) do
-              render(conn, :show, user: updated_user)
-            end
-
-          nil ->
-            ErrorHandler.handle_error(conn, :not_found, "User not found")
-        end
-
-      false ->
-        ErrorHandler.handle_error(
-          conn,
-          :forbidden,
-          "User is not the current user"
-        )
+      with {:ok, %User{} = updated_user} <- Users.update_user(user, attrs) do
+        render(conn, :show, user: updated_user)
+      end
     end
   end
 
-  def delete(conn = %{assigns: %{current_user: %User{id: current_user_id}}}, %{
+  def delete(conn, %{
         "user_id" => user_id
       }) do
-    case user_id === current_user_id do
-      true ->
-        case Users.get_user(user_id) do
-          %User{} = user ->
-            with {:ok, %User{} = _soft_deleted_user} <- Users.soft_delete_user(user) do
-              send_resp(conn, :no_content, "")
-            end
+    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+      with {:ok, %User{} = _soft_deleted_user} <- Users.soft_delete_user(user) do
+        send_resp(conn, :no_content, "")
+      end
+    end
+  end
 
-          nil ->
-            ErrorHandler.handle_error(conn, :not_found, "User not found")
-        end
+  defp preliminary_check_result(
+         conn = %{assigns: %{current_user: %User{} = current_user}},
+         user_id
+       )
+       when is_integer(user_id) do
+    user_result = Users.get_user(user_id)
 
-      false ->
+    cond do
+      is_nil(user_result) ->
+        ErrorHandler.handle_error(conn, :not_found, "User not found")
+
+      user_is_not_current_user?(user_result, current_user) ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
           "User is not the current user"
         )
+
+      true ->
+        {:ok, user_result}
     end
+  end
+
+  defp user_is_not_current_user?(%User{id: current_user_id}, %User{id: user_id}) do
+    current_user_id !== user_id
   end
 end
