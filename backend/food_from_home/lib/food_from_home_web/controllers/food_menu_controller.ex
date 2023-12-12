@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "food_menu" => attrs,
         "seller_id" => seller_id
       }) do
-    with {:ok, seller} <- preliminary_check_result(conn, seller_id) do
+    with {:ok, %Seller{} = seller} <- preliminary_check_result(conn, seller_id) do
       attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
       with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create_food_menu(seller, attrs) do
@@ -33,7 +33,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
   def index(conn, %{
         "seller_id" => seller_id
       }) do
-    with {:ok, seller} <- preliminary_check_result(conn, seller_id) do
+    with {:ok, %Seller{} = seller} <- preliminary_check_result(conn, seller_id) do
       filters =
         conn
         |> fetch_query_params()
@@ -49,7 +49,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
-    with {:ok, food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
+    with {:ok, %FoodMenu{} = food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
       render(conn, :show, food_menu: food_menu)
     end
   end
@@ -59,7 +59,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
-    with {:ok, food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
+    with {:ok, %FoodMenu{} = food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
       attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
       with {:ok, %FoodMenu{} = food_menu} <-
@@ -73,7 +73,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
-    with {:ok, food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
+    with {:ok, %FoodMenu{} = food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
       with {:ok, %FoodMenu{}} <- FoodMenus.delete_food_menu(food_menu) do
         send_resp(conn, :no_content, "")
       end
@@ -191,12 +191,12 @@ defmodule FoodFromHomeWeb.FoodMenuController do
   defp seller_does_not_belong_to_current_user?(%User{id: current_user_id}, %Seller{
          seller_user_id: seller_user_id
        }) do
-    !seller_user_id === current_user_id
+    current_user_id !== seller_user_id
   end
 
   defp food_menu_does_not_belong_to_seller?(%Seller{id: seller_id}, %FoodMenu{
          seller_id: food_menu_seller_id
        }) do
-    !seller_id === food_menu_seller_id
+    seller_id !== food_menu_seller_id
   end
 end
