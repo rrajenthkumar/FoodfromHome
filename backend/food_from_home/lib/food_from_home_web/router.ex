@@ -36,9 +36,6 @@ defmodule FoodFromHomeWeb.Router do
 
           # Gets a seller (along with average rating, user info and available food menus) for current buyer user
           get "/:seller_id", SellerController, :show
-
-          # Lists reviews of a seller based on query parameters with limited fields for current buyer user
-          get "/:seller_id/reviews", ReviewController, :index
         end
 
         scope "/" do
@@ -61,6 +58,9 @@ defmodule FoodFromHomeWeb.Router do
           # Gets food menu with food_menu_id for current buyer user
           # Gets only own food menu with food_menu_id for current seller user
           get "/:seller_id/food-menus/:food_menu_id", FoodMenuController, :show
+
+          # Lists reviews of a seller based on query parameters with limited fields for current seller or buyer user
+          get "/:seller_id/reviews", ReviewController, :index
         end
       end
 
@@ -107,8 +107,8 @@ defmodule FoodFromHomeWeb.Router do
             # To create a review for an order linked to current buyer user. Order must be in 'delivered' status.
             post "/:order_id/review", ReviewController, :create
 
-            # To delete a review for an order linked to current buyer user. Delivery should not be more than a month old.
-            # Once reply has been added the review cannot be deleted.
+            # To delete a review for an order linked to current buyer user.
+            # Review should not have a reply and be older than a day.
             delete "/:order_id/review", ReviewController, :delete
           end
 
@@ -118,7 +118,8 @@ defmodule FoodFromHomeWeb.Router do
             # To update the review for an order linked to current buyer or seller user.
             # A buyer can update the fields 'Stars' and 'Note'. Delivery should not be more than a month old.
             # A seller can update the field 'Reply' after the buyer has added his 'Note' and / or 'Stars'.
-            # Once reply has been added the review cannot be updated further.
+            # Once reply has been added or 1 day has passed since adding the review it cannot be updated by buyer further.
+            # Once 1 day has passed since adding the reply it cannot be updated by seller further.
             put "/:order_id/review", ReviewController, :update
           end
 

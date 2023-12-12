@@ -4,7 +4,6 @@ defmodule FoodFromHome.Reviews.Finders.ReviewFromOrder do
   """
   import Ecto.Query, warn: false
 
-
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Repo
   alias FoodFromHome.Reviews.Review
