@@ -105,10 +105,11 @@ defmodule FoodFromHomeWeb.Router do
             delete "/:order_id/cart_items/:cart_item_id", CartItemController, :delete
 
             # To create a review for an order linked to current buyer user. Order must be in 'delivered' status.
+            # Delivery date should not be more than a month old.
             post "/:order_id/review", ReviewController, :create
 
             # To delete a review for an order linked to current buyer user.
-            # Review should not have a reply and be older than a day.
+            # Review should not have a reply or be older than a day.
             delete "/:order_id/review", ReviewController, :delete
           end
 
