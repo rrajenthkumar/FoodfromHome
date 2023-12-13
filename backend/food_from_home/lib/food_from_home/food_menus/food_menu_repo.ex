@@ -4,7 +4,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   import Ecto.Query, warn: false
 
-  alias FoodFromHome.FoodMenus.Finders.AssociatedCartitems
+  alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers.Seller
@@ -113,7 +113,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   """
   def update_food_menu(food_menu = %FoodMenu{}, attrs) when is_map(attrs) do
-    case AssociatedCartitems.check?(food_menu) do
+    case FoodMenus.has_associated_cart_items?(food_menu) do
       true ->
         {:error, 403, "An associated cart item exists"}
 
@@ -138,7 +138,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   """
   def delete_food_menu(food_menu = %FoodMenu{}) do
-    case AssociatedCartitems.check?(food_menu) do
+    case FoodMenus.has_associated_cart_items?(food_menu) do
       true -> {:error, 403, "An associated cart item exists"}
       false -> Repo.delete(food_menu)
     end

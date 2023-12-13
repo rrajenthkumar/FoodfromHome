@@ -9,10 +9,11 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   import Ecto.Changeset
 
   alias FoodFromHome.CartItems.CartItem
-  alias FoodFromHome.FoodMenus.Finders.AssociatedCartitems
+  alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.FoodMenus.FoodMenu.Rebate
   alias FoodFromHome.Sellers.Seller
+  alias FoodFromHome.Utils
 
   @allowed_create_keys [
     :name,
@@ -78,6 +79,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     food_menu
     |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_create_keys)
     |> unique_constraint(:unique_food_menu_name_per_seller_per_validity_date_constraint,
       name: :unique_food_menu_name_per_seller_per_validity_date_index,
       message:
@@ -94,6 +96,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     food_menu
     |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_update_keys)
     |> validate_no_associated_cart_items()
     |> unique_constraint(:unique_food_menu_name_per_seller_per_validity_date_constraint,
       name: :unique_food_menu_name_per_seller_per_validity_date_index,
@@ -116,7 +119,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
   defp validate_no_associated_cart_items(
          changeset = %Ecto.Changeset{data: %FoodMenu{} = food_menu}
        ) do
-    if AssociatedCartitems.check?(food_menu) do
+    if FoodMenus.has_associated_cart_items?(food_menu) do
       add_error(changeset, :base, "Cannot update a food menu with an associated cart item.")
     else
       changeset

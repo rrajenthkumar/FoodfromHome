@@ -22,7 +22,7 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveryFromOrder do
     ** (Ecto.NoResultsError)
 
   """
-  def find!(%Order{id: order_id}) do
+  def get!(%Order{id: order_id}) do
     query =
       from(delivery in Delivery,
         join: order in assoc(delivery, :order),

@@ -1,5 +1,7 @@
 defmodule FoodFromHome.Users.Utils do
-  @moduledoc false
+  @moduledoc """
+  Utility functions related to User context
+  """
   alias FoodFromHome.Geocoding
   alias FoodFromHome.Users.User.Address
 

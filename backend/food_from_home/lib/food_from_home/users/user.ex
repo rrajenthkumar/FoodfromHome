@@ -12,9 +12,10 @@ defmodule FoodFromHome.Users.User do
   alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
+  alias FoodFromHome.Utils
   alias Geo.PostGIS.Geometry
 
-  @allowed_create_user_keys [
+  @allowed_create_keys [
     :email_id,
     :first_name,
     :last_name,
@@ -24,7 +25,7 @@ defmodule FoodFromHome.Users.User do
     :profile_image,
     :geoposition
   ]
-  @allowed_update_user_keys [
+  @allowed_update_keys [
     :email_id,
     :first_name,
     :last_name,
@@ -76,8 +77,9 @@ defmodule FoodFromHome.Users.User do
   """
   def create_changeset(user = %User{}, attrs = %{user_type: :seller}) do
     user
-    |> cast(attrs, @allowed_create_user_keys)
+    |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_create_keys)
     |> unique_constraint(:unique_active_user_email_constraint,
       name: :unique_active_user_email_index,
       message: "Another active user has the same email id."
@@ -89,8 +91,9 @@ defmodule FoodFromHome.Users.User do
 
   def create_changeset(user = %User{}, attrs = %{}) do
     user
-    |> cast(attrs, @allowed_create_user_keys)
+    |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_create_keys)
     |> unique_constraint(:unique_active_user_email_constraint,
       name: :unique_active_user_email_index,
       message: "Another active user has the same email id."
@@ -105,9 +108,9 @@ defmodule FoodFromHome.Users.User do
   """
   def update_changeset(user = %User{user_type: :seller}, attrs = %{}) do
     user
-    |> cast(attrs, @allowed_update_user_keys)
+    |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_keys)
-    |> validate_unallowed_fields(attrs)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_update_keys)
     |> unique_constraint(:unique_active_user_email_constraint,
       name: :unique_active_user_email_index,
       message: "Another active user has the same email id."
@@ -119,9 +122,9 @@ defmodule FoodFromHome.Users.User do
 
   def update_changeset(user = %User{}, attrs = %{}) do
     user
-    |> cast(attrs, @allowed_update_user_keys)
+    |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_keys)
-    |> validate_unallowed_fields(attrs)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_update_keys)
     |> unique_constraint(:unique_active_user_email_constraint,
       name: :unique_active_user_email_index,
       message: "Another active user has the same email id."
@@ -145,15 +148,5 @@ defmodule FoodFromHome.Users.User do
     address
     |> cast(attrs, @address_keys)
     |> validate_required(@address_keys)
-  end
-
-  defp validate_unallowed_fields(changeset, attrs) do
-    attrs_keys = Map.keys(attrs)
-    unallowed_keys = attrs_keys -- @allowed_update_user_keys
-
-    case Enum.empty?(unallowed_keys) do
-      true -> changeset
-      false -> add_error(changeset, :base, "Unallowed fields: #{unallowed_keys}")
-    end
   end
 end

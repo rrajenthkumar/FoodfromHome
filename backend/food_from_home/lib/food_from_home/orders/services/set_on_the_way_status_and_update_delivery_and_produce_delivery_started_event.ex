@@ -42,7 +42,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndUpdateDeliveryAndProd
 
   defp add_pickup_time(order = %Order{}) do
     order
-    |> Deliveries.find_delivery_from_order!()
+    |> Deliveries.get_delivery_from_order!()
     |> Deliveries.add_pickup_time()
   end
 end

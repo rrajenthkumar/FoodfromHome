@@ -4,7 +4,6 @@ defmodule FoodFromHome.Orders do
   """
   alias FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId
   alias FoodFromHome.Orders.OrderRepo
-  alias FoodFromHome.Orders.Services.IsOrderRelatedToUser
   alias FoodFromHome.Orders.Services.SetReadyForPickupStatus
 
   alias FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndProduceOrderConfirmedEvent
@@ -18,6 +17,7 @@ defmodule FoodFromHome.Orders do
   alias FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent
 
   alias FoodFromHome.Orders.Services.UpdateDeliveryAddress
+  alias FoodFromHome.Orders.Utils
 
   defdelegate create(buyer_user_id, attrs), to: OrderRepo
   defdelegate list(user, filters), to: OrderRepo
@@ -27,7 +27,7 @@ defmodule FoodFromHome.Orders do
   # Used by CartItems.Services.DeleteLastCartItemAndDeleteRelatedOpenOrder
   defdelegate delete(order), to: OrderRepo
 
-  def find_with_preloads(order_id), do: OrderWithPreloadsFromOrderId.find(order_id)
+  def get_with_preloads(order_id), do: OrderWithPreloadsFromOrderId.get(order_id)
 
   def update_delivery_address(order, delivery_address),
     do: UpdateDeliveryAddress.call(order, delivery_address)
@@ -50,5 +50,5 @@ defmodule FoodFromHome.Orders do
   def mark_as_delivered(order),
     do: SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent.call(order)
 
-  def is_order_related_to_user?(order, user), do: IsOrderRelatedToUser.check?(order, user)
+  defdelegate is_order_related_to_user?(order, user), to: Utils
 end

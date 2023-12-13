@@ -8,12 +8,13 @@ defmodule FoodFromHome.Deliveries do
   alias FoodFromHome.Deliveries.Services.AddPickupTime
   alias FoodFromHome.Deliveries.Services.AddDeliveryTime
   alias FoodFromHome.Deliveries.Services.InitiateDelivery
+  alias FoodFromHome.Deliveries.Utils
 
   defdelegate create(order, attrs), to: DeliveryRepo
   defdelegate get_with_order_id!(order_id), to: DeliveryRepo
   defdelegate update(order, attrs), to: DeliveryRepo
 
-  def find_delivery_from_order!(order), do: DeliveryFromOrder.find!(order)
+  def get_delivery_from_order!(order), do: DeliveryFromOrder.get!(order)
 
   def list_deliveries_from_user(seller_or_deliverer_user, filters),
     do: DeliveriesFromUser.list(seller_or_deliverer_user, filters)
@@ -23,4 +24,6 @@ defmodule FoodFromHome.Deliveries do
 
   def add_pickup_time(delivery), do: AddPickupTime.call(delivery)
   def add_delivery_time(delivery), do: AddDeliveryTime.call(delivery)
+
+  defdelegate is_delivery_older_than_a_month?(delivery), to: Utils
 end

@@ -9,9 +9,10 @@ defmodule FoodFromHome.Sellers.Seller do
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Users.User
+  alias FoodFromHome.Utils
 
-  @allowed_create_seller_keys [:nickname, :illustration, :introduction, :tax_id]
-  @allowed_update_seller_keys [:nickname, :illustration, :introduction]
+  @allowed_create_keys [:nickname, :illustration, :introduction, :tax_id]
+  @allowed_update_keys [:nickname, :illustration, :introduction]
   @required_seller_keys [:nickname, :introduction, :tax_id]
 
   schema "sellers" do
@@ -32,8 +33,9 @@ defmodule FoodFromHome.Sellers.Seller do
   """
   def create_changeset(seller, attrs) do
     seller
-    |> cast(attrs, @allowed_create_seller_keys)
+    |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_seller_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_create_keys)
     |> unique_constraint(:seller_user_id)
     |> unique_constraint(:tax_id)
     |> foreign_key_constraint(:seller_user_id)
@@ -44,8 +46,9 @@ defmodule FoodFromHome.Sellers.Seller do
   """
   def update_changeset(seller, attrs) do
     seller
-    |> cast(attrs, @allowed_update_seller_keys)
+    |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_seller_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_update_keys)
     |> unique_constraint(:seller_user_id)
     |> unique_constraint(:tax_id)
     |> foreign_key_constraint(:seller_user_id)

@@ -18,10 +18,10 @@ defmodule FoodFromHome.Reviews.ReviewRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(order = %Order{}, attrs) when is_map(attrs) do
+  def create_review(order = %Order{}, attrs) when is_map(attrs) do
     order
     |> Ecto.build_assoc(:review, attrs)
-    |> change()
+    |> change_create_review()
     |> Repo.insert()
   end
 
@@ -37,9 +37,9 @@ defmodule FoodFromHome.Reviews.ReviewRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(review = %Review{}, attrs) when is_map(attrs) do
+  def update_review(review = %Review{}, attrs) when is_map(attrs) do
     review
-    |> change(attrs)
+    |> change_update_review(attrs)
     |> Repo.update()
   end
 
@@ -55,20 +55,33 @@ defmodule FoodFromHome.Reviews.ReviewRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete(review = %Review{}) do
+  def delete_review(review = %Review{}) do
     Repo.delete(review)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking review changes.
+  Returns an `%Ecto.Changeset{}` for tracking review changes during creation.
 
   ## Examples
 
-      iex> change_review(review)
+      iex> change_create_review(review)
       %Ecto.Changeset{data: %Review{}}
 
   """
-  def change(review = %Review{}, attrs = %{} \\ %{}) do
-    Review.changeset(review, attrs)
+  def change_create_review(review = %Review{}, attrs = %{} \\ %{}) do
+    Review.create_changeset(review, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking review changes during updation.
+
+  ## Examples
+
+      iex> change_update_review(review)
+      %Ecto.Changeset{data: %Review{}}
+
+  """
+  def change_update_review(review = %Review{}, attrs = %{} \\ %{}) do
+    Review.update_changeset(review, attrs)
   end
 end

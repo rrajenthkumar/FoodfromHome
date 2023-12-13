@@ -7,6 +7,7 @@ defmodule FoodFromHome.Reviews do
   alias FoodFromHome.Reviews.Finders.ReviewsFromSeller
   alias FoodFromHome.Reviews.Finders.AverageRatingFromSeller
   alias FoodFromHome.Reviews.ReviewRepo
+  alias FoodFromHome.Reviews.Utils
 
   defdelegate create_review(order, attrs), to: ReviewRepo
   defdelegate update_review(review, attrs), to: ReviewRepo
@@ -15,4 +16,6 @@ defmodule FoodFromHome.Reviews do
   def get_review_from_order(order), do: ReviewFromOrder.get(order)
   def list_reviews_from_seller(seller, filters), do: ReviewsFromSeller.list(seller, filters)
   def get_average_rating_from_seller(seller), do: AverageRatingFromSeller.get(seller)
+
+  defdelegate is_review_older_than_a_day?(review), to: Utils
 end

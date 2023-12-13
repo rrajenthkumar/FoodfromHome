@@ -15,7 +15,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "food_menu" => attrs,
         "seller_id" => seller_id
       }) do
-    with {:ok, %Seller{} = seller} <- preliminary_check_result(conn, seller_id) do
+    with {:ok, %Seller{} = seller} <- run_preliminary_checks(conn, seller_id) do
       attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
       with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create_food_menu(seller, attrs) do
@@ -33,7 +33,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
   def index(conn, %{
         "seller_id" => seller_id
       }) do
-    with {:ok, %Seller{} = seller} <- preliminary_check_result(conn, seller_id) do
+    with {:ok, %Seller{} = seller} <- run_preliminary_checks(conn, seller_id) do
       filters =
         conn
         |> fetch_query_params()
@@ -49,7 +49,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
-    with {:ok, %FoodMenu{} = food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
+    with {:ok, %FoodMenu{} = food_menu} <- run_preliminary_checks(conn, seller_id, food_menu_id) do
       render(conn, :show, food_menu: food_menu)
     end
   end
@@ -59,7 +59,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
-    with {:ok, %FoodMenu{} = food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
+    with {:ok, %FoodMenu{} = food_menu} <- run_preliminary_checks(conn, seller_id, food_menu_id) do
       attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
       with {:ok, %FoodMenu{} = food_menu} <-
@@ -73,14 +73,14 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "seller_id" => seller_id,
         "food_menu_id" => food_menu_id
       }) do
-    with {:ok, %FoodMenu{} = food_menu} <- preliminary_check_result(conn, seller_id, food_menu_id) do
+    with {:ok, %FoodMenu{} = food_menu} <- run_preliminary_checks(conn, seller_id, food_menu_id) do
       with {:ok, %FoodMenu{}} <- FoodMenus.delete_food_menu(food_menu) do
         send_resp(conn, :no_content, "")
       end
     end
   end
 
-  defp preliminary_check_result(
+  defp run_preliminary_checks(
          conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}},
          seller_id
        )
@@ -95,7 +95,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Seller not found"
         )
 
-      seller_does_not_belong_to_current_user?(current_user, seller_result) ->
+      Sellers.seller_does_not_belong_to_user?(seller_result, current_user) ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -107,7 +107,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  defp preliminary_check_result(
+  defp run_preliminary_checks(
          conn = %{assigns: %{current_user: %User{user_type: :buyer}}},
          seller_id,
          food_menu_id
@@ -132,7 +132,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Food menu not found"
         )
 
-      food_menu_does_not_belong_to_seller?(seller_result, food_menu_result) ->
+      FoodMenus.food_menu_does_not_belong_to_seller?(food_menu_result, seller_result) ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -144,7 +144,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
     end
   end
 
-  defp preliminary_check_result(
+  defp run_preliminary_checks(
          conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}},
          seller_id,
          food_menu_id
@@ -162,7 +162,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Seller not found"
         )
 
-      seller_does_not_belong_to_current_user?(current_user, seller_result) ->
+      Sellers.seller_does_not_belong_to_user?(seller_result, current_user) ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -176,7 +176,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Food menu not found"
         )
 
-      food_menu_does_not_belong_to_seller?(seller_result, food_menu_result) ->
+      FoodMenus.food_menu_does_not_belong_to_seller?(food_menu_result, seller_result) ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -186,17 +186,5 @@ defmodule FoodFromHomeWeb.FoodMenuController do
       true ->
         {:ok, food_menu_result}
     end
-  end
-
-  defp seller_does_not_belong_to_current_user?(%User{id: current_user_id}, %Seller{
-         seller_user_id: seller_user_id
-       }) do
-    current_user_id !== seller_user_id
-  end
-
-  defp food_menu_does_not_belong_to_seller?(%Seller{id: seller_id}, %FoodMenu{
-         seller_id: food_menu_seller_id
-       }) do
-    seller_id !== food_menu_seller_id
   end
 end

@@ -7,6 +7,7 @@ defmodule FoodFromHome.Sellers do
   alias FoodFromHome.Sellers.Finders.SellerFromUser
   alias FoodFromHome.Sellers.Finders.SellerWithUserInfoAndAvailableMenus
   alias FoodFromHome.Sellers.SellerRepo
+  alias FoodFromHome.Sellers.Utils
 
   defdelegate get_seller(seller_id), to: SellerRepo
   defdelegate get_seller!(seller_id), to: SellerRepo
@@ -17,4 +18,6 @@ defmodule FoodFromHome.Sellers do
     do: SellerWithUserInfoAndAvailableMenus.get(seller_id)
 
   def get_seller_from_user!(user), do: SellerFromUser.get!(user)
+
+  defdelegate seller_does_not_belong_to_user?(seller, user), to: Utils
 end

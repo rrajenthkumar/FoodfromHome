@@ -42,7 +42,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndPro
 
   defp add_delivery_time(order = %Order{}) do
     order
-    |> Deliveries.find_delivery_from_order!()
+    |> Deliveries.get_delivery_from_order!()
     |> Deliveries.add_delivery_time()
   end
 end

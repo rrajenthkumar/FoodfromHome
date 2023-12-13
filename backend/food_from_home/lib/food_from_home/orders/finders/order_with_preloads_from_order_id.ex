@@ -21,7 +21,7 @@ defmodule FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId do
       nil
 
   """
-  def find(order_id) when is_integer(order_id) do
+  def get(order_id) when is_integer(order_id) do
     query =
       from(order in Order,
         join: seller in assoc(order, :seller),

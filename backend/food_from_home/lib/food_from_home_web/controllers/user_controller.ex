@@ -20,7 +20,7 @@ defmodule FoodFromHomeWeb.UserController do
   end
 
   def show(conn, %{"user_id" => user_id}) do
-    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+    with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
       render(conn, :show, user: user)
     end
   end
@@ -29,7 +29,7 @@ defmodule FoodFromHomeWeb.UserController do
         "user_id" => user_id,
         "user" => %{"address" => _address} = attrs
       }) do
-    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+    with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
       attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
       with {:ok, %User{} = updated_user} <-
@@ -43,7 +43,7 @@ defmodule FoodFromHomeWeb.UserController do
         "user_id" => user_id,
         "user" => attrs
       }) do
-    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+    with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
       attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
       with {:ok, %User{} = updated_user} <- Users.update_user(user, attrs) do
@@ -55,14 +55,14 @@ defmodule FoodFromHomeWeb.UserController do
   def delete(conn, %{
         "user_id" => user_id
       }) do
-    with {:ok, %User{} = user} <- preliminary_check_result(conn, user_id) do
+    with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
       with {:ok, %User{} = _soft_deleted_user} <- Users.soft_delete_user(user) do
         send_resp(conn, :no_content, "")
       end
     end
   end
 
-  defp preliminary_check_result(
+  defp run_preliminary_checks(
          conn = %{assigns: %{current_user: %User{} = current_user}},
          user_id
        )
@@ -73,7 +73,7 @@ defmodule FoodFromHomeWeb.UserController do
       is_nil(user_result) ->
         ErrorHandler.handle_error(conn, :not_found, "User not found")
 
-      user_is_not_current_user?(user_result, current_user) ->
+      user_result.id === current_user.id ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -83,9 +83,5 @@ defmodule FoodFromHomeWeb.UserController do
       true ->
         {:ok, user_result}
     end
-  end
-
-  defp user_is_not_current_user?(%User{id: current_user_id}, %User{id: user_id}) do
-    current_user_id !== user_id
   end
 end

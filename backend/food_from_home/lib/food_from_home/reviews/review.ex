@@ -9,6 +9,11 @@ defmodule FoodFromHome.Reviews.Review do
 
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Reviews.Review
+  alias FoodFromHome.Utils
+
+  @allowed_create_keys [:rating, :buyer_note]
+  @allowed_update_keys [:rating, :buyer_note, :seller_reply]
+  @required_keys [:rating]
 
   schema "reviews" do
     field :rating, :integer
@@ -20,11 +25,27 @@ defmodule FoodFromHome.Reviews.Review do
     timestamps()
   end
 
-  @doc false
-  def changeset(review, attrs) do
+  @doc """
+  Changeset function for creating a review
+  """
+  def create_changeset(review, attrs) do
     review
-    |> cast(attrs, [:stars, :buyer_note, :seller_reply])
-    |> validate_required([:rating])
+    |> cast(attrs, @allowed_create_keys)
+    |> validate_required(@required_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_create_keys)
+    |> validate_rating()
+    |> unique_constraint(:order_id)
+    |> foreign_key_constraint(:order_id)
+  end
+
+  @doc """
+  Changeset function for updating a review
+  """
+  def update_changeset(review, attrs) do
+    review
+    |> cast(attrs, @allowed_update_keys)
+    |> validate_required(@required_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_update_keys)
     |> validate_rating()
     |> unique_constraint(:order_id)
     |> foreign_key_constraint(:order_id)
