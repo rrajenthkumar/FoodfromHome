@@ -1,6 +1,6 @@
 defmodule FoodFromHome.Utils do
   @moduledoc """
-  Module for all utility functions.
+  Module for FoodFromHome utility functions.
   """
   import Ecto.Changeset
 
