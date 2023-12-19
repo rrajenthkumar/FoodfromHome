@@ -3,6 +3,7 @@ defmodule FoodFromHomeWeb.ReviewController do
 
   import Ecto.Query, warn: false
 
+  alias FoodFromHome.Deliveries
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Reviews
@@ -34,12 +35,13 @@ defmodule FoodFromHomeWeb.ReviewController do
             reviews = Reviews.list_reviews_from_seller(seller, filters)
 
             render(conn, :index, reviews: reviews)
+
           false ->
-              ErrorHandler.handle_error(
-                conn,
-                :forbidden,
-                "Seller does not belong to the current user"
-              )
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Seller does not belong to the current user"
+            )
         end
 
       nil ->
@@ -93,16 +95,19 @@ defmodule FoodFromHomeWeb.ReviewController do
         "review" => attrs
       }) do
     with {:ok, %Review{} = review} <- run_preliminary_checks(conn, order_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      with {:ok, %Review{} = review} <-
+             run_additional_checks(conn, review) do
+        attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-      with {:ok, attrs} <-
-             FoodFromHomeWebUtils.unallowed_attributes_check(
-               conn,
-               attrs,
-               @allowed_update_attrs_for_seller
-             ) do
-        with {:ok, %Review{} = review} <- Reviews.update_review(review, attrs) do
-          render(conn, :show, review: review)
+        with {:ok, attrs} <-
+               FoodFromHomeWebUtils.unallowed_attributes_check(
+                 conn,
+                 attrs,
+                 @allowed_update_attrs_for_seller
+               ) do
+          with {:ok, %Review{} = review} <- Reviews.update_review(review, attrs) do
+            render(conn, :show, review: review)
+          end
         end
       end
     end
@@ -218,6 +223,24 @@ defmodule FoodFromHomeWeb.ReviewController do
 
       true ->
         {:ok, review}
+    end
+  end
+
+  defp run_additional_checks(
+         conn = %{assigns: %{current_user: %User{user_type: :seller}}},
+         review = %Review{order_id: order_id}
+       ) do
+    order = Orders.get!(order_id)
+    delivery = Deliveries.get_delivery_from_order!(order)
+
+    if Deliveries.is_delivery_older_than_a_month?(delivery) do
+      ErrorHandler.handle_error(
+        conn,
+        :forbidden,
+        "Your reply cannot be edited as the delivery happened more than a month ago"
+      )
+    else
+      {:ok, review}
     end
   end
 end
