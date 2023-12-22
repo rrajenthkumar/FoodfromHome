@@ -22,6 +22,8 @@ defmodule FoodFromHomeWeb.CartItemJSON do
       id: cart_item.id,
       count: cart_item.count,
       remark: cart_item.remark,
+      order_id: cart_item.order_id,
+      food_menu_id: cart_item.food_menu_id,
       food_menu: limited_data(cart_item.food_menu)
     }
   end
@@ -30,7 +32,9 @@ defmodule FoodFromHomeWeb.CartItemJSON do
     %{
       id: cart_item.id,
       count: cart_item.count,
-      remark: cart_item.remark
+      remark: cart_item.remark,
+      order_id: cart_item.order_id,
+      food_menu_id: cart_item.food_menu_id
     }
   end
 
