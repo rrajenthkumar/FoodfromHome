@@ -5,7 +5,7 @@ defmodule FoodFromHomeWeb.DeliveryJSON do
   Renders a list of deliveries.
   """
   def index(%{deliveries: deliveries}) do
-    %{data: for(delivery <- deliveries, do: data(delivery))}
+    %{data: for(delivery <- deliveries, do: limited_data(delivery))}
   end
 
   @doc """
@@ -23,6 +23,14 @@ defmodule FoodFromHomeWeb.DeliveryJSON do
       current_geoposition: delivery.current_geoposition,
       distance_travelled_in_kms: delivery.distance_travelled_in_kms,
       delivered_at: delivery.delivered_at,
+      deliverer_user_id: delivery.deliverer_user_id
+    }
+  end
+
+  defp limited_data(delivery = %Delivery{}) do
+    %{
+      id: delivery.id,
+      order_id: delivery.order_id,
       deliverer_user_id: delivery.deliverer_user_id
     }
   end

@@ -5,12 +5,14 @@ defmodule FoodFromHomeWeb.DeliveryController do
   alias FoodFromHome.Deliveries.Delivery
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
-  alias FoodFromHome.Users
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
   alias FoodFromHomeWeb.ErrorHandler
+  alias FoodFromHomeWeb.Utils, as: FoodFromHomeWebUtils
 
   action_fallback FoodFromHomeWeb.FallbackController
+
+  @allowed_update_attrs [:current_geoposition, :distance_travelled_in_kms]
 
   def index(conn = %{assigns: %{current_user: %User{} = current_seller_or_deliverer_user}}) do
     filters =
@@ -23,59 +25,57 @@ defmodule FoodFromHomeWeb.DeliveryController do
     render(conn, :index, deliveries: deliveries)
   end
 
-  def show(conn = %{assigns: %{current_user: %User{} = current_seller_or_deliverer_user}}, %{
+  def show(conn = %{assigns: %{current_user: %User{} = _current_seller_or_deliverer_user}}, %{
         "order_id" => order_id
       }) do
-    delivery =
-      order_id
-      |> Orders.get!()
-      |> Deliveries.get_delivery_from_order!()
+    with {:ok, %Order{} = order} <-
+           run_preliminary_checks(conn, order_id) do
+      delivery = Deliveries.get_delivery_from_order!(order)
 
-    case delivery_related_to_current_user?(current_seller_or_deliverer_user, delivery) do
-      true ->
-        render(conn, :show, delivery: delivery)
-
-      false ->
-        ErrorHandler.handle_error(conn, :forbidden, "Delivery is not related to the current user")
+      render(conn, :show, delivery: delivery)
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer}}}, %{
         "order_id" => order_id,
-        "delivery" => delivery_params
+        "delivery" => attrs
       }) do
-    delivery =
-      order_id
-      |> Orders.get!()
-      |> Deliveries.get_delivery_from_order!()
+    with {:ok, %Order{} = order} <-
+           run_preliminary_checks(conn, order_id) do
+      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    case delivery_related_to_current_user?(current_user, delivery) do
-      true ->
-        with {:ok, %Order{} = delivery} <- Deliveries.update_delivery(delivery, delivery_params) do
+      with {:ok, attrs} <-
+             FoodFromHomeWebUtils.unallowed_attributes_check(
+               conn,
+               attrs,
+               @allowed_update_attrs
+             ) do
+        delivery = Deliveries.get_delivery_from_order!(order)
+
+        with {:ok, %Delivery{} = delivery} <-
+               Deliveries.update_delivery(delivery, attrs) do
           render(conn, :show, delivery: delivery)
         end
-
-      false ->
-        ErrorHandler.handle_error(conn, :forbidden, "Delivery is not related to the current user")
+      end
     end
   end
 
-  defp delivery_related_to_current_user?(
-         %User{id: current_user_id, user_type: :deliverer},
-         %Delivery{deliverer_user_id: deliverer_user_id}
-       ) do
-    deliverer_user_id === current_user_id
-  end
+  defp run_preliminary_checks(
+         conn = %{assigns: %{current_user: %User{} = current_user}},
+         order_id
+       )
+       when is_integer(order_id) do
+    order_result = Orders.get(order_id)
 
-  defp delivery_related_to_current_user?(
-         %User{id: current_user_id, user_type: :seller},
-         %Delivery{order_id: order_id}
-       ) do
-    %User{id: seller_user_id} =
-      order_id
-      |> Orders.get!()
-      |> Users.get_seller_user_from_order!()
+    cond do
+      is_nil(order_result) ->
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
 
-    seller_user_id === current_user_id
+      Orders.is_order_related_to_user?(order_result, current_user) === false ->
+        ErrorHandler.handle_error(conn, :forbidden, "Order not related to the current user")
+
+      true ->
+        {:ok, order_result}
+    end
   end
 end
