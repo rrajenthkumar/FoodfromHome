@@ -11,18 +11,18 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
 
   ## Examples
 
-      iex> create(%Order{}, %{field: new_value})
+      iex> create_cart_item(%Order{}, %{field: new_value})
       {:ok, %CartItem{}}
 
-      iex> create(%Order{}, %{field: bad_value})
+      iex> create_cart_item(%Order{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(order = %Order{}, attrs = %{} \\ %{}) do
+  def create_cart_item(order = %Order{}, attrs = %{} \\ %{}) do
     order
     |> Ecto.build_assoc(:cart_items, attrs)
     |> change_cart_item()
-    |> Repo.update()
+    |> Repo.insert()
   end
 
   @doc """
@@ -32,14 +32,14 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
 
   ## Examples
 
-      iex> get(123)
+      iex> get_cart_item(123)
       %CartItem{}
 
-      iex> get(456)
+      iex> get_cart_item(456)
       nil
 
   """
-  def get(cart_item_id) when is_integer(cart_item_id) do
+  def get_cart_item(cart_item_id) when is_integer(cart_item_id) do
     cart_item_id
     |> Repo.get(CartItem)
   end
@@ -51,14 +51,14 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
 
   ## Examples
 
-      iex> get(123)
+      iex> get_cart_item(123)
       %CartItem{}
 
-      iex> get(456)
+      iex> get_cart_item(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get!(cart_item_id) when is_integer(cart_item_id) do
+  def get_cart_item!(cart_item_id) when is_integer(cart_item_id) do
     cart_item_id
     |> Repo.get!(CartItem)
   end
@@ -68,14 +68,14 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
 
   ## Examples
 
-      iex> update(cart_item, %{field: new_value})
+      iex> update_cart_item(cart_item, %{field: new_value})
       {:ok, %CartItem{}}
 
-      iex> update(cart_item, %{field: bad_value})
+      iex> update_cart_item(cart_item, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(cart_item = %CartItem{}, attrs = %{} \\ %{}) do
+  def update_cart_item(cart_item = %CartItem{}, attrs = %{} \\ %{}) do
     cart_item
     |> change_cart_item(attrs)
     |> Repo.update()
@@ -86,14 +86,14 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
 
   ## Examples
 
-      iex> delete(cart_item)
+      iex> delete_cart_item(cart_item)
       {:ok, %CartItem{}}
 
-      iex> delete(cart_item)
+      iex> delete_cart_item(cart_item)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete(cart_item = %CartItem{}) do
+  def delete_cart_item(cart_item = %CartItem{}) do
     Repo.delete(cart_item)
   end
 

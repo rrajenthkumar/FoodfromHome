@@ -80,6 +80,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> cast(attrs, @allowed_create_keys)
     |> validate_required(@required_keys)
     |> Utils.validate_unallowed_fields(attrs, @allowed_create_keys)
+    |> validate_number(:remaining_quantity, greater_than_or_equal_to: 0)
     |> unique_constraint(:unique_food_menu_name_per_seller_per_validity_date_constraint,
       name: :unique_food_menu_name_per_seller_per_validity_date_index,
       message:
@@ -97,7 +98,8 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> cast(attrs, @allowed_update_keys)
     |> validate_required(@required_keys)
     |> Utils.validate_unallowed_fields(attrs, @allowed_update_keys)
-    |> validate_no_associated_cart_items()
+    |> validate_number(:remaining_quantity, greater_than_or_equal_to: 0)
+    |> other_validations()
     |> unique_constraint(:unique_food_menu_name_per_seller_per_validity_date_constraint,
       name: :unique_food_menu_name_per_seller_per_validity_date_index,
       message:
@@ -116,13 +118,24 @@ defmodule FoodFromHome.FoodMenus.FoodMenu do
     |> validate_required([:count, :discount_percentage])
   end
 
-  defp validate_no_associated_cart_items(
-         changeset = %Ecto.Changeset{data: %FoodMenu{} = food_menu}
+  defp other_validations(
+         changeset = %Ecto.Changeset{data: %FoodMenu{} = food_menu, changes: changes}
        ) do
-    if FoodMenus.has_associated_cart_items?(food_menu) do
-      add_error(changeset, :base, "Cannot update a food menu with an associated cart item.")
-    else
-      changeset
+    changes_map_keys = Map.keys(changes)
+
+    cond do
+      changes_map_keys === [:remaining_quantity] ->
+        changeset
+
+      FoodMenus.has_associated_cart_items?(food_menu) ->
+        add_error(
+          changeset,
+          :base,
+          "Cannot update food menu fields other than 'remaining quantity' when the food menu has an associated cart item."
+        )
+
+      true ->
+        changeset
     end
   end
 end

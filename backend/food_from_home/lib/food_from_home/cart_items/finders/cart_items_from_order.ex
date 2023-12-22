@@ -1,6 +1,6 @@
 defmodule FoodFromHome.CartItems.Finders.CartItemsFromOrder do
   @moduledoc """
-  Finder to list cart items from an order
+  Finder to list cart items from an order along with food menu details
   """
   import Ecto.Query, warn: false
 

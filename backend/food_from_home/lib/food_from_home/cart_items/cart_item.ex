@@ -1,5 +1,7 @@
 defmodule FoodFromHome.CartItems.CartItem do
-  @moduledoc false
+  @moduledoc """
+  The CartItem schema
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,9 +9,10 @@ defmodule FoodFromHome.CartItems.CartItem do
   alias FoodFromHome.FoodMenus
   alias FoodFromHome.FoodMenus.FoodMenu
   alias FoodFromHome.Orders.Order
+  alias FoodFromHome.Utils
 
-  @allowed_keys [:count, :remark]
-  @required_keys [:count]
+  @allowed_keys [:food_menu_id, :count, :remark]
+  @required_keys [:food_menu_id, :count]
 
   schema "cart_items" do
     field :count, :integer
@@ -26,18 +29,21 @@ defmodule FoodFromHome.CartItems.CartItem do
     cart_item
     |> cast(attrs, @allowed_keys)
     |> validate_required(@required_keys)
-    |> validate_remaining_quantity()
+    |> Utils.validate_unallowed_fields(attrs, @allowed_keys)
+    |> validate_number(:count, greater_than_or_equal_to: 1)
     |> unique_constraint(:unique_food_menu_id_order_id_combo_constraint,
       name: :unique_food_menu_id_order_id_combo_index,
       message: "A cart item with the same food menu id, order id combination exists."
     )
     |> foreign_key_constraint(:food_menu_id)
     |> foreign_key_constraint(:order_id)
+    |> validate_foodmenu_availability()
   end
 
-  defp validate_remaining_quantity(
+  defp validate_foodmenu_availability(
          changeset = %Ecto.Changeset{
-           data: %CartItem{food_menu_id: food_menu_id, count: required_food_menu_count}
+           data: %CartItem{},
+           changes: %{food_menu_id: food_menu_id, count: required_food_menu_count}
          }
        ) do
     %FoodMenu{remaining_quantity: food_menu_remaining_quantity} =

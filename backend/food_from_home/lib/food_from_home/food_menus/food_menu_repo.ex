@@ -98,7 +98,6 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   @doc """
   Updates a food menu.
-  If an associated cart item exists updation is forbidden and it results in ecto changeset error.
 
   ## Examples
 
@@ -108,20 +107,11 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
       iex> update_food_menu(%FoodMenu{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
-      iex> delete_food_menu(%FoodMenu{}, %{field: new_value})
-      {:error, 403, "An associated cart item exists"}
-
   """
   def update_food_menu(food_menu = %FoodMenu{}, attrs) when is_map(attrs) do
-    case FoodMenus.has_associated_cart_items?(food_menu) do
-      true ->
-        {:error, 403, "An associated cart item exists"}
-
-      false ->
-        food_menu
-        |> update_change(attrs)
-        |> Repo.update()
-    end
+    food_menu
+    |> update_change(attrs)
+    |> Repo.update()
   end
 
   @doc """
