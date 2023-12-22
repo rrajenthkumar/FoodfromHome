@@ -10,9 +10,8 @@ defmodule FoodFromHome.Deliveries do
   alias FoodFromHome.Deliveries.Services.InitiateDelivery
   alias FoodFromHome.Deliveries.Utils
 
-  defdelegate create(order, attrs), to: DeliveryRepo
-  defdelegate get_with_order_id!(order_id), to: DeliveryRepo
-  defdelegate update(order, attrs), to: DeliveryRepo
+  defdelegate create_delivery(order, attrs), to: DeliveryRepo
+  defdelegate update_delivery(delivery, attrs), to: DeliveryRepo
 
   def get_delivery_from_order!(order), do: DeliveryFromOrder.get!(order)
 

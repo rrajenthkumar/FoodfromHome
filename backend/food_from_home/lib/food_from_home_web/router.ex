@@ -137,7 +137,6 @@ defmodule FoodFromHomeWeb.Router do
             # Lists deliveries linked to current seller or deliverer user with limited fields based on query parameters
             get "/deliveries", DeliveryController, :index
             # To get a delivery for an order linked to current seller or deliverer user
-            # Add option to expand order, buyer, seller, delivery, cart items, foodmenu details
             get "/:order_id/delivery", DeliveryController, :show
           end
         end

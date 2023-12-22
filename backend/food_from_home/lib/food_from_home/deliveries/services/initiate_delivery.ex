@@ -16,7 +16,7 @@ defmodule FoodFromHome.Deliveries.Services.InitiateDelivery do
       ) do
     %User{geoposition: seller_geoposition} = Users.get_seller_user_from_order!(order)
 
-    Deliveries.create(order, %{
+    Deliveries.create_delivery(order, %{
       deliverer_user_id: deliverer_user_id,
       current_geoposition: seller_geoposition
     })

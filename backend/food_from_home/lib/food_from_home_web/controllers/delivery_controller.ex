@@ -26,7 +26,10 @@ defmodule FoodFromHomeWeb.DeliveryController do
   def show(conn = %{assigns: %{current_user: %User{} = current_seller_or_deliverer_user}}, %{
         "order_id" => order_id
       }) do
-    delivery = Deliveries.get_with_order_id!(order_id)
+    delivery =
+      order_id
+      |> Orders.get!()
+      |> Deliveries.get_delivery_from_order!()
 
     case delivery_related_to_current_user?(current_seller_or_deliverer_user, delivery) do
       true ->
@@ -41,11 +44,14 @@ defmodule FoodFromHomeWeb.DeliveryController do
         "order_id" => order_id,
         "delivery" => delivery_params
       }) do
-    delivery = Deliveries.get_with_order_id!(order_id)
+    delivery =
+      order_id
+      |> Orders.get!()
+      |> Deliveries.get_delivery_from_order!()
 
     case delivery_related_to_current_user?(current_user, delivery) do
       true ->
-        with {:ok, %Order{} = delivery} <- Deliveries.update(delivery, delivery_params) do
+        with {:ok, %Order{} = delivery} <- Deliveries.update_delivery(delivery, delivery_params) do
           render(conn, :show, delivery: delivery)
         end
 

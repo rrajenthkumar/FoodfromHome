@@ -11,14 +11,14 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
 
   ## Examples
 
-      iex> create(%Order{}, %{field: value})
+      iex> create_delivery(%Order{}, %{field: value})
       {:ok, %Delivery{}}
 
-      iex> create(%Order{}, %{field: bad_value})
+      iex> create_delivery(%Order{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(order = %Order{}, attrs = %{} \\ %{}) do
+  def create_delivery(order = %Order{}, attrs = %{} \\ %{}) do
     order
     |> Ecto.build_assoc(:delivery, attrs)
     |> change_create()
@@ -26,40 +26,18 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
   end
 
   @doc """
-  Gets a delivery using order id.
-
-  Raises `Ecto.NoResultsError` if the Delivery does not exist.
-
-  ## Examples
-
-      iex> get_with_order_id!(123)
-      %Delivery{}
-
-      iex> get_with_order_id!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_with_order_id!(order_id) when is_integer(order_id) do
-    query =
-      from delivery in Delivery,
-        where: delivery.order_id == ^order_id
-
-    Repo.one!(query)
-  end
-
-  @doc """
   Updates a delivery.
 
   ## Examples
 
-      iex> update(delivery, %{field: new_value})
+      iex> update_delivery(delivery, %{field: new_value})
       {:ok, %Delivery{}}
 
       iex> update(delivery, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(delivery = %Delivery{}, attrs = %{}) do
+  def update_delivery(delivery = %Delivery{}, attrs = %{}) do
     delivery
     |> change_update(attrs)
     |> Repo.update()

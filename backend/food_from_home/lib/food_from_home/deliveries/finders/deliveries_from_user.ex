@@ -33,7 +33,7 @@ defmodule FoodFromHome.Deliveries.Finders.DeliveriesFromUser do
       from(delivery in Delivery,
         join: order in assoc(delivery, :order),
         join: seller in assoc(order, :seller),
-        join: user in assoc(seller, :deliverer_user),
+        join: user in assoc(seller, :seller_user),
         where: ^filters,
         where: user.id == ^seller_user_id
       )
