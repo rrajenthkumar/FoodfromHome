@@ -12,7 +12,7 @@ defmodule FoodFromHome.DeliveriesTest do
       delivered_at: nil,
       distance_travelled_in_kms: nil,
       picked_up_at: nil,
-      current_position: nil
+      current_geoposition: nil
     }
 
     test "list_deliveries/0 returns all deliveries" do
@@ -30,14 +30,14 @@ defmodule FoodFromHome.DeliveriesTest do
         delivered_at: ~U[2023-11-02 08:23:00Z],
         distance_travelled_in_kms: "120.5",
         picked_up_at: ~U[2023-11-02 08:23:00Z],
-        current_position: %Geo.Point{coordinates: {30, -90}, srid: 4326}
+        current_geoposition: %Geo.Point{coordinates: {30, -90}, srid: 4326}
       }
 
       assert {:ok, %Delivery{} = delivery} = Deliveries.create_delivery(valid_attrs)
       assert delivery.delivered_at == ~U[2023-11-02 08:23:00Z]
       assert delivery.distance_travelled_in_kms == Decimal.new("120.5")
       assert delivery.picked_up_at == ~U[2023-11-02 08:23:00Z]
-      assert delivery.current_position == %Geo.Point{coordinates: {30, -90}, srid: 4326}
+      assert delivery.current_geoposition == %Geo.Point{coordinates: {30, -90}, srid: 4326}
     end
 
     test "create_delivery/1 with invalid data returns error changeset" do
@@ -51,14 +51,14 @@ defmodule FoodFromHome.DeliveriesTest do
         delivered_at: ~U[2023-11-03 08:23:00Z],
         distance_travelled_in_kms: "456.7",
         picked_up_at: ~U[2023-11-03 08:23:00Z],
-        current_position: %Geo.Point{coordinates: {70, -40}, srid: 4100}
+        current_geoposition: %Geo.Point{coordinates: {70, -40}, srid: 4100}
       }
 
       assert {:ok, %Delivery{} = delivery} = Deliveries.update_delivery(delivery, update_attrs)
       assert delivery.delivered_at == ~U[2023-11-03 08:23:00Z]
       assert delivery.distance_travelled_in_kms == Decimal.new("456.7")
       assert delivery.picked_up_at == ~U[2023-11-03 08:23:00Z]
-      assert delivery.current_position == %Geo.Point{coordinates: {70, -40}, srid: 4100}
+      assert delivery.current_geoposition == %Geo.Point{coordinates: {70, -40}, srid: 4100}
     end
 
     test "update_delivery/2 with invalid data returns error changeset" do

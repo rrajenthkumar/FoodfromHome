@@ -1,26 +1,28 @@
 defmodule FoodFromHome.Deliveries.Delivery do
-  @moduledoc false
+  @moduledoc """
+  The Delivery schema
+  """
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias FoodFromHome.Orders.Order
-  alias FoodFromHome.Users.User
   alias FoodFromHome.Deliveries.Delivery
   alias Geo.PostGIS.Geometry
+  alias FoodFromHome.Orders.Order
+  alias FoodFromHome.Users.User
 
-  @allowed_create_delivery_keys [:deliverer_user_id, :current_position]
-  @required_create_delivery_keys [:deliverer_user_id, :current_position]
+  @allowed_create_delivery_keys [:deliverer_user_id, :current_geoposition]
   @allowed_update_delivery_keys [
     :picked_up_at,
-    :current_position,
+    :current_geoposition,
     :distance_travelled_in_kms,
     :delivered_at
   ]
+  @required_delivery_keys [:deliverer_user_id, :current_geoposition]
 
   schema "deliveries" do
     field :picked_up_at, :utc_datetime, default: nil
-    field :current_position, Geometry
+    field :current_geoposition, Geometry
     field :delivered_at, :utc_datetime, default: nil
     field :distance_travelled_in_kms, :decimal, default: nil
 
@@ -36,7 +38,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
   def create_changeset(delivery = %Delivery{}, attrs = %{}) do
     delivery
     |> cast(attrs, @allowed_create_delivery_keys)
-    |> validate_required(@required_create_delivery_keys)
+    |> validate_required(@required_delivery_keys)
     |> unique_constraint(:order_id)
     |> foreign_key_constraint(:order_id)
     |> foreign_key_constraint(:deliverer_user_id)
@@ -48,6 +50,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
   def update_changeset(delivery = %Delivery{}, attrs = %{}) do
     delivery
     |> cast(attrs, @allowed_update_delivery_keys)
+    |> validate_required(@required_delivery_keys)
     |> unique_constraint(:order_id)
     |> foreign_key_constraint(:order_id)
     |> foreign_key_constraint(:deliverer_user_id)

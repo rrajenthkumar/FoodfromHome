@@ -20,7 +20,7 @@ defmodule FoodFromHomeWeb.DeliveryJSON do
       id: delivery.id,
       order_id: delivery.order_id,
       picked_up_at: delivery.picked_up_at,
-      current_position: delivery.current_position,
+      current_geoposition: delivery.current_geoposition,
       distance_travelled_in_kms: delivery.distance_travelled_in_kms,
       delivered_at: delivery.delivered_at,
       deliverer_user_id: delivery.deliverer_user_id

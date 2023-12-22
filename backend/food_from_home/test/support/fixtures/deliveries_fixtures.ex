@@ -14,7 +14,7 @@ defmodule FoodFromHome.DeliveriesFixtures do
         delivered_at: ~U[2023-11-02 08:23:00Z],
         distance_travelled_in_kms: "120.5",
         picked_up_at: ~U[2023-11-02 08:23:00Z],
-        current_position: %Geo.Point{coordinates: {75, -35}, srid: 4578}
+        current_geoposition: %Geo.Point{coordinates: {75, -35}, srid: 4578}
       })
       |> FoodFromHome.Deliveries.create_delivery()
 

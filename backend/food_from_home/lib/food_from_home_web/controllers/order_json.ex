@@ -136,7 +136,7 @@ defmodule FoodFromHomeWeb.OrderJSON do
     %{
       id: delivery.id,
       picked_up_at: delivery.picked_up_at,
-      current_position: delivery.current_position,
+      current_geoposition: delivery.current_geoposition,
       delivered_at: delivery.delivered_at
     }
   end

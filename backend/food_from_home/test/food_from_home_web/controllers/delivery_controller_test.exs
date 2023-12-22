@@ -9,19 +9,19 @@ defmodule FoodFromHomeWeb.DeliveryControllerTest do
     delivered_at: ~U[2023-11-02 08:23:00Z],
     distance_travelled_in_kms: "120.5",
     picked_up_at: ~U[2023-11-02 08:23:00Z],
-    current_position: %Geo.Point{coordinates: {20, -10}, srid: 2200}
+    current_geoposition: %Geo.Point{coordinates: {20, -10}, srid: 2200}
   }
   @update_attrs %{
     delivered_at: ~U[2023-11-03 08:23:00Z],
     distance_travelled_in_kms: "456.7",
     picked_up_at: ~U[2023-11-03 08:23:00Z],
-    current_position: %Geo.Point{coordinates: {10, -90}, srid: 5420}
+    current_geoposition: %Geo.Point{coordinates: {10, -90}, srid: 5420}
   }
   @invalid_attrs %{
     delivered_at: nil,
     distance_travelled_in_kms: nil,
     picked_up_at: nil,
-    current_position: nil
+    current_geoposition: nil
   }
 
   setup %{conn: conn} do
@@ -47,7 +47,7 @@ defmodule FoodFromHomeWeb.DeliveryControllerTest do
                "delivered_at" => "2023-11-02T08:23:00Z",
                "distance_travelled_in_kms" => "120.5",
                "picked_up_at" => "2023-11-02T08:23:00Z",
-               "current_position" => %{"coordinates" => {"20", "-10"}, "srid" => "2200"}
+               "current_geoposition" => %{"coordinates" => {"20", "-10"}, "srid" => "2200"}
              } = json_response(conn, 200)["data"]
     end
 
@@ -74,7 +74,7 @@ defmodule FoodFromHomeWeb.DeliveryControllerTest do
                "delivered_at" => "2023-11-03T08:23:00Z",
                "distance_travelled_in_kms" => "456.7",
                "picked_up_at" => "2023-11-03T08:23:00Z",
-               "current_position" => %{"coordinates" => {"10", "-90"}, "srid" => "5420"}
+               "current_geoposition" => %{"coordinates" => {"10", "-90"}, "srid" => "5420"}
              } = json_response(conn, 200)["data"]
     end
 
