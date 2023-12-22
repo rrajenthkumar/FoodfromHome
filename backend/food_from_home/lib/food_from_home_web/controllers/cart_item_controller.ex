@@ -11,163 +11,176 @@ defmodule FoodFromHomeWeb.CartItemController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def create(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+  def create(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{
         "order_id" => order_id,
         "cart_item" => attrs
       }) do
-    case Orders.get(order_id) do
-      %Order{status: order_status} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
-          true ->
-            case order_status do
-              :open ->
-                attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+    with {:ok, %Order{} = order} <-
+           run_preliminary_checks(conn, order_id) do
+      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-                with {:ok, %CartItem{id: cart_item_id} = cart_item} <-
-                       CartItems.create(order, attrs) do
-                  conn
-                  |> put_status(:created)
-                  |> put_resp_header(
-                    "location",
-                    ~p"/api/v1/orders/#{order_id}/cart_items/#{cart_item_id}"
-                  )
-                  |> render(:show, cart_item: cart_item)
-                end
-
-              another_status ->
-                ErrorHandler.handle_error(
-                  conn,
-                  :forbidden,
-                  "Order is in #{another_status} status. Cart item can be added only for an open order."
-                )
-            end
-
-          false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
-        end
-
-      nil ->
-        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+      with {:ok, %CartItem{id: cart_item_id} = cart_item} <-
+             CartItems.create_cart_item_and_update_food_menu_remaining_quantity(
+               order,
+               attrs
+             ) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header(
+          "location",
+          ~p"/api/v1/orders/#{order_id}/cart_items/#{cart_item_id}"
+        )
+        |> render(:show, cart_item: cart_item)
+      end
     end
   end
 
-  def index(conn = %{assigns: %{current_user: %User{} = current_user}}, %{"order_id" => order_id}) do
-    case Orders.get(order_id) do
-      %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
-          true ->
-            cart_items = CartItems.list_cart_items_from_order(order)
+  def index(conn, %{"order_id" => order_id}) do
+    with {:ok, %Order{} = order} <- run_preliminary_checks_for_index(conn, order_id) do
+      cart_items = CartItems.list_cart_items_from_order(order)
 
-            render(conn, :index, cart_items: cart_items)
-
-          false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
-        end
-
-      nil ->
-        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+      render(conn, :index, cart_items: cart_items)
     end
   end
 
-  def show(conn = %{assigns: %{current_user: %User{} = current_user}}, %{
+  def show(conn, %{
         "order_id" => order_id,
         "cart_item_id" => cart_item_id
       }) do
-    case Orders.get(order_id) do
-      %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
-          true ->
-            case CartItems.get(cart_item_id) do
-              %CartItem{} = cart_item ->
-                render(conn, :show, cart_item: cart_item)
-
-              nil ->
-                ErrorHandler.handle_error(conn, :not_found, "Cart item not found")
-            end
-
-          false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
-        end
-
-      nil ->
-        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+    with {:ok, %CartItem{} = cart_item} <-
+           run_preliminary_checks_for_show(conn, order_id, cart_item_id) do
+      render(conn, :show, cart_item: cart_item)
     end
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{
         "order_id" => order_id,
         "cart_item_id" => cart_item_id,
         "cart_item" => attrs
       }) do
-    case Orders.get(order_id) do
-      %Order{status: order_status} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
-          true ->
-            case order_status do
-              :open ->
-                case CartItems.get(cart_item_id) do
-                  %CartItem{} = cart_item ->
-                    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+    with {:ok, %CartItem{} = cart_item} <- run_preliminary_checks(conn, order_id, cart_item_id) do
+      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-                    with {:ok, %CartItem{} = cart_item} <- CartItems.update(cart_item, attrs) do
-                      render(conn, :show, cart_item: cart_item)
-                    end
-
-                  nil ->
-                    ErrorHandler.handle_error(conn, :not_found, "Cart item not found")
-                end
-
-              another_status ->
-                ErrorHandler.handle_error(
-                  conn,
-                  :forbidden,
-                  "Order is in #{another_status} status. Cart item can be updated only for an open order."
-                )
-            end
-
-          false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
-        end
-
-      nil ->
-        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+      with {:ok, %CartItem{} = cart_item} <-
+             CartItems.update_cart_item_and_update_food_menu_remaining_quantity(
+               cart_item,
+               attrs
+             ) do
+        render(conn, :show, cart_item: cart_item)
+      end
     end
   end
 
-  def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+  def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer}}}, %{
         "order_id" => order_id,
         "cart_item_id" => cart_item_id
       }) do
-    case Orders.get(order_id) do
-      %Order{status: order_status} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
-          true ->
-            case order_status do
-              :open ->
-                case CartItems.get(cart_item_id) do
-                  %CartItem{} = cart_item ->
-                    with {:ok, %CartItem{}} <- CartItems.delete(cart_item) do
-                      send_resp(conn, :no_content, "")
-                    end
+    with {:ok, %CartItem{} = cart_item} <- run_preliminary_checks(conn, order_id, cart_item_id) do
+      with {:ok, %CartItem{}} <- CartItems.delete_cart_item(cart_item) do
+        send_resp(conn, :no_content, "")
+      end
+    end
+  end
 
-                  nil ->
-                    ErrorHandler.handle_error(conn, :not_found, "Cart item not found")
-                end
+  defp run_preliminary_checks(
+         conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}},
+         order_id,
+         cart_item_id
+       )
+       when is_integer(order_id) and is_integer(cart_item_id) do
+    order_result = Orders.get(order_id)
 
-              another_status ->
-                ErrorHandler.handle_error(
-                  conn,
-                  :forbidden,
-                  "Order is in #{another_status} status. Cart item can be deleted only for an open order."
-                )
-            end
+    cart_item_result = CartItems.get_cart_item(cart_item_id)
 
-          false ->
-            ErrorHandler.handle_error(conn, :forbidden, "Order not related to the user")
-        end
-
-      nil ->
+    cond do
+      is_nil(order_result) ->
         ErrorHandler.handle_error(conn, :not_found, "Order not found")
+
+      Orders.is_order_related_to_user?(order_result, current_user) === false ->
+        ErrorHandler.handle_error(conn, :forbidden, "Order not related to the current user")
+
+      order_result.status != :open ->
+        ErrorHandler.handle_error(
+          conn,
+          :forbidden,
+          "Order is in #{order_result.status} status. Only a cart item from an open order can be updated or deleted."
+        )
+
+      is_nil(cart_item_result) ->
+        ErrorHandler.handle_error(conn, :not_found, "Cart Item not found")
+
+      true ->
+        {:ok, cart_item_result}
+    end
+  end
+
+  defp run_preliminary_checks(
+         conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}},
+         order_id
+       )
+       when is_integer(order_id) do
+    order_result = Orders.get(order_id)
+
+    cond do
+      is_nil(order_result) ->
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+
+      Orders.is_order_related_to_user?(order_result, current_user) === false ->
+        ErrorHandler.handle_error(conn, :forbidden, "Order not related to the current user")
+
+      order_result.status != :open ->
+        ErrorHandler.handle_error(
+          conn,
+          :forbidden,
+          "Order is in #{order_result.status} status. Cart item can be added only for an open order."
+        )
+
+      true ->
+        {:ok, order_result}
+    end
+  end
+
+  defp run_preliminary_checks_for_show(
+         conn = %{assigns: %{current_user: %User{} = current_user}},
+         order_id,
+         cart_item_id
+       )
+       when is_integer(order_id) and is_integer(cart_item_id) do
+    order_result = Orders.get(order_id)
+
+    cart_item_result = CartItems.get_cart_item(cart_item_id)
+
+    cond do
+      is_nil(order_result) ->
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+
+      Orders.is_order_related_to_user?(order_result, current_user) === false ->
+        ErrorHandler.handle_error(conn, :forbidden, "Order not related to the current user")
+
+      is_nil(cart_item_result) ->
+        ErrorHandler.handle_error(conn, :not_found, "Cart Item not found")
+
+      true ->
+        {:ok, cart_item_result}
+    end
+  end
+
+  defp run_preliminary_checks_for_index(
+         conn = %{assigns: %{current_user: %User{} = current_user}},
+         order_id
+       )
+       when is_integer(order_id) do
+    order_result = Orders.get(order_id)
+
+    cond do
+      is_nil(order_result) ->
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+
+      Orders.is_order_related_to_user?(order_result, current_user) === false ->
+        ErrorHandler.handle_error(conn, :forbidden, "Order not related to the current user")
+
+      true ->
+        {:ok, order_result}
     end
   end
 end
