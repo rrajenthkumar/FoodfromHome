@@ -16,7 +16,7 @@ defmodule FoodFromHome.CartItems.CartItem do
 
   schema "cart_items" do
     field :count, :integer
-    field :remark, :string
+    field :remark, :string, default: nil
 
     belongs_to :order, Order
     belongs_to :food_menu, FoodMenu
