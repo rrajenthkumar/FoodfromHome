@@ -10,6 +10,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
   alias Geo.PostGIS.Geometry
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Users.User
+  alias FoodFromHome.Utils
 
   @allowed_create_delivery_keys [:deliverer_user_id, :current_geoposition]
   @allowed_update_delivery_keys [
@@ -39,6 +40,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
     delivery
     |> cast(attrs, @allowed_create_delivery_keys)
     |> validate_required(@required_delivery_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_create_delivery_keys)
     |> unique_constraint(:order_id)
     |> foreign_key_constraint(:order_id)
     |> foreign_key_constraint(:deliverer_user_id)
@@ -51,6 +53,7 @@ defmodule FoodFromHome.Deliveries.Delivery do
     delivery
     |> cast(attrs, @allowed_update_delivery_keys)
     |> validate_required(@required_delivery_keys)
+    |> Utils.validate_unallowed_fields(attrs, @allowed_update_delivery_keys)
     |> unique_constraint(:order_id)
     |> foreign_key_constraint(:order_id)
     |> foreign_key_constraint(:deliverer_user_id)
