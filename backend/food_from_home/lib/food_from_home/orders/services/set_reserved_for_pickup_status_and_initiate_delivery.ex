@@ -1,4 +1,4 @@
-defmodule FoodFromHome.Orders.Services.SetReservedForPickupStatusAndCreateDelivery do
+defmodule FoodFromHome.Orders.Services.SetReservedForPickupStatusAndInitiateDelivery do
   @moduledoc """
   Used by a deliverer to reserve an order for pickup.
   Simultaneously a new delivery record is created with seller's location as current location.

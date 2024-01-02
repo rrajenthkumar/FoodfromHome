@@ -10,7 +10,7 @@ defmodule FoodFromHome.Orders do
 
   alias FoodFromHome.Orders.Services.SetCancelledStatusAndAddSellerRemarkAndProduceOrderCancelledEvent
 
-  alias FoodFromHome.Orders.Services.SetReservedForPickupStatusAndCreateDelivery
+  alias FoodFromHome.Orders.Services.SetReservedForPickupStatusAndInitiateDelivery
 
   alias FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDeliveryAndProduceDeliveryStartedEvent
 
@@ -41,7 +41,7 @@ defmodule FoodFromHome.Orders do
       SetCancelledStatusAndAddSellerRemarkAndProduceOrderCancelledEvent.call(order, seller_remark)
 
   def reserve_for_pickup(order, deliverer_user),
-    do: SetReservedForPickupStatusAndCreateDelivery.call(order, deliverer_user)
+    do: SetReservedForPickupStatusAndInitiateDelivery.call(order, deliverer_user)
 
   def mark_as_on_the_way(order),
     do: SetOnTheWayStatusAndAddPickupTimeToDeliveryAndProduceDeliveryStartedEvent.call(order)
