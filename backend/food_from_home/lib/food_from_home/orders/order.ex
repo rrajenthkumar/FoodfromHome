@@ -71,7 +71,7 @@ defmodule FoodFromHome.Orders.Order do
     |> unique_constraint(:invoice_link)
     |> unique_constraint(:unique_open_order_per_buyer_constraint,
       name: :unique_open_order_per_buyer_index,
-      message: "A buyer can have only one open order at a time."
+      message: "A buyer can have only one open order at a time"
     )
     |> foreign_key_constraint(:seller_id)
     |> foreign_key_constraint(:buyer_user_id)
@@ -88,10 +88,11 @@ defmodule FoodFromHome.Orders.Order do
     |> validate_required(@required_order_keys)
     |> Utils.validate_unallowed_fields(attrs, @allowed_update_order_keys)
     |> validate_status_change()
+    |> validate_invoice_link_format()
     |> unique_constraint(:invoice_link)
     |> unique_constraint(:unique_open_order_per_buyer_constraint,
       name: :unique_open_order_per_buyer_index,
-      message: "Only one open order is allowed per buyer."
+      message: "A buyer can have only one open order at a time"
     )
     |> foreign_key_constraint(:seller_id)
     |> foreign_key_constraint(:buyer_user_id)
@@ -116,7 +117,7 @@ defmodule FoodFromHome.Orders.Order do
       add_error(
         changeset,
         :status,
-        "The status cannot be updated to #{new_status} from :open status."
+        "The status cannot be updated to #{new_status} from :open status"
       )
     end
   end
@@ -133,7 +134,7 @@ defmodule FoodFromHome.Orders.Order do
       add_error(
         changeset,
         :status,
-        "The status cannot be updated to #{new_status} from :confirmed status."
+        "The status cannot be updated to #{new_status} from :confirmed status"
       )
     end
   end
@@ -147,7 +148,7 @@ defmodule FoodFromHome.Orders.Order do
     add_error(
       changeset,
       :status,
-      "The status cannot be updated to #{new_status} from :cancelled status."
+      "The status cannot be updated to #{new_status} from :cancelled status"
     )
   end
 
@@ -163,7 +164,7 @@ defmodule FoodFromHome.Orders.Order do
       add_error(
         changeset,
         :status,
-        "The status cannot be updated to #{new_status} from :ready_for_pickup status."
+        "The status cannot be updated to #{new_status} from :ready_for_pickup status"
       )
     end
   end
@@ -180,7 +181,7 @@ defmodule FoodFromHome.Orders.Order do
       add_error(
         changeset,
         :status,
-        "The status cannot be updated to #{new_status} from :reserved_for_pickup status."
+        "The status cannot be updated to #{new_status} from :reserved_for_pickup status"
       )
     end
   end
@@ -197,7 +198,21 @@ defmodule FoodFromHome.Orders.Order do
       add_error(
         changeset,
         :status,
-        "The status cannot be updated to #{new_status} from :on_the_way status."
+        "The status cannot be updated to #{new_status} from :on_the_way status"
+      )
+    end
+  end
+
+  defp validate_invoice_link_format(
+         changeset = %Ecto.Changeset{changes: %{invoice_link: invoice_link}}
+       ) do
+    if Regex.match?(~r/^https:\/\/\S+$/i, invoice_link) do
+      changeset
+    else
+      add_error(
+        changeset,
+        :invoice_link,
+        "The provided invoice link is not a valid URL"
       )
     end
   end
