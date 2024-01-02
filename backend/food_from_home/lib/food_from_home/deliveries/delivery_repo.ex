@@ -18,7 +18,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_delivery(order = %Order{}, attrs = %{} \\ %{}) do
+  def create_delivery(order = %Order{}, attrs) when is_map(attrs) do
     order
     |> Ecto.build_assoc(:delivery, attrs)
     |> change_create()
@@ -37,7 +37,7 @@ defmodule FoodFromHome.Deliveries.DeliveryRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_delivery(delivery = %Delivery{}, attrs = %{}) do
+  def update_delivery(delivery = %Delivery{}, attrs) when is_map(attrs) do
     delivery
     |> change_update(attrs)
     |> Repo.update()

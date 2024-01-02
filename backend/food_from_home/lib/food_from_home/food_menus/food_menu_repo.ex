@@ -24,7 +24,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   def create_food_menu(seller = %Seller{}, attrs) when is_map(attrs) do
     seller
     |> Ecto.build_assoc(:food_menus, attrs)
-    |> create_change()
+    |> change_create()
     |> Repo.insert()
   end
 
@@ -110,7 +110,7 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
   """
   def update_food_menu(food_menu = %FoodMenu{}, attrs) when is_map(attrs) do
     food_menu
-    |> update_change(attrs)
+    |> change_update(attrs)
     |> Repo.update()
   end
 
@@ -139,11 +139,11 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   ## Examples
 
-      iex> create_change(food_menu)
+      iex> change_create(food_menu)
       %Ecto.Changeset{data: %FoodMenu{}}
 
   """
-  def create_change(food_menu = %FoodMenu{}, attrs = %{} \\ %{}) do
+  def change_create(food_menu = %FoodMenu{}, attrs = %{} \\ %{}) do
     FoodMenu.create_changeset(food_menu, attrs)
   end
 
@@ -152,11 +152,11 @@ defmodule FoodFromHome.FoodMenus.FoodMenuRepo do
 
   ## Examples
 
-      iex> update_change(food_menu)
+      iex> change_update(food_menu)
       %Ecto.Changeset{data: %FoodMenu{}}
 
   """
-  def update_change(food_menu = %FoodMenu{}, attrs = %{} \\ %{}) do
+  def change_update(food_menu = %FoodMenu{}, attrs = %{} \\ %{}) do
     FoodMenu.update_changeset(food_menu, attrs)
   end
 end

@@ -18,7 +18,7 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_cart_item(order = %Order{}, attrs = %{} \\ %{}) do
+  def create_cart_item(order = %Order{}, attrs) when is_map(attrs) do
     order
     |> Ecto.build_assoc(:cart_items, attrs)
     |> change_cart_item()
@@ -75,7 +75,7 @@ defmodule FoodFromHome.CartItems.CartItemRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_cart_item(cart_item = %CartItem{}, attrs = %{} \\ %{}) do
+  def update_cart_item(cart_item = %CartItem{}, attrs) when is_map(attrs) do
     cart_item
     |> change_cart_item(attrs)
     |> Repo.update()

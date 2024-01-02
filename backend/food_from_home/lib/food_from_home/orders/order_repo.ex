@@ -6,7 +6,6 @@ defmodule FoodFromHome.Orders.OrderRepo do
   alias FoodFromHome.Repo
   alias FoodFromHome.Sellers
   alias FoodFromHome.Sellers.Seller
-  alias FoodFromHome.Users
   alias FoodFromHome.Users.User
   alias FoodFromHome.Users.User.Address
 
@@ -15,16 +14,18 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   ## Examples
 
-      iex> create(12345, %{field: value})
+      iex> create_order(%User{}, %{field: value})
       {:ok, %Order{}}
 
-      iex> create(6789, %{field: bad_value})
+      iex> create_order(%User{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(buyer_user_id, attrs) when is_integer(buyer_user_id) and is_map(attrs) do
-    buyer_user = %User{address: default_delivery_address} = Users.get_user!(buyer_user_id)
-
+  def create_order(
+        buyer_user = %User{address: default_delivery_address, user_type: :buyer},
+        attrs
+      )
+      when is_map(attrs) do
     default_delivery_address_map = Map.from_struct(default_delivery_address)
 
     attrs_with_default_delivery_address =
@@ -32,7 +33,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
     buyer_user
     |> Ecto.build_assoc(:orders, attrs_with_default_delivery_address)
-    |> create_change()
+    |> change_create()
     |> Repo.insert()
   end
 
@@ -42,12 +43,12 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   ## Examples
 
-    iex> list(%User{}, [])
+    iex> list_order(%User{}, [])
     [%Order{}, ...]
 
   """
 
-  def list(user = %User{user_type: :seller}, filters) when is_list(filters) do
+  def list_order(user = %User{user_type: :seller}, filters) when is_list(filters) do
     %Seller{id: seller_id} = Sellers.get_seller_from_user!(user)
 
     query =
@@ -59,7 +60,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
     Repo.all(query)
   end
 
-  def list(%User{id: user_id, user_type: :buyer}, filters) when is_list(filters) do
+  def list_order(%User{id: user_id, user_type: :buyer}, filters) when is_list(filters) do
     query =
       from(order in Order,
         where: ^filters,
@@ -69,7 +70,7 @@ defmodule FoodFromHome.Orders.OrderRepo do
     Repo.all(query)
   end
 
-  def list(%User{user_type: :deliverer, address: %Address{city: deliverer_city}}, filters)
+  def list_order(%User{user_type: :deliverer, address: %Address{city: deliverer_city}}, filters)
       when is_list(filters) do
     query =
       from order in Order,
@@ -88,14 +89,14 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   ## Examples
 
-      iex> get(123)
+      iex> get_order(123)
       %Order{}
 
-      iex> get(456)
+      iex> get_order(456)
       nil
 
   """
-  def get(order_id) when is_integer(order_id), do: Repo.get(Order, order_id)
+  def get_order(order_id) when is_integer(order_id), do: Repo.get(Order, order_id)
 
   @doc """
   Gets an order using order_id.
@@ -104,14 +105,14 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   ## Examples
 
-      iex> get!(123)
+      iex> get_order!(123)
       %Order{}
 
-      iex> get!(456)
+      iex> get_order!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get!(order_id) when is_integer(order_id), do: Repo.get!(Order, order_id)
+  def get_order!(order_id) when is_integer(order_id), do: Repo.get!(Order, order_id)
 
   @doc """
   Updates an order.
@@ -125,9 +126,9 @@ defmodule FoodFromHome.Orders.OrderRepo do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(order = %Order{}, attrs) when is_map(attrs) do
+  def update_order(order = %Order{}, attrs) when is_map(attrs) do
     order
-    |> update_change(attrs)
+    |> change_update(attrs)
     |> Repo.update()
   end
 
@@ -143,11 +144,11 @@ defmodule FoodFromHome.Orders.OrderRepo do
       {:error, 403, "Only an order of :open status can be deleted"}
 
   """
-  def delete(order = %Order{status: :open}) do
+  def delete_order(order = %Order{status: :open}) do
     Repo.delete(order)
   end
 
-  def delete(%Order{}) do
+  def delete_order(%Order{}) do
     {:error, 403, "Only an order of :open status can be deleted"}
   end
 
@@ -156,11 +157,11 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   ## Examples
 
-      iex> create_change(order)
+      iex> change_create(order)
       %Ecto.Changeset{data: %Order{}}
 
   """
-  def create_change(order = %Order{}, attrs = %{} \\ %{}) do
+  def change_create(order = %Order{}, attrs = %{} \\ %{}) do
     Order.create_changeset(order, attrs)
   end
 
@@ -169,11 +170,11 @@ defmodule FoodFromHome.Orders.OrderRepo do
 
   ## Examples
 
-      iex> update_change(order)
+      iex> change_update(order)
       %Ecto.Changeset{data: %Order{}}
 
   """
-  def update_change(order = %Order{}, attrs = %{} \\ %{}) do
+  def change_update(order = %Order{}, attrs = %{} \\ %{}) do
     Order.update_changeset(order, attrs)
   end
 end
