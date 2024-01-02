@@ -14,6 +14,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDelive
     case Orders.update_order(order, %{status: :on_the_way}) do
       {:ok, %Order{} = order} ->
         add_pickup_time_to_delivery(order)
+
       error ->
         error
     end
