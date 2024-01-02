@@ -32,7 +32,7 @@ defmodule FoodFromHomeWeb.OrderController do
   end
 
   def show(conn = %{assigns: %{current_user: %User{} = current_user}}, %{"order_id" => order_id}) do
-    case Orders.get_with_preloads(order_id) do
+    case Orders.get_order_with_associated_data(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->

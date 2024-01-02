@@ -1,6 +1,6 @@
-defmodule FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId do
+defmodule FoodFromHome.Orders.Finders.OrderWithAssociatedData do
   @moduledoc """
-  Finder to find an order from order_id with seller user, buyer user, deliverer user, cart items, food menus, delivery and review preloads
+  Finder to find an order from order_id with seller user, buyer user, deliverer user, cart items, food menus, delivery and review data
   """
   import Ecto.Query, warn: false
 
@@ -8,8 +8,7 @@ defmodule FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId do
   alias FoodFromHome.Repo
 
   @doc """
-  Finds an order from order_id with seller, seller user, buyer user, deliverer user, cart items, food menus, delivery and review preloads
-
+  Finds an order from order_id with all associated data.
   Returns 'nil' if the order does not exist.
 
   ## Examples

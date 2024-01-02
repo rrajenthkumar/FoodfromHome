@@ -2,7 +2,7 @@ defmodule FoodFromHome.Orders do
   @moduledoc """
   The Orders context.
   """
-  alias FoodFromHome.Orders.Finders.OrderWithPreloadsFromOrderId
+  alias FoodFromHome.Orders.Finders.OrderWithAssociatedData
   alias FoodFromHome.Orders.OrderRepo
   alias FoodFromHome.Orders.Services.SetReadyForPickupStatus
 
@@ -26,7 +26,7 @@ defmodule FoodFromHome.Orders do
   defdelegate update_order(order, attrs), to: OrderRepo
   defdelegate delete_order(order), to: OrderRepo
 
-  def get_with_preloads(order_id), do: OrderWithPreloadsFromOrderId.get(order_id)
+  def get_order_with_associated_data(order_id), do: OrderWithAssociatedData.get(order_id)
 
   def update_delivery_address(order, delivery_address),
     do: UpdateDeliveryAddress.call(order, delivery_address)
