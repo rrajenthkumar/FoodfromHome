@@ -7,11 +7,11 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
   alias FoodFromHome.Deliveries
   alias FoodFromHome.Deliveries.Delivery
   # alias FoodFromHome.KafkaAgent
-  alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
+  alias FoodFromHome.Orders.OrderRepo
 
   def call(order = %Order{status: :on_the_way}) do
-    case Orders.update_order(order, %{status: :delivered}) do
+    case OrderRepo.update_order(order, %{status: :delivered}) do
       {:ok, %Order{} = order} ->
         add_delivery_time_to_delivery(order)
 
@@ -38,7 +38,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
 
       {:error, delivery_time_addition_error_reason} ->
         # Rollingback status change
-        case Orders.update_order(order, %{status: :on_the_way}) do
+        case OrderRepo.update_order(order, %{status: :on_the_way}) do
           {:ok, %Order{}} ->
             {:error, 500,
              "The status update operation has been rolled back as delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason}"}

@@ -4,11 +4,11 @@ defmodule FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndPro
   and produce an order_confirmed Kafka event to be consumed by the notification module.
   """
   # alias FoodFromHome.KafkaAgent
-  alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
+  alias FoodFromHome.Orders.OrderRepo
 
   def call(order = %Order{status: :open}, invoice_link) when is_binary(invoice_link) do
-    case Orders.update_order(order, %{status: :confirmed, invoice_link: invoice_link}) do
+    case OrderRepo.update_order(order, %{status: :confirmed, invoice_link: invoice_link}) do
       {:ok, %Order{}} = result ->
         # KafkaAgent.produce_order_confirmed_event()
         result

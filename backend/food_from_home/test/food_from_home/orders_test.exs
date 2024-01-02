@@ -5,6 +5,7 @@ defmodule FoodFromHome.OrdersTest do
 
   describe "orders" do
     alias FoodFromHome.Orders.Order
+    alias FoodFromHome.Orders.OrderRepo
 
     import FoodFromHome.OrdersFixtures
 
@@ -49,7 +50,7 @@ defmodule FoodFromHome.OrdersTest do
         status: :confirmed
       }
 
-      assert {:ok, %Order{} = order} = Orders.update_order(order, update_attrs)
+      assert {:ok, %Order{} = order} = OrderRepo.update_order(order, update_attrs)
       assert order.date == ~U[2023-10-31 14:37:00Z]
       assert order.delivery_address == %{}
       assert order.invoice_link == "some updated invoice_link"
@@ -58,7 +59,7 @@ defmodule FoodFromHome.OrdersTest do
 
     test "update_order/2 with invalid data returns error changeset" do
       order = order_fixture()
-      assert {:error, %Ecto.Changeset{}} = Orders.update_order(order, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = OrderRepo.update_order(order, @invalid_attrs)
       assert order == Orders.get_order!(order.id)
     end
 

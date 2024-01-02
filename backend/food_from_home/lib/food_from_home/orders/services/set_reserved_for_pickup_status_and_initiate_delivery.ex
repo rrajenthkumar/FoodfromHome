@@ -6,15 +6,15 @@ defmodule FoodFromHome.Orders.Services.SetReservedForPickupStatusAndInitiateDeli
 
   alias FoodFromHome.Deliveries
   alias FoodFromHome.Deliveries.Delivery
-  alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
+  alias FoodFromHome.Orders.OrderRepo
   alias FoodFromHome.Users.User
 
   def call(
         order = %Order{status: :ready_for_pickup},
         deliverer_user = %User{user_type: :deliverer}
       ) do
-    case Orders.update_order(order, %{status: :reserved_for_pickup}) do
+    case OrderRepo.update_order(order, %{status: :reserved_for_pickup}) do
       {:ok, %Order{} = order} ->
         initiate_delivery(order, deliverer_user)
 
@@ -41,7 +41,7 @@ defmodule FoodFromHome.Orders.Services.SetReservedForPickupStatusAndInitiateDeli
 
       {:error, delivery_initiation_error_reason} ->
         # Rollingback status change
-        case Orders.update_order(order, %{status: :ready_for_pickup}) do
+        case OrderRepo.update_order(order, %{status: :ready_for_pickup}) do
           {:ok, %Order{}} ->
             {:error, 500,
              "The status update operation has been rolled back as creation of an associated delivery failed due to the following reason: #{delivery_initiation_error_reason}"}

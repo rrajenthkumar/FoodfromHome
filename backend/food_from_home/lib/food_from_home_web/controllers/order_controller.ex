@@ -63,7 +63,7 @@ defmodule FoodFromHomeWeb.OrderController do
             delivery_address = Utils.convert_map_string_keys_to_atoms(delivery_address)
 
             with {:ok, %Order{} = order} <-
-                   Orders.update_delivery_address(order, delivery_address) do
+                   Orders.update_order_delivery_address(order, delivery_address) do
               render(conn, :show, order: order)
             end
 
@@ -99,7 +99,7 @@ defmodule FoodFromHomeWeb.OrderController do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
-            with {:ok, %Order{} = order} <- Orders.mark_as_ready_for_pickup(order) do
+            with {:ok, %Order{} = order} <- Orders.mark_order_as_ready_for_pickup(order) do
               render(conn, :show, order: order)
             end
 
@@ -135,7 +135,7 @@ defmodule FoodFromHomeWeb.OrderController do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
-            with {:ok, %Order{} = order} <- Orders.cancel(order, seller_remark) do
+            with {:ok, %Order{} = order} <- Orders.cancel_order(order, seller_remark) do
               render(conn, :show, order: order)
             end
 
@@ -171,7 +171,7 @@ defmodule FoodFromHomeWeb.OrderController do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
-            with {:ok, %Order{} = order} <- Orders.reserve_for_pickup(order, current_user) do
+            with {:ok, %Order{} = order} <- Orders.reserve_order_for_pickup(order, current_user) do
               render(conn, :show, order: order)
             end
 
@@ -207,7 +207,7 @@ defmodule FoodFromHomeWeb.OrderController do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
-            with {:ok, %Order{} = order} <- Orders.mark_as_on_the_way(order) do
+            with {:ok, %Order{} = order} <- Orders.mark_order_as_on_the_way(order) do
               render(conn, :show, order: order)
             end
 
@@ -243,7 +243,7 @@ defmodule FoodFromHomeWeb.OrderController do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
-            with {:ok, %Order{} = order} <- Orders.mark_as_delivered(order) do
+            with {:ok, %Order{} = order} <- Orders.mark_order_as_delivered(order) do
               render(conn, :show, order: order)
             end
 
