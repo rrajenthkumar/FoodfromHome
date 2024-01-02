@@ -30,7 +30,7 @@ defmodule FoodFromHome.Deliveries.Utils do
       ) do
     %User{id: seller_user_id} =
       order_id
-      |> Orders.get!()
+      |> Orders.get_order!()
       |> Users.get_seller_user_from_order!()
 
     seller_user_id === current_user_id

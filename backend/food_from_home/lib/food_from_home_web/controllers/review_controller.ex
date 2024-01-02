@@ -154,7 +154,7 @@ defmodule FoodFromHomeWeb.ReviewController do
          order_id
        )
        when is_integer(order_id) do
-    order_result = Orders.get(order_id)
+    order_result = Orders.get_order(order_id)
 
     cond do
       is_nil(order_result) ->
@@ -179,7 +179,7 @@ defmodule FoodFromHomeWeb.ReviewController do
          conn = %{assigns: %{current_user: %User{} = current_user}},
          order_id
        ) do
-    order_result = Orders.get(order_id)
+    order_result = Orders.get_order(order_id)
 
     review_result =
       case order_result do
@@ -230,7 +230,7 @@ defmodule FoodFromHomeWeb.ReviewController do
          conn = %{assigns: %{current_user: %User{user_type: :seller}}},
          review = %Review{order_id: order_id}
        ) do
-    order = Orders.get!(order_id)
+    order = Orders.get_order!(order_id)
     delivery = Deliveries.get_delivery_from_order!(order)
 
     if Deliveries.is_delivery_older_than_a_month?(delivery) do

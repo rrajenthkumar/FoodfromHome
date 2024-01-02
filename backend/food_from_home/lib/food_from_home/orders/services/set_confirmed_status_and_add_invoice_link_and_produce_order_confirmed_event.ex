@@ -7,7 +7,7 @@ defmodule FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndPro
   alias FoodFromHome.Orders.Order
 
   def call(order = %Order{status: :open}, invoice_link) do
-    case Orders.update(order, %{status: :confirmed, invoice_link: invoice_link}) do
+    case Orders.update_order(order, %{status: :confirmed, invoice_link: invoice_link}) do
       {:ok, %Order{}} = result ->
         # produce_order_confirmed_event()
         result

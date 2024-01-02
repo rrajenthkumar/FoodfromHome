@@ -6,7 +6,7 @@ defmodule FoodFromHome.Orders.Services.SetReadyForPickupStatus do
   alias FoodFromHome.Orders.Order
 
   def call(order = %Order{status: :confirmed}) do
-    Orders.update(order, %{status: :ready_for_pickup})
+    Orders.update_order(order, %{status: :ready_for_pickup})
   end
 
   def call(%Order{status: another_status}) do

@@ -6,7 +6,7 @@ defmodule FoodFromHome.Orders.Services.UpdateDeliveryAddress do
   alias FoodFromHome.Orders.Order
 
   def call(order = %Order{status: :open}, delivery_address) when is_map(delivery_address) do
-    Orders.update(order, %{delivery_address: delivery_address})
+    Orders.update_order(order, %{delivery_address: delivery_address})
   end
 
   def call(%Order{status: another_status}, delivery_address) when is_map(delivery_address) do

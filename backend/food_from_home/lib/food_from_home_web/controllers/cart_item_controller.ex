@@ -88,7 +88,7 @@ defmodule FoodFromHomeWeb.CartItemController do
          cart_item_id
        )
        when is_integer(order_id) and is_integer(cart_item_id) do
-    order_result = Orders.get(order_id)
+    order_result = Orders.get_order(order_id)
 
     cart_item_result = CartItems.get_cart_item(cart_item_id)
 
@@ -119,7 +119,7 @@ defmodule FoodFromHomeWeb.CartItemController do
          order_id
        )
        when is_integer(order_id) do
-    order_result = Orders.get(order_id)
+    order_result = Orders.get_order(order_id)
 
     cond do
       is_nil(order_result) ->
@@ -146,7 +146,7 @@ defmodule FoodFromHomeWeb.CartItemController do
          cart_item_id
        )
        when is_integer(order_id) and is_integer(cart_item_id) do
-    order_result = Orders.get(order_id)
+    order_result = Orders.get_order(order_id)
 
     cart_item_result = CartItems.get_cart_item(cart_item_id)
 
@@ -170,7 +170,7 @@ defmodule FoodFromHomeWeb.CartItemController do
          order_id
        )
        when is_integer(order_id) do
-    order_result = Orders.get(order_id)
+    order_result = Orders.get_order(order_id)
 
     cond do
       is_nil(order_result) ->

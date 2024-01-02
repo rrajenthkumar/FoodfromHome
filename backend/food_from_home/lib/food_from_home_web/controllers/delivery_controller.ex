@@ -65,7 +65,7 @@ defmodule FoodFromHomeWeb.DeliveryController do
          order_id
        )
        when is_integer(order_id) do
-    order_result = Orders.get(order_id)
+    order_result = Orders.get_order(order_id)
 
     cond do
       is_nil(order_result) ->

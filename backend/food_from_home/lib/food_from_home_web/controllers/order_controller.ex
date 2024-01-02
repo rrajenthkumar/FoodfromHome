@@ -12,7 +12,7 @@ defmodule FoodFromHomeWeb.OrderController do
   def create(conn = %{assigns: %{current_user: %User{id: buyer_user_id}}}, %{"order" => attrs}) do
     attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    with {:ok, %Order{} = order} <- Orders.create(buyer_user_id, attrs) do
+    with {:ok, %Order{} = order} <- Orders.create_order(buyer_user_id, attrs) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/v1/orders/#{order.id}")
@@ -26,7 +26,7 @@ defmodule FoodFromHomeWeb.OrderController do
       |> fetch_query_params()
       |> Utils.convert_map_to_keyword_list()
 
-    orders = Orders.list(current_user, filters)
+    orders = Orders.list_order(current_user, filters)
 
     render(conn, :index, orders: orders)
   end
@@ -56,7 +56,7 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => order_id,
         "order" => %{"delivery_address" => delivery_address}
       }) do
-    case Orders.get(order_id) do
+    case Orders.get_order(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
@@ -95,7 +95,7 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => order_id,
         "order" => %{"status" => :ready_for_pickup}
       }) do
-    case Orders.get(order_id) do
+    case Orders.get_order(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
@@ -131,7 +131,7 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => order_id,
         "order" => %{"status" => :cancelled, "seller_remark" => seller_remark}
       }) do
-    case Orders.get(order_id) do
+    case Orders.get_order(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
@@ -167,7 +167,7 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => order_id,
         "order" => %{"status" => :reserved_for_pickup}
       }) do
-    case Orders.get(order_id) do
+    case Orders.get_order(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
@@ -203,7 +203,7 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => order_id,
         "order" => %{"status" => :on_the_way}
       }) do
-    case Orders.get(order_id) do
+    case Orders.get_order(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
@@ -239,7 +239,7 @@ defmodule FoodFromHomeWeb.OrderController do
         "order_id" => order_id,
         "order" => %{"status" => :delivered}
       }) do
-    case Orders.get(order_id) do
+    case Orders.get_order(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
@@ -274,11 +274,11 @@ defmodule FoodFromHomeWeb.OrderController do
   def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
         "order_id" => order_id
       }) do
-    case Orders.get(order_id) do
+    case Orders.get_order(order_id) do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, current_user) do
           true ->
-            with {:ok, %Order{}} <- Orders.delete(order) do
+            with {:ok, %Order{}} <- Orders.delete_order(order) do
               send_resp(conn, :no_content, "")
             end
 

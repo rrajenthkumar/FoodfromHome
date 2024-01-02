@@ -10,7 +10,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndPro
   alias FoodFromHome.Orders.Order
 
   def call(order = %Order{status: :on_the_way}) do
-    case Orders.update(order, %{status: :delivered}) do
+    case Orders.update_order(order, %{status: :delivered}) do
       {:ok, %Order{} = order} ->
         case add_delivery_time(order) do
           {:ok, %Delivery{}} ->
@@ -19,7 +19,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndPro
 
           {:error, delivery_time_addition_error_reason} ->
             # Rollingback status change
-            case Orders.update(order, %{status: :on_the_way}) do
+            case Orders.update_order(order, %{status: :on_the_way}) do
               {:ok, %Order{}} ->
                 {:error, 500,
                  "The status update operation has been rolled back as delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason}. "}

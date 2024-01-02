@@ -19,13 +19,12 @@ defmodule FoodFromHome.Orders do
   alias FoodFromHome.Orders.Services.UpdateDeliveryAddress
   alias FoodFromHome.Orders.Utils
 
-  defdelegate create(buyer_user_id, attrs), to: OrderRepo
-  defdelegate list(user, filters), to: OrderRepo
-  defdelegate get(order_id), to: OrderRepo
-  defdelegate get!(order_id), to: OrderRepo
-  defdelegate update(order, attrs), to: OrderRepo
-  # Used by CartItems.Services.DeleteLastCartItemAndDeleteRelatedOpenOrder
-  defdelegate delete(order), to: OrderRepo
+  defdelegate create_order(buyer_user, attrs), to: OrderRepo
+  defdelegate list_order(user, filters), to: OrderRepo
+  defdelegate get_order(order_id), to: OrderRepo
+  defdelegate get_order!(order_id), to: OrderRepo
+  defdelegate update_order(order, attrs), to: OrderRepo
+  defdelegate delete_order(order), to: OrderRepo
 
   def get_with_preloads(order_id), do: OrderWithPreloadsFromOrderId.get(order_id)
 

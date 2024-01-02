@@ -10,7 +10,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndUpdateDeliveryAndProd
   alias FoodFromHome.Orders.Order
 
   def call(order = %Order{status: :reserved_for_pickup}) do
-    case Orders.update(order, %{status: :on_the_way}) do
+    case Orders.update_order(order, %{status: :on_the_way}) do
       {:ok, %Order{} = order} ->
         case add_pickup_time(order) do
           {:ok, %Delivery{}} ->
@@ -19,7 +19,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndUpdateDeliveryAndProd
 
           {:error, pickup_time_addition_error_reason} ->
             # Rollingback status change
-            case Orders.update(order, %{status: :reserved_for_pickup}) do
+            case Orders.update_order(order, %{status: :reserved_for_pickup}) do
               {:ok, %Order{}} ->
                 {:error, 500,
                  "The status update operation has been rolled back as pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason}. "}
