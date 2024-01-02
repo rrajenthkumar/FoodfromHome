@@ -14,7 +14,7 @@ defmodule FoodFromHome.Orders do
 
   alias FoodFromHome.Orders.Services.SetOnTheWayStatusAndUpdateDeliveryAndProduceDeliveryStartedEvent
 
-  alias FoodFromHome.Orders.Services.SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent
+  alias FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDeliveryAndProduceDeliveryCompletedEvent
 
   alias FoodFromHome.Orders.Services.UpdateDeliveryAddress
   alias FoodFromHome.Orders.Utils
@@ -47,7 +47,7 @@ defmodule FoodFromHome.Orders do
     do: SetOnTheWayStatusAndUpdateDeliveryAndProduceDeliveryStartedEvent.call(order)
 
   def mark_as_delivered(order),
-    do: SetDeliveredStatusAndUpdateDeliveryAndProduceDeliveryCompletedEvent.call(order)
+    do: SetDeliveredStatusAndAddDeliveryTimeToDeliveryAndProduceDeliveryCompletedEvent.call(order)
 
   defdelegate is_order_related_to_user?(order, user), to: Utils
 end
