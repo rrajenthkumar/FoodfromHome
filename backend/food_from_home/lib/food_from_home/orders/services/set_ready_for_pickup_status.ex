@@ -11,6 +11,6 @@ defmodule FoodFromHome.Orders.Services.SetReadyForPickupStatus do
 
   def call(%Order{status: another_status}) do
     {:error, 403,
-     "Order in #{another_status} status. Only an order of :confirmed status can be marked as ready for pickup"}
+     "Order in #{another_status} status. Only an order of :confirmed status can be marked as ready for pickup."}
   end
 end

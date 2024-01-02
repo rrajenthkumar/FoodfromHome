@@ -16,30 +16,40 @@ defmodule FoodFromHome.Orders.Services.SetReservedForPickupStatusAndCreateDelive
       ) do
     case Orders.update_order(order, %{status: :reserved_for_pickup}) do
       {:ok, %Order{} = order} ->
-        case Deliveries.initiate_delivery(order, deliverer_user) do
-          {:ok, %Delivery{}} ->
-            {:ok, order}
-
-          {:error, delivery_initiation_error_reason} ->
-            # Rollingback status change
-            case Orders.update_order(order, %{status: :ready_for_pickup}) do
-              {:ok, %Order{}} ->
-                {:error, 500,
-                 "The status update operation has been rolled back as creation of an associated delivery failed due to the following reason: #{delivery_initiation_error_reason}. "}
-
-              {:error, reason} ->
-                {:error, 500,
-                 "Associated delivery creation failed due to the following reason: #{delivery_initiation_error_reason} and the eventual order status update rollback also failed due to the following reason: #{reason}."}
-            end
-        end
+        initiate_delivery(order, deliverer_user)
 
       error ->
         error
     end
   end
 
-  def call(%Order{status: another_status}, _deliverer_user = %User{user_type: :deliverer}) do
+  def call(
+        %Order{status: another_status},
+        _deliverer_user
+      ) do
     {:error, 403,
-     "Order in #{another_status} status. Only an order of :ready_for_pickup status can be reserved for pickup"}
+     "Order in #{another_status} status. Only an order of :ready_for_pickup status can be reserved for pickup."}
+  end
+
+  defp initiate_delivery(
+         order = %Order{status: :reserved_for_pickup},
+         deliverer_user = %User{user_type: :deliverer}
+       ) do
+    case Deliveries.initiate_delivery(order, deliverer_user) do
+      {:ok, %Delivery{}} ->
+        {:ok, order}
+
+      {:error, delivery_initiation_error_reason} ->
+        # Rollingback status change
+        case Orders.update_order(order, %{status: :ready_for_pickup}) do
+          {:ok, %Order{}} ->
+            {:error, 500,
+             "The status update operation has been rolled back as creation of an associated delivery failed due to the following reason: #{delivery_initiation_error_reason}"}
+
+          {:error, reason} ->
+            {:error, 500,
+             "Associated delivery creation failed due to the following reason: #{delivery_initiation_error_reason} and the eventual order status update rollback too failed due to the following reason: #{reason}"}
+        end
+    end
   end
 end

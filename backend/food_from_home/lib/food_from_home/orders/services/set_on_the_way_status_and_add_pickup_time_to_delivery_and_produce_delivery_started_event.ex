@@ -25,7 +25,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDelive
      "Order in #{another_status} status. Only an order of :reserved_for_pickup status can be changed to :on_the_way status."}
   end
 
-  defp add_pickup_time_to_delivery(order = %Order{}) do
+  defp add_pickup_time_to_delivery(order = %Order{status: :on_the_way}) do
     result =
       order
       |> Deliveries.get_delivery_from_order!()
@@ -41,11 +41,11 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDelive
         case Orders.update_order(order, %{status: :reserved_for_pickup}) do
           {:ok, %Order{}} ->
             {:error, 500,
-             "The status update operation has been rolled back as pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason}. "}
+             "The status update operation has been rolled back as pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason}"}
 
           {:error, reason} ->
             {:error, 500,
-             "Pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason} and the eventual order status update rollback too failed due to the following reason: #{reason}."}
+             "Pickup time addition to the associated delivery failed due to the following reason: #{pickup_time_addition_error_reason} and the eventual order status update rollback too failed due to the following reason: #{reason}"}
         end
     end
   end

@@ -25,7 +25,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
      "Order in #{another_status} status. Only an order of :on_the_way status can be changed to :delivered status."}
   end
 
-  defp add_delivery_time_to_delivery(order = %Order{}) do
+  defp add_delivery_time_to_delivery(order = %Order{status: :delivered}) do
     result =
       order
       |> Deliveries.get_delivery_from_order!()
@@ -41,11 +41,11 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
         case Orders.update_order(order, %{status: :on_the_way}) do
           {:ok, %Order{}} ->
             {:error, 500,
-             "The status update operation has been rolled back as delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason}. "}
+             "The status update operation has been rolled back as delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason}"}
 
           {:error, reason} ->
             {:error, 500,
-             "Delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason} and the eventual order status update rollback too failed due to the following reason: #{reason}."}
+             "Delivery time addition to the associated delivery failed due to the following reason: #{delivery_time_addition_error_reason} and the eventual order status update rollback too failed due to the following reason: #{reason}"}
         end
     end
   end
