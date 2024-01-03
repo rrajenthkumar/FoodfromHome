@@ -39,7 +39,8 @@ defmodule FoodFromHomeWeb.OrderJSON do
            delivery: {%Delivery{} = delivery, deliverer_user: %User{} = deliverer_user},
            review: %Review{} = review
          }
-       ) when is_list(cart_items) do
+       )
+       when is_list(cart_items) do
     %{
       id: order.id,
       created_at: order.inserted_at,

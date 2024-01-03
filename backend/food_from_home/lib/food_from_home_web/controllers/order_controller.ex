@@ -9,10 +9,12 @@ defmodule FoodFromHomeWeb.OrderController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def create(conn = %{assigns: %{current_user: %User{id: buyer_user_id}}}, %{"order" => attrs}) do
+  def create(conn = %{assigns: %{current_user: %User{user_type: :buyer} = buyer_user}}, %{
+        "order" => attrs
+      }) do
     attrs = Utils.convert_map_string_keys_to_atoms(attrs)
 
-    with {:ok, %Order{} = order} <- Orders.create_order(buyer_user_id, attrs) do
+    with {:ok, %Order{} = order} <- Orders.create_order(buyer_user, attrs) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/v1/orders/#{order.id}")
@@ -51,14 +53,13 @@ defmodule FoodFromHomeWeb.OrderController do
     end
   end
 
-  # User type check is needed here as there is no user type check in router as every user can perform some kind of update based on his user type
-  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = buyer_user}}, %{
         "order_id" => order_id,
         "order" => %{"delivery_address" => delivery_address}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
+        case Orders.is_order_related_to_user?(order, buyer_user) do
           true ->
             delivery_address = Utils.convert_map_string_keys_to_atoms(delivery_address)
 
@@ -91,13 +92,49 @@ defmodule FoodFromHomeWeb.OrderController do
     )
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :buyer} = buyer_user}}, %{
+        "order_id" => order_id,
+        "order" => %{"invoice_link" => invoice_link}
+      }) do
+    case Orders.get_order(order_id) do
+      %Order{} = order ->
+        case Orders.is_order_related_to_user?(order, buyer_user) do
+          true ->
+            with {:ok, %Order{} = order} <- Orders.confirm_order(order, invoice_link) do
+              render(conn, :show, order: order)
+            end
+
+          false ->
+            ErrorHandler.handle_error(
+              conn,
+              :forbidden,
+              "Order is not related to the current user"
+            )
+        end
+
+      nil ->
+        ErrorHandler.handle_error(conn, :not_found, "Order not found")
+    end
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{
+        "order_id" => _order_id,
+        "order" => %{"invoice_link" => _invoice_link}
+      }) do
+    ErrorHandler.handle_error(
+      conn,
+      :forbidden,
+      "An order can be confirmed only for a buyer user"
+    )
+  end
+
+  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = seller_user}}, %{
         "order_id" => order_id,
         "order" => %{"status" => :ready_for_pickup}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
+        case Orders.is_order_related_to_user?(order, seller_user) do
           true ->
             with {:ok, %Order{} = order} <- Orders.mark_order_as_ready_for_pickup(order) do
               render(conn, :show, order: order)
@@ -127,13 +164,13 @@ defmodule FoodFromHomeWeb.OrderController do
     )
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = seller_user}}, %{
         "order_id" => order_id,
         "order" => %{"status" => :cancelled, "seller_remark" => seller_remark}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
+        case Orders.is_order_related_to_user?(order, seller_user) do
           true ->
             with {:ok, %Order{} = order} <- Orders.cancel_order(order, seller_remark) do
               render(conn, :show, order: order)
@@ -163,15 +200,15 @@ defmodule FoodFromHomeWeb.OrderController do
     )
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = deliverer_user}}, %{
         "order_id" => order_id,
         "order" => %{"status" => :reserved_for_pickup}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
+        case Orders.is_order_related_to_user?(order, deliverer_user) do
           true ->
-            with {:ok, %Order{} = order} <- Orders.reserve_order_for_pickup(order, current_user) do
+            with {:ok, %Order{} = order} <- Orders.reserve_order_for_pickup(order, deliverer_user) do
               render(conn, :show, order: order)
             end
 
@@ -199,13 +236,13 @@ defmodule FoodFromHomeWeb.OrderController do
     )
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = deliverer_user}}, %{
         "order_id" => order_id,
         "order" => %{"status" => :on_the_way}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
+        case Orders.is_order_related_to_user?(order, deliverer_user) do
           true ->
             with {:ok, %Order{} = order} <- Orders.mark_order_as_on_the_way(order) do
               render(conn, :show, order: order)
@@ -235,13 +272,13 @@ defmodule FoodFromHomeWeb.OrderController do
     )
   end
 
-  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = current_user}}, %{
+  def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = deliverer_user}}, %{
         "order_id" => order_id,
         "order" => %{"status" => :delivered}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
+        case Orders.is_order_related_to_user?(order, deliverer_user) do
           true ->
             with {:ok, %Order{} = order} <- Orders.mark_order_as_delivered(order) do
               render(conn, :show, order: order)
@@ -271,12 +308,12 @@ defmodule FoodFromHomeWeb.OrderController do
     )
   end
 
-  def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = current_user}}, %{
+  def delete(conn = %{assigns: %{current_user: %User{user_type: :buyer} = buyer_user}}, %{
         "order_id" => order_id
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
-        case Orders.is_order_related_to_user?(order, current_user) do
+        case Orders.is_order_related_to_user?(order, buyer_user) do
           true ->
             with {:ok, %Order{}} <- Orders.delete_order(order) do
               send_resp(conn, :no_content, "")
