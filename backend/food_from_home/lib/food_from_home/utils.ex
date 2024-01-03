@@ -7,7 +7,7 @@ defmodule FoodFromHome.Utils do
   def convert_map_string_keys_to_atoms(data) when is_map(data) do
     Enum.map(data, fn
       {key, value} when is_binary(key) ->
-        {String.to_existing_atom(key), convert_map_string_keys_to_atoms(value)}
+        {String.to_atom(key), convert_map_string_keys_to_atoms(value)}
 
       {key, value} when is_atom(key) ->
         {key, convert_map_string_keys_to_atoms(value)}
@@ -21,7 +21,7 @@ defmodule FoodFromHome.Utils do
 
   def convert_map_to_keyword_list(data) when is_map(data) do
     Enum.map(data, fn
-      {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
+      {key, value} when is_binary(key) -> {String.to_atom(key), value}
       pair_with_atom_key -> pair_with_atom_key
     end)
   end
@@ -32,8 +32,12 @@ defmodule FoodFromHome.Utils do
     unallowed_keys = attrs_keys -- allowed_keys
 
     case Enum.empty?(unallowed_keys) do
-      true -> changeset
-      false -> add_error(changeset, :base, "Unallowed fields in request: #{unallowed_keys}")
+      true ->
+        changeset
+
+      false ->
+        unallowed_keys = Enum.map(unallowed_keys, fn key -> Atom.to_string(key) end)
+        add_error(changeset, :base, "Unallowed fields in request: #{unallowed_keys}")
     end
   end
 end

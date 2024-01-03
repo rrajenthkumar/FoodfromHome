@@ -53,7 +53,7 @@ defmodule FoodFromHome.MixProject do
       {:guardian, "~> 2.3"},
       {:joken, "~> 2.6"},
       {:ueberauth, "~> 0.10.5"},
-      {:ueberauth_auth0, "~> 2.1"},
+      {:ueberauth_auth0, "~> 2.1"}
     ]
   end
 

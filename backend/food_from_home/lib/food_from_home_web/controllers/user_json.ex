@@ -58,10 +58,10 @@ defmodule FoodFromHomeWeb.UserJSON do
     }
   end
 
-  defp data(geoposition = %Geo.Point{}) do
+  defp data(%Geo.Point{coordinates: {latitude, longitude}}) do
     %{
-      latitude: geoposition.coordinates.latitude,
-      longitude: geoposition.coordinates.longitude
+      latitude: latitude,
+      longitude: longitude
     }
   end
 

@@ -8,8 +8,15 @@ defmodule FoodFromHomeWeb.UserController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def create(conn, %{"user" => attrs}) do
-    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+  def create(conn, %{"user" => %{"gender" => gender, "user_type" => user_type} = attrs}) do
+    user_type = String.to_existing_atom(user_type)
+    gender = String.to_existing_atom(gender)
+
+    attrs =
+      attrs
+      |> Utils.convert_map_string_keys_to_atoms()
+      |> Map.replace(:user_type, user_type)
+      |> Map.replace(:gender, gender)
 
     with {:ok, %User{} = user} <- Users.get_geoposition_and_create_user(attrs) do
       conn
@@ -27,10 +34,15 @@ defmodule FoodFromHomeWeb.UserController do
 
   def update(conn, %{
         "user_id" => user_id,
-        "user" => %{"address" => _address} = attrs
+        "user" => %{"gender" => gender, "address" => _address} = attrs
       }) do
     with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      gender = String.to_existing_atom(gender)
+
+      attrs =
+        attrs
+        |> Utils.convert_map_string_keys_to_atoms()
+        |> Map.replace(:gender, gender)
 
       with {:ok, %User{} = updated_user} <-
              Users.get_updated_geoposition_and_update_user(user, attrs) do
@@ -41,10 +53,15 @@ defmodule FoodFromHomeWeb.UserController do
 
   def update(conn, %{
         "user_id" => user_id,
-        "user" => attrs
+        "user" => %{"gender" => gender} = attrs
       }) do
     with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      gender = String.to_existing_atom(gender)
+
+      attrs =
+        attrs
+        |> Utils.convert_map_string_keys_to_atoms()
+        |> Map.replace(:gender, gender)
 
       with {:ok, %User{} = updated_user} <- Users.update_user(user, attrs) do
         render(conn, :show, user: updated_user)
