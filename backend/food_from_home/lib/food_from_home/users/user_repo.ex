@@ -65,11 +65,34 @@ defmodule FoodFromHome.Users.UserRepo do
 
   defp query(user_id) when is_integer(user_id) do
     from user in User,
-      join: seller in assoc(user, :seller),
       where:
         user.id == ^user_id and
           user.deleted == false,
-      preload: [seller: seller]
+      preload: [:seller]
+  end
+
+  @doc """
+  Gets a single user from email.
+
+  Raises `Ecto.NoResultsError` if the User does not exist.
+
+  ## Examples
+
+      iex> get_user_from_email!("abc@test.de")
+      %User{}
+
+      iex> get_user_from_email!("def@test.de")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user_from_email!(email) when is_binary(email) do
+    query =
+      from user in User,
+        where:
+          user.email_id == ^email and
+            user.deleted == false
+
+    Repo.one!(query)
   end
 
   @doc """
@@ -103,6 +126,22 @@ defmodule FoodFromHome.Users.UserRepo do
     user
     |> User.soft_delete_changeset()
     |> Repo.update()
+  end
+
+  @doc """
+  Deletes an user.
+
+  ## Examples
+
+      iex> delete_user(user)
+      {:ok, %User{}}
+
+      iex> delete_user(user)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user(user = %User{}) do
+    Repo.delete(user)
   end
 
   @doc """

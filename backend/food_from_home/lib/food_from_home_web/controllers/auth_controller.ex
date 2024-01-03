@@ -4,16 +4,28 @@ defmodule FoodFromHomeWeb.AuthController do
   use FoodFromHomeWeb, :controller
   plug Ueberauth
 
-  def request(_conn, _params) do
-    # Ueberauth.Strategy.Auth0.OAuth.authorization_url(conn)
+  alias FoodFromHome.Guardian
+  alias FoodFromHome.Users
+
+  def callback(conn = %{assigns: %{ueberauth_auth: %{info: %{email: email}}}}, _params) do
+    {:ok, jwt, _full_claims} =
+      email
+      |> Users.get_user_from_email!()
+      |> Guardian.encode_and_sign()
+
+    render(conn, json: %{jwt: jwt})
   end
 
-  def callback(conn = %{assigns: %{ueberauth_failure: _fails}}, _params) do
+  def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
     conn
+    |> put_flash(:error, "Failed to authenticate.")
+    |> redirect(to: "/")
   end
 
-  def callback(conn = %{assigns: %{ueberauth_auth: _auth}}, _params) do
-    # Handle successful authentication, e.g., create user session or generate JWT
+  def logout(conn, _params) do
     conn
+    |> Guardian.Plug.sign_out()
+    |> put_flash(:info, "You have been logged out!")
+    |> redirect(to: "/")
   end
 end

@@ -5,11 +5,20 @@ defmodule FoodFromHomeWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   scope "/auth", FoodFromHomeWeb do
-    pipe_through [:api]
+    pipe_through [:browser]
 
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
+    get "/logout", AuthController, :logout
   end
 
   scope "/api/v1", FoodFromHomeWeb do

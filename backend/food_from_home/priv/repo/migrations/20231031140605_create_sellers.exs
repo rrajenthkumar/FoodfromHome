@@ -3,7 +3,8 @@ defmodule FoodFromHome.Repo.Migrations.CreateSellers do
 
   def change do
     create table(:sellers) do
-      add :seller_user_id, references(:users, on_delete: :nothing)
+      add :seller_user_id, references(:users, on_delete: :delete_all)
+      add :nickname, :string
       add :illustration, :binary, default: nil
       add :introduction, :text
       add :tax_id, :string

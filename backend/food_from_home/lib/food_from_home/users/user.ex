@@ -68,7 +68,11 @@ defmodule FoodFromHome.Users.User do
       field :postal_code, :string
     end
 
-    has_one :seller, Seller, on_replace: :update, foreign_key: :seller_user_id
+    has_one :seller, Seller,
+      on_replace: :update,
+      on_delete: :delete_all,
+      foreign_key: :seller_user_id
+
     has_many :orders, Order, foreign_key: :buyer_user_id
     has_many :deliveries, Delivery, foreign_key: :deliverer_user_id
 

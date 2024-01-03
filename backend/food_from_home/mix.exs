@@ -51,6 +51,7 @@ defmodule FoodFromHome.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
       {:credo, "~> 1.7"},
       {:guardian, "~> 2.3"},
+      {:jose, "~> 1.11"},
       {:joken, "~> 2.6"},
       {:ueberauth, "~> 0.10.5"},
       {:ueberauth_auth0, "~> 2.1"}

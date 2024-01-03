@@ -1,6 +1,7 @@
 defmodule FoodFromHomeWeb.UserController do
   use FoodFromHomeWeb, :controller
 
+  alias FoodFromHome.Auth0Management
   alias FoodFromHome.Users
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
@@ -8,7 +9,15 @@ defmodule FoodFromHomeWeb.UserController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def create(conn, %{"user" => %{"gender" => gender, "user_type" => user_type} = attrs}) do
+  def create(conn, %{
+        "user" =>
+          %{
+            "gender" => gender,
+            "user_type" => user_type,
+            "email" => email,
+            "password" => password
+          } = attrs
+      }) do
     user_type = String.to_existing_atom(user_type)
     gender = String.to_existing_atom(gender)
 
@@ -17,12 +26,25 @@ defmodule FoodFromHomeWeb.UserController do
       |> Utils.convert_map_string_keys_to_atoms()
       |> Map.replace(:user_type, user_type)
       |> Map.replace(:gender, gender)
+      |> Map.drop(:password)
 
     with {:ok, %User{} = user} <- Users.get_geoposition_and_create_user(attrs) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/v1/users/#{user.id}")
-      |> render(:show, user: user)
+      case Auth0Management.create_user(email, password) do
+        {:ok, _auth0_response} ->
+          conn
+          |> put_status(:created)
+          |> put_resp_header("location", ~p"/api/v1/users/#{user.id}")
+          |> render(:show, user: user)
+
+        {:error, reason} ->
+          with {:ok, %User{} = _deleted_user} <- Users.delete_user(user) do
+            ErrorHandler.handle_error(
+              conn,
+              :internal_server_error,
+              "Unable to create an auth0 user. Reason: #{reason}"
+            )
+          end
+      end
     end
   end
 
