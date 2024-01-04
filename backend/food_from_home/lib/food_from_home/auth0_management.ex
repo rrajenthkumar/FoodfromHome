@@ -1,9 +1,11 @@
 defmodule FoodFromHome.Auth0Management do
   @moduledoc """
-  Module to create, update and delete Auth0 users using Auth0 Management API
+  Module to manage Auth0 users using Auth0 Management API
   """
   @auth0_domain Application.compile_env(:food_from_home, FoodFromHome.Auth0Management)[:domain]
-  @management_api_token Application.compile_env(:food_from_home, FoodFromHome.Auth0Management)[:management_api_token]
+  @management_api_token Application.compile_env(:food_from_home, FoodFromHome.Auth0Management)[
+                          :management_api_token
+                        ]
 
   def create_user(email, password) when is_binary(email) and is_binary(password) do
     user_data = %{

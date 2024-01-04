@@ -5,7 +5,7 @@ defmodule FoodFromHome.Users do
   """
   alias FoodFromHome.Users.UserRepo
   alias FoodFromHome.Users.Finders.SellerUserFromOrder
-  alias FoodFromHome.Users.Services.GetGeopositionAndCreateUser
+  alias FoodFromHome.Users.Services.CreateAuth0UserAndGetGeopositionAndCreateUserResource
   alias FoodFromHome.Users.Services.GetUpdatedGeopositionAndUpdateUser
 
   defdelegate get_user!(user_id), to: UserRepo
@@ -17,7 +17,8 @@ defmodule FoodFromHome.Users do
 
   def get_seller_user_from_order!(order), do: SellerUserFromOrder.get!(order)
 
-  def get_geoposition_and_create_user(attrs), do: GetGeopositionAndCreateUser.call(attrs)
+  def create_auth0_user_and_get_geoposition_and_create_user_resource(attrs),
+    do: CreateAuth0UserAndGetGeopositionAndCreateUserResource.call(attrs)
 
   def get_updated_geoposition_and_update_user(user, attrs),
     do: GetUpdatedGeopositionAndUpdateUser.call(user, attrs)
