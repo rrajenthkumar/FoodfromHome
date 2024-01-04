@@ -2,7 +2,7 @@ defmodule FoodFromHomeWeb.AuthJSON do
   @doc """
   Renders a jwt.
   """
-  def show(%{jwt: jwt}) do
-    %{data: %{jwt: jwt}}
+  def show(data = %{}) do
+    %{token: data.token}
   end
 end

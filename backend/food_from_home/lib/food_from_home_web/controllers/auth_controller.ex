@@ -14,7 +14,7 @@ defmodule FoodFromHomeWeb.AuthController do
       |> Users.get_user_from_email!()
       |> Guardian.encode_and_sign()
 
-    render(conn, :show, jwt: jwt)
+    render(conn, :show, token: jwt)
   end
 
   def callback(
