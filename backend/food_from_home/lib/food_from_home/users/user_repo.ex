@@ -129,22 +129,6 @@ defmodule FoodFromHome.Users.UserRepo do
   end
 
   @doc """
-  Deletes an user.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_user(user = %User{}) do
-    Repo.delete(user)
-  end
-
-  @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes during user creation.
 
   ## Examples
