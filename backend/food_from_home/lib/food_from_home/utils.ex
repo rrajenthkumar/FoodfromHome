@@ -7,7 +7,7 @@ defmodule FoodFromHome.Utils do
   def convert_string_keys_to_atoms(data) when is_map(data) do
     Enum.map(data, fn
       {key, value} when is_binary(key) ->
-        {String.to_atom(key), convert_string_keys_to_atoms(value)}
+        {String.to_existing_atom(key), convert_string_keys_to_atoms(value)}
 
       {key, value} when is_atom(key) ->
         {key, convert_string_keys_to_atoms(value)}
