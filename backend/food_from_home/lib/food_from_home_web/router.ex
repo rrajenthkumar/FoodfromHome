@@ -6,15 +6,19 @@ defmodule FoodFromHomeWeb.Router do
   end
 
   scope "/", FoodFromHomeWeb do
-    pipe_through [:api]
-
     scope "/auth" do
       get "/:provider", AuthController, :request
+      get "/:provider/logout", AuthController, :logout
+    end
+
+    scope "/auth" do
+      pipe_through [:api]
       get "/:provider/callback", AuthController, :callback
-      get "/logout", AuthController, :logout
     end
 
     scope "/api/v1" do
+      pipe_through [:api]
+
       scope "/users" do
         # Creates a new user (along with a new seller in case of :seller user type)
         post "/", UserController, :create

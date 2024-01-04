@@ -36,5 +36,6 @@ defmodule FoodFromHomeWeb.AuthController do
   def logout(conn, _params) do
     conn
     |> Guardian.Plug.sign_out()
+    |> redirect(to: "/auth/auth0")
   end
 end
