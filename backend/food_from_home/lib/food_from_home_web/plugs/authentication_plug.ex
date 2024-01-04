@@ -1,6 +1,6 @@
 defmodule FoodFromHomeWeb.AuthenticationPlug do
   @moduledoc """
-  This plug checks if there is an authenticated user.
+  This plug extracts user from the JWT and assigns it to conn.
   """
   import Plug.Conn
 
@@ -13,14 +13,14 @@ defmodule FoodFromHomeWeb.AuthenticationPlug do
 
   def call(conn, _opts) do
     case VerifyHeader.call(conn, jwt_module: FoodFromHome.Guardian) do
-      {:ok, conn} ->
-        conn
+      {:ok, user} ->
+        assign(conn, :current_user, user)
 
-      {:error, _reason, conn} ->
+      {:error, reason} ->
         ErrorHandler.handle_error(
           conn,
           :unauthorized,
-          "No authenticated user"
+          reason
         )
     end
   end

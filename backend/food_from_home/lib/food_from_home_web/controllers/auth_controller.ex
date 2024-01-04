@@ -6,6 +6,7 @@ defmodule FoodFromHomeWeb.AuthController do
 
   alias FoodFromHome.Guardian
   alias FoodFromHome.Users
+  alias FoodFromHomeWeb.ErrorHandler
 
   def callback(conn = %{assigns: %{ueberauth_auth: %{info: %{email: email}}}}, _params) do
     {:ok, jwt, _full_claims} =
@@ -13,19 +14,27 @@ defmodule FoodFromHomeWeb.AuthController do
       |> Users.get_user_from_email!()
       |> Guardian.encode_and_sign()
 
-    render(conn, json: %{jwt: jwt})
+    render(conn, :show, jwt: jwt)
   end
 
-  def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
-    conn
-    |> put_flash(:error, "Failed to authenticate.")
-    |> redirect(to: "/")
+  def callback(
+        conn = %{assigns: %{ueberauth_failure: %Ueberauth.Failure{errors: errors}}},
+        _params
+      ) do
+    errors =
+      errors
+      |> Enum.map(fn %Ueberauth.Failure.Error{message: message} -> message end)
+      |> Enum.join(",")
+
+    ErrorHandler.handle_error(
+      conn,
+      :internal_server_error,
+      "Ueberauth failure. Reasons: #{errors}."
+    )
   end
 
   def logout(conn, _params) do
     conn
     |> Guardian.Plug.sign_out()
-    |> put_flash(:info, "You have been logged out!")
-    |> redirect(to: "/")
   end
 end
