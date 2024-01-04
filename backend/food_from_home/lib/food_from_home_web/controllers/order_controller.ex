@@ -12,7 +12,7 @@ defmodule FoodFromHomeWeb.OrderController do
   def create(conn = %{assigns: %{current_user: %User{user_type: :buyer} = buyer_user}}, %{
         "order" => attrs
       }) do
-    attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+    attrs = Utils.convert_string_keys_to_atoms(attrs)
 
     with {:ok, %Order{} = order} <- Orders.create_order(buyer_user, attrs) do
       conn
@@ -61,7 +61,7 @@ defmodule FoodFromHomeWeb.OrderController do
       %Order{} = order ->
         case Orders.is_order_related_to_user?(order, buyer_user) do
           true ->
-            delivery_address = Utils.convert_map_string_keys_to_atoms(delivery_address)
+            delivery_address = Utils.convert_string_keys_to_atoms(delivery_address)
 
             with {:ok, %Order{} = order} <-
                    Orders.update_order_delivery_address(order, delivery_address) do
@@ -130,7 +130,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = seller_user}}, %{
         "order_id" => order_id,
-        "order" => %{"status" => :ready_for_pickup}
+        "order" => %{"status" => "ready_for_pickup"}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
@@ -155,7 +155,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{
         "order_id" => _order_id,
-        "order" => %{"status" => :ready_for_pickup}
+        "order" => %{"status" => "ready_for_pickup"}
       }) do
     ErrorHandler.handle_error(
       conn,
@@ -166,7 +166,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :seller} = seller_user}}, %{
         "order_id" => order_id,
-        "order" => %{"status" => :cancelled, "seller_remark" => seller_remark}
+        "order" => %{"status" => "cancelled", "seller_remark" => seller_remark}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
@@ -191,7 +191,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{
         "order_id" => _order_id,
-        "order" => %{"status" => :cancelled}
+        "order" => %{"status" => "cancelled"}
       }) do
     ErrorHandler.handle_error(
       conn,
@@ -202,7 +202,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = deliverer_user}}, %{
         "order_id" => order_id,
-        "order" => %{"status" => :reserved_for_pickup}
+        "order" => %{"status" => "reserved_for_pickup"}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
@@ -227,7 +227,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{
         "order_id" => _order_id,
-        "order" => %{"status" => :reserved_for_pickup}
+        "order" => %{"status" => "reserved_for_pickup"}
       }) do
     ErrorHandler.handle_error(
       conn,
@@ -238,7 +238,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = deliverer_user}}, %{
         "order_id" => order_id,
-        "order" => %{"status" => :on_the_way}
+        "order" => %{"status" => "on_the_way"}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
@@ -263,7 +263,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{
         "order_id" => _order_id,
-        "order" => %{"status" => :on_the_way}
+        "order" => %{"status" => "on_the_way"}
       }) do
     ErrorHandler.handle_error(
       conn,
@@ -274,7 +274,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: :deliverer} = deliverer_user}}, %{
         "order_id" => order_id,
-        "order" => %{"status" => :delivered}
+        "order" => %{"status" => "delivered"}
       }) do
     case Orders.get_order(order_id) do
       %Order{} = order ->
@@ -299,7 +299,7 @@ defmodule FoodFromHomeWeb.OrderController do
 
   def update(conn = %{assigns: %{current_user: %User{user_type: _another_type}}}, %{
         "order_id" => _order_id,
-        "order" => %{"status" => :delivered}
+        "order" => %{"status" => "delivered"}
       }) do
     ErrorHandler.handle_error(
       conn,

@@ -42,7 +42,7 @@ defmodule FoodFromHomeWeb.DeliveryController do
       }) do
     with {:ok, %Order{} = order} <-
            run_preliminary_checks(conn, order_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      attrs = Utils.convert_string_keys_to_atoms(attrs)
 
       with {:ok, attrs} <-
              FoodFromHomeWebUtils.unallowed_attributes_check(

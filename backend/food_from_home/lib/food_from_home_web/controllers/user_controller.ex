@@ -8,21 +8,17 @@ defmodule FoodFromHomeWeb.UserController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  def create(conn, %{
-        "user" =>
-          %{
-            "gender" => gender,
-            "user_type" => user_type
-          } = attrs
-      }) do
-    user_type = String.to_existing_atom(user_type)
-    gender = String.to_existing_atom(gender)
+  @keys_of_atom_type_fields_for_create [:gender, :user_type]
 
+  @keys_of_atom_type_fields_for_update [:gender]
+
+  def create(conn, %{
+        "user" => attrs
+      }) do
     attrs =
       attrs
-      |> Utils.convert_map_string_keys_to_atoms()
-      |> Map.replace(:user_type, user_type)
-      |> Map.replace(:gender, gender)
+      |> Utils.convert_string_keys_to_atoms()
+      |> Utils.convert_string_values_to_atoms(@keys_of_atom_type_fields_for_create)
 
     with {:ok, %User{} = user} <-
            Users.create_auth0_user_and_get_geoposition_and_create_user_resource(attrs) do
@@ -41,15 +37,13 @@ defmodule FoodFromHomeWeb.UserController do
 
   def update(conn, %{
         "user_id" => user_id,
-        "user" => %{"gender" => gender, "address" => _address} = attrs
+        "user" => %{"address" => _address} = attrs
       }) do
     with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
-      gender = String.to_existing_atom(gender)
-
       attrs =
         attrs
-        |> Utils.convert_map_string_keys_to_atoms()
-        |> Map.replace(:gender, gender)
+        |> Utils.convert_string_keys_to_atoms()
+        |> Utils.convert_string_values_to_atoms(@keys_of_atom_type_fields_for_update)
 
       with {:ok, %User{} = updated_user} <-
              Users.get_updated_geoposition_and_update_user(user, attrs) do
@@ -60,15 +54,13 @@ defmodule FoodFromHomeWeb.UserController do
 
   def update(conn, %{
         "user_id" => user_id,
-        "user" => %{"gender" => gender} = attrs
+        "user" => attrs
       }) do
     with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
-      gender = String.to_existing_atom(gender)
-
       attrs =
         attrs
-        |> Utils.convert_map_string_keys_to_atoms()
-        |> Map.replace(:gender, gender)
+        |> Utils.convert_string_keys_to_atoms()
+        |> Utils.convert_string_values_to_atoms(@keys_of_atom_type_fields_for_update)
 
       with {:ok, %User{} = updated_user} <- Users.update_user(user, attrs) do
         render(conn, :show, user: updated_user)

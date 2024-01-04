@@ -16,7 +16,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "seller_id" => seller_id
       }) do
     with {:ok, %Seller{} = seller} <- run_preliminary_checks(conn, seller_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      attrs = Utils.convert_string_keys_to_atoms(attrs)
 
       with {:ok, %FoodMenu{} = food_menu} <- FoodMenus.create_food_menu(seller, attrs) do
         conn
@@ -60,7 +60,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
         "food_menu_id" => food_menu_id
       }) do
     with {:ok, %FoodMenu{} = food_menu} <- run_preliminary_checks(conn, seller_id, food_menu_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      attrs = Utils.convert_string_keys_to_atoms(attrs)
 
       with {:ok, %FoodMenu{} = food_menu} <-
              FoodMenus.update_food_menu(food_menu, attrs) do

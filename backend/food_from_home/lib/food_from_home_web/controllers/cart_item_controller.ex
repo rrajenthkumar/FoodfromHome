@@ -17,7 +17,7 @@ defmodule FoodFromHomeWeb.CartItemController do
       }) do
     with {:ok, %Order{} = order} <-
            run_preliminary_checks(conn, order_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      attrs = Utils.convert_string_keys_to_atoms(attrs)
 
       with {:ok, %CartItem{id: cart_item_id} = cart_item} <-
              CartItems.create_cart_item_and_update_food_menu_remaining_quantity(
@@ -59,7 +59,7 @@ defmodule FoodFromHomeWeb.CartItemController do
         "cart_item" => attrs
       }) do
     with {:ok, %CartItem{} = cart_item} <- run_preliminary_checks(conn, order_id, cart_item_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      attrs = Utils.convert_string_keys_to_atoms(attrs)
 
       with {:ok, %CartItem{} = cart_item} <-
              CartItems.update_cart_item_and_update_food_menu_remaining_quantity(

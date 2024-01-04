@@ -73,7 +73,7 @@ defmodule FoodFromHomeWeb.ReviewController do
         "review" => attrs
       }) do
     with {:ok, %Order{} = order} <- run_preliminary_checks_for_create(conn, order_id) do
-      attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+      attrs = Utils.convert_string_keys_to_atoms(attrs)
 
       with {:ok, %Review{} = review} <- Reviews.create_review(order, attrs) do
         conn
@@ -97,7 +97,7 @@ defmodule FoodFromHomeWeb.ReviewController do
     with {:ok, %Review{} = review} <- run_preliminary_checks(conn, order_id) do
       with {:ok, %Review{} = review} <-
              run_additional_checks(conn, review) do
-        attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+        attrs = Utils.convert_string_keys_to_atoms(attrs)
 
         with {:ok, attrs} <-
                FoodFromHomeWebUtils.unallowed_attributes_check(
@@ -120,7 +120,7 @@ defmodule FoodFromHomeWeb.ReviewController do
     with {:ok, %Review{} = review} <- run_preliminary_checks(conn, order_id) do
       with {:ok, %Review{} = review} <-
              run_additional_checks(conn, review) do
-        attrs = Utils.convert_map_string_keys_to_atoms(attrs)
+        attrs = Utils.convert_string_keys_to_atoms(attrs)
 
         with {:ok, attrs} <-
                FoodFromHomeWebUtils.unallowed_attributes_check(
