@@ -2,42 +2,82 @@ defmodule FoodFromHome.Auth0Management do
   @moduledoc """
   Module to manage Auth0 users using Auth0 Management API
   """
-  @auth0_domain Application.compile_env(:food_from_home, FoodFromHome.Auth0Management)[:domain]
-  @management_api_token Application.compile_env(:food_from_home, FoodFromHome.Auth0Management)[
-                          :management_api_token
-                        ]
+  alias Auth0.Entity.User
+  alias Auth0.Entity.Users
+  alias Auth0.Management
+  alias Auth0.Management.UsersByEmail
 
-  def create_user(email, password) when is_binary(email) and is_binary(password) do
-    user_data = %{
-      email: email,
-      password: password,
-      connection: "Username-Password-Authentication"
-    }
+  @auth0_management_api_config %Auth0.Config{
+    domain: Application.compile_env(:food_from_home, Auth0ManagementAPI)[:domain],
+    client_id: Application.compile_env(:food_from_home, Auth0ManagementAPI)[:client_id],
+    client_secret: Application.compile_env(:food_from_home, Auth0ManagementAPI)[:client_secret]
+  }
 
-    headers = [
-      {"Content-Type", "application/json"},
-      {"Authorization", "Bearer #{@management_api_token}"}
-    ]
-
-    auth0_management_api_url = "https://#{@auth0_domain}/api/v2/users"
-
+  def create_auth0_user(params = %{email: _email, password: _password}) do
     result =
-      HTTPoison.post(
-        auth0_management_api_url,
-        Jason.encode!(%{user: user_data}),
-        headers,
-        [:json]
+      Management.Users.create(
+        params,
+        @auth0_management_api_config
       )
 
     case result do
-      {:ok, %{status_code: 201, body: body}} ->
-        {:ok, body}
+      {:ok, %User{} = user, _response_body} ->
+        {:ok, user}
 
-      {:ok, %{status_code: code, body: body}} ->
-        {:error, "Auth0 user creation failed with status code #{code}: #{body}"}
+      error ->
+        error
+    end
+  end
 
-      {:error, reason} ->
-        {:error, "Failed to communicate with Auth0 Management API: #{reason}"}
+  def update_auth0_user(email, params \\ %{}) when is_binary(email) do
+    {:ok, %User{user_id: auth0_user_id}} = get_auth0_user_from_email(email)
+
+    result =
+      Management.Users.update(
+        auth0_user_id,
+        params,
+        @auth0_management_api_config
+      )
+
+    case result do
+      {:ok, %User{} = user, _response_body} ->
+        {:ok, user}
+
+      error ->
+        error
+    end
+  end
+
+  def delete_auth0_user(email) when is_binary(email) do
+    {:ok, %User{user_id: auth0_user_id} = to_be_deleted_user} = get_auth0_user_from_email(email)
+
+    result =
+      Management.Users.delete(
+        auth0_user_id,
+        @auth0_management_api_config
+      )
+
+    case result do
+      {:ok, _status, _response_body} ->
+        {:ok, to_be_deleted_user}
+
+      error ->
+        error
+    end
+  end
+
+  defp get_auth0_user_from_email(email) when is_binary(email) do
+    result = UsersByEmail.list(_params = %{"email" => email}, @auth0_management_api_config)
+
+    case result do
+      {:ok, %Users{users: []}, _response_body} ->
+        {:error, "No auth0 account found"}
+
+      {:ok, %Users{users: [user]}, _response_body} ->
+        {:ok, user}
+
+      error ->
+        error
     end
   end
 end

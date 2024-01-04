@@ -47,14 +47,15 @@ defmodule FoodFromHome.MixProject do
       {:geo_postgis, "~> 3.5"},
       {:kaffe, "~> 1.24"},
       {:oauth2, "~> 2.1"},
-      {:httpoison, "~> 2.2"},
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
       {:credo, "~> 1.7"},
       {:guardian, "~> 2.3"},
       {:jose, "~> 1.11"},
       {:joken, "~> 2.6"},
       {:ueberauth, "~> 0.10.5"},
-      {:ueberauth_auth0, "~> 2.1"}
+      {:ueberauth_auth0, "~> 2.1"},
+      {:auth0_api, "~> 1.6"},
+      {:httpoison, "~> 1.8"}
     ]
   end
 

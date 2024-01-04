@@ -1,7 +1,6 @@
 defmodule FoodFromHomeWeb.UserController do
   use FoodFromHomeWeb, :controller
 
-  alias FoodFromHome.Auth0Management
   alias FoodFromHome.Users
   alias FoodFromHome.Users.User
   alias FoodFromHome.Utils
