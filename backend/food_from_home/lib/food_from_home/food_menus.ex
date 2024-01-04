@@ -13,6 +13,6 @@ defmodule FoodFromHome.FoodMenus do
   defdelegate update_food_menu(food_menu, attrs), to: FoodMenuRepo
   defdelegate delete_food_menu(food_menu), to: FoodMenuRepo
 
-  defdelegate food_menu_does_not_belong_to_seller?(food_menu, seller), to: Utils
+  defdelegate food_menu_belongs_to_seller?(food_menu, seller), to: Utils
   defdelegate has_associated_cart_items?(food_menu), to: Utils
 end

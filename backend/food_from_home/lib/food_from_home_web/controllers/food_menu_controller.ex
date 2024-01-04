@@ -95,7 +95,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Seller not found"
         )
 
-      Sellers.seller_does_not_belong_to_user?(seller_result, current_user) ->
+      Sellers.seller_belongs_to_user?(seller_result, current_user) === false ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -132,7 +132,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Food menu not found"
         )
 
-      FoodMenus.food_menu_does_not_belong_to_seller?(food_menu_result, seller_result) ->
+      FoodMenus.food_menu_belongs_to_seller?(food_menu_result, seller_result) === false ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -162,7 +162,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Seller not found"
         )
 
-      Sellers.seller_does_not_belong_to_user?(seller_result, current_user) ->
+      Sellers.seller_belongs_to_user?(seller_result, current_user) === false ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,
@@ -176,7 +176,7 @@ defmodule FoodFromHomeWeb.FoodMenuController do
           "Food menu not found"
         )
 
-      FoodMenus.food_menu_does_not_belong_to_seller?(food_menu_result, seller_result) ->
+      FoodMenus.food_menu_belongs_to_seller?(food_menu_result, seller_result) === false ->
         ErrorHandler.handle_error(
           conn,
           :forbidden,

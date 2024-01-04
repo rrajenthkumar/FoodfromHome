@@ -20,5 +20,4 @@ defmodule FoodFromHome.Sellers do
   def get_seller_from_user!(user), do: SellerFromUser.get!(user)
 
   defdelegate seller_belongs_to_user?(seller, user), to: Utils
-  defdelegate seller_does_not_belong_to_user?(seller, user), to: Utils
 end
