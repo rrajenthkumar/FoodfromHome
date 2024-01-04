@@ -4,11 +4,11 @@ defmodule FoodFromHome.Users.Services.CreateAuth0UserAndGetGeopositionAndCreateU
   alias FoodFromHome.Users.UserRepo
   alias FoodFromHome.Users.Utils
 
-  def call(attrs = %{email: email, password: password, address: _address}) do
+  def call(attrs = %{email_id: email, password: password, address: _address}) do
     case Auth0Management.create_auth0_user(%{email: email, password: password}) do
       {:ok, _auth0_user} ->
         attrs
-        |> Map.drop(:password)
+        |> Map.drop([:password])
         |> Utils.add_geoposition_to_attrs()
         |> UserRepo.create_user()
 

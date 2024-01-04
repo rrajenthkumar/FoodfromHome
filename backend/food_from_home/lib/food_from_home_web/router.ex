@@ -22,12 +22,17 @@ defmodule FoodFromHomeWeb.Router do
   end
 
   scope "/api/v1", FoodFromHomeWeb do
-    pipe_through [:api, FoodFromHomeWeb.AuthenticationPlug]
+    pipe_through [:api]
+
+    scope "/users" do
+      # Creates a new user (along with a new seller in case of :seller user type)
+      post "/", UserController, :create
+    end
 
     scope "/" do
+      pipe_through [FoodFromHomeWeb.AuthenticationPlug]
+
       scope "/users" do
-        # Creates a new user (along with a new seller in case of :seller user type)
-        post "/", UserController, :create
         # Gets current user (along with seller details in case of :seller user type) with user_id
         get "/:user_id", UserController, :show
         # Updates current user (along with seller details in case of :seller user type)
@@ -150,8 +155,6 @@ defmodule FoodFromHomeWeb.Router do
           end
         end
       end
-
-      # TO DO: pagination & sorting feature for all :index function routes
     end
   end
 

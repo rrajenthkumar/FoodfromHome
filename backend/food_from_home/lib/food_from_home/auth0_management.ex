@@ -14,6 +14,8 @@ defmodule FoodFromHome.Auth0Management do
   }
 
   def create_auth0_user(params = %{email: _email, password: _password}) do
+    params = Map.put(params, :connection, "Username-Password-Authentication")
+
     result =
       Management.Users.create(
         params,
@@ -31,6 +33,8 @@ defmodule FoodFromHome.Auth0Management do
 
   def update_auth0_user(email, params \\ %{}) when is_binary(email) do
     {:ok, %User{user_id: auth0_user_id}} = get_auth0_user_from_email(email)
+
+    params = Map.put(params, :connection, "Username-Password-Authentication")
 
     result =
       Management.Users.update(
