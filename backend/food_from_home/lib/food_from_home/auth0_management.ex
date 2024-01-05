@@ -16,7 +16,7 @@ defmodule FoodFromHome.Auth0Management do
 
   def create_auth0_user(params = %{}) do
     case validate_params(params) do
-      {:ok, %{email: email, password: encoded_password} = validated_params} ->
+      {:ok, %{password: encoded_password} = validated_params} ->
         decoded_password = Base.decode64!(encoded_password, ignore: :whitespace)
 
         params =
@@ -137,9 +137,9 @@ defmodule FoodFromHome.Auth0Management do
 
   defp validate_params(params = %{email: email, password: password}) do
     case Utils.validate_email(email) do
-      {:ok, email} ->
+      {:ok, _email} ->
         case Utils.validate_password(password) do
-          {:ok, password} -> {:ok, params}
+          {:ok, _password} -> {:ok, params}
           error -> error
         end
 
@@ -150,14 +150,14 @@ defmodule FoodFromHome.Auth0Management do
 
   defp validate_params(params = %{email: email}) do
     case Utils.validate_email(email) do
-      {:ok, email} -> {:ok, params}
+      {:ok, _email} -> {:ok, params}
       error -> error
     end
   end
 
   defp validate_params(params = %{password: password}) do
     case Utils.validate_password(password) do
-      {:ok, password} -> {:ok, params}
+      {:ok, _password} -> {:ok, params}
       error -> error
     end
   end
