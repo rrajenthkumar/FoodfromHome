@@ -5,19 +5,18 @@ defmodule FoodFromHomeWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", FoodFromHomeWeb do
+  scope "/api/v1", FoodFromHomeWeb do
     scope "/auth" do
       get "/:provider", AuthController, :request
       get "/:provider/logout", AuthController, :logout
     end
 
-    scope "/auth" do
+    scope "/" do
       pipe_through [:api]
-      get "/:provider/callback", AuthController, :callback
-    end
 
-    scope "/api/v1" do
-      pipe_through [:api]
+      scope "/auth" do
+        get "/:provider/callback", AuthController, :callback
+      end
 
       scope "/users" do
         # Creates a new user (along with a new seller in case of :seller user type)
@@ -25,7 +24,7 @@ defmodule FoodFromHomeWeb.Router do
       end
 
       scope "/" do
-        pipe_through [FoodFromHomeWeb.AuthenticationPlug]
+        pipe_through [FoodFromHomeWeb.AuthenticationPipeline]
 
         scope "/users" do
           # Gets current user (along with seller details in case of :seller user type) with user_id
