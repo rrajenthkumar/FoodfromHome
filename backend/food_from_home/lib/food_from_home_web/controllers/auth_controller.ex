@@ -20,7 +20,7 @@ defmodule FoodFromHomeWeb.AuthController do
         ErrorHandler.handle_error(
           conn,
           :not_found,
-          "User corresponding to auth0 user not found"
+          "User resource corresponding to auth0 user not found"
         )
     end
   end
