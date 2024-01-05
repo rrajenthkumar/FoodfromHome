@@ -1,11 +1,12 @@
 defmodule FoodFromHome.Auth0Management do
   @moduledoc """
-  Module to manage Auth0 users using Auth0 Management API
+  Module to create, update, delete Auth0 user using Auth0 Management API
   """
   alias Auth0.Entity.User
   alias Auth0.Entity.Users
   alias Auth0.Management
   alias Auth0.Management.UsersByEmail
+  alias FoodFromHome.Auth0Management.Utils
 
   @auth0_management_api_config %Auth0.Config{
     domain: Application.compile_env(:food_from_home, Auth0ManagementAPI)[:domain],
@@ -13,39 +14,88 @@ defmodule FoodFromHome.Auth0Management do
     client_secret: Application.compile_env(:food_from_home, Auth0ManagementAPI)[:client_secret]
   }
 
-  def create_auth0_user(params = %{email: _email, password: _password}) do
-    params = Map.put(params, :connection, "Username-Password-Authentication")
+  def create_auth0_user(params = %{}) do
+    case validate_params(params) do
+      {:ok, %{email: email, password: encoded_password} = validated_params} ->
+        decoded_password = Base.decode64!(encoded_password, ignore: :whitespace)
 
-    result =
-      Management.Users.create(
-        params,
-        @auth0_management_api_config
-      )
+        params =
+          validated_params
+          |> Map.put(:password, decoded_password)
+          |> Map.put(:connection, "Username-Password-Authentication")
 
-    case result do
-      {:ok, %User{} = user, _response_body} ->
-        {:ok, user}
+        result =
+          Management.Users.create(
+            params,
+            @auth0_management_api_config
+          )
+
+        case result do
+          {:ok, %User{} = user, _response_body} ->
+            {:ok, user}
+
+          error ->
+            error
+        end
 
       error ->
         error
     end
   end
 
-  def update_auth0_user(email, params \\ %{}) when is_binary(email) do
-    {:ok, %User{user_id: auth0_user_id}} = get_auth0_user_from_email(email)
+  def update_auth0_user(email, params = %{email: _new_email}) when is_binary(email) do
+    case validate_params(params) do
+      {:ok, validated_params} ->
+        {:ok, %User{user_id: auth0_user_id}} = get_auth0_user_from_email(email)
 
-    params = Map.put(params, :connection, "Username-Password-Authentication")
+        params = Map.put(validated_params, :connection, "Username-Password-Authentication")
 
-    result =
-      Management.Users.update(
-        auth0_user_id,
-        params,
-        @auth0_management_api_config
-      )
+        result =
+          Management.Users.update(
+            auth0_user_id,
+            params,
+            @auth0_management_api_config
+          )
 
-    case result do
-      {:ok, %User{} = user, _response_body} ->
-        {:ok, user}
+        case result do
+          {:ok, %User{} = user, _response_body} ->
+            {:ok, user}
+
+          error ->
+            error
+        end
+
+      error ->
+        error
+    end
+  end
+
+  def update_auth0_user(email, params = %{password: _encoded_password}) when is_binary(email) do
+    case validate_params(params) do
+      {:ok, %{password: encoded_password} = validated_params} ->
+        {:ok, %User{user_id: auth0_user_id}} = get_auth0_user_from_email(email)
+
+        decoded_password = Base.decode64!(encoded_password, ignore: :whitespace)
+
+        params =
+          validated_params
+          |> Map.put(:password, decoded_password)
+          |> Map.put(:connection, "Username-Password-Authentication")
+
+        result =
+          Management.Users.update(
+            auth0_user_id,
+            params,
+            @auth0_management_api_config
+          )
+
+        case result do
+          {:ok, %User{} = user, _response_body} ->
+            {:ok, user}
+
+          error ->
+            error
+        end
 
       error ->
         error
@@ -82,6 +132,33 @@ defmodule FoodFromHome.Auth0Management do
 
       error ->
         error
+    end
+  end
+
+  defp validate_params(params = %{email: email, password: password}) do
+    case Utils.validate_email(email) do
+      {:ok, email} ->
+        case Utils.validate_password(password) do
+          {:ok, password} -> {:ok, params}
+          error -> error
+        end
+
+      error ->
+        error
+    end
+  end
+
+  defp validate_params(params = %{email: email}) do
+    case Utils.validate_email(email) do
+      {:ok, email} -> {:ok, params}
+      error -> error
+    end
+  end
+
+  defp validate_params(params = %{password: password}) do
+    case Utils.validate_password(password) do
+      {:ok, password} -> {:ok, params}
+      error -> error
     end
   end
 end
