@@ -4,10 +4,10 @@ defmodule FoodFromHome.Users.Services.UpdateEmailInAuth0UserAndUser do
   alias FoodFromHome.Users
   alias FoodFromHome.Users.User
 
-  def call(user = %User{email: email}, attrs = %{email: new_email}) do
-    case Auth0Management.update_auth0_user(email, %{email: new_email}) do
+  def call(user = %User{email: email}, param = %{email: _new_email}) do
+    case Auth0Management.update_auth0_user(email, param) do
       {:ok, _auth0_user} ->
-        Users.update_user(user, attrs)
+        Users.update_user(user, param)
 
       {:error, reason} ->
         {:error, 500,

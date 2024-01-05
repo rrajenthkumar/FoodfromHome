@@ -121,7 +121,7 @@ defmodule FoodFromHome.Auth0Management do
   end
 
   defp get_auth0_user_from_email(email) when is_binary(email) do
-    result = UsersByEmail.list(_params = %{"email" => email}, @auth0_management_api_config)
+    result = UsersByEmail.list(_params = %{email: email}, @auth0_management_api_config)
 
     case result do
       {:ok, %Users{users: []}, _response_body} ->

@@ -3,8 +3,8 @@ defmodule FoodFromHome.Users.Services.UpdatePasswordInAuth0User do
   alias FoodFromHome.Auth0Management
   alias FoodFromHome.Users.User
 
-  def call(user = %User{email: email}, attrs = %{password: _encoded_password}) do
-    case Auth0Management.update_auth0_user(email, attrs) do
+  def call(user = %User{email: email}, param = %{password: _encoded_password}) do
+    case Auth0Management.update_auth0_user(email, param) do
       {:ok, _auth0_user} ->
         {:ok, user}
 
