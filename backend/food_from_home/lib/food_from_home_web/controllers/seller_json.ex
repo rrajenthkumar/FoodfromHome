@@ -38,7 +38,7 @@ defmodule FoodFromHomeWeb.SellerJSON do
       seller_user_id: seller_user.id,
       address: data(seller_user.address),
       phone_number: seller_user.phone_number,
-      email_id: seller_user.email_id,
+      email: seller_user.email,
       first_name: seller_user.first_name,
       gender: seller_user.gender,
       last_name: seller_user.last_name,

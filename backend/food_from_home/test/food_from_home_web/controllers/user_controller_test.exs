@@ -14,7 +14,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
       postal_code: "845789"
     },
     phone_number: "+4912334578912",
-    email_id: "random@email.de",
+    email: "random@email.de",
     first_name: "random first_name",
     gender: :non_binary,
     last_name: "random last_name",
@@ -30,7 +30,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
       postal_code: "457814"
     },
     phone_number: "+4912334578534",
-    email_id: "another_random@email.de",
+    email: "another_random@email.de",
     first_name: "another random first_name",
     gender: :female,
     last_name: "another random last_name",
@@ -47,7 +47,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
       postal_code: "789456"
     },
     phone_number: "+491231118912",
-    email_id: "updated@email.de",
+    email: "updated@email.de",
     first_name: "updated first_name",
     gender: :female,
     last_name: "updated last_name",
@@ -57,7 +57,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
   @invalid_attrs %{
     address: nil,
     phone_number: nil,
-    email_id: nil,
+    email: nil,
     first_name: nil,
     gender: nil,
     last_name: nil,
@@ -79,7 +79,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
       assert json_response(conn, 200)["data"] == [
                %{
                  "id" => user_1.id,
-                 "email_id" => user_1.email_id,
+                 "email" => user_1.email,
                  "first_name" => user_1.first_name,
                  "gender" => to_string(user_1.gender),
                  "last_name" => user_1.last_name,
@@ -112,7 +112,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
       assert json_response(conn, 200)["data"] == [
                %{
                  "id" => user_2.id,
-                 "email_id" => user_2.email_id,
+                 "email" => user_2.email,
                  "first_name" => user_2.first_name,
                  "gender" => to_string(user_2.gender),
                  "last_name" => user_2.last_name,
@@ -129,7 +129,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                },
                %{
                  "id" => user_3.id,
-                 "email_id" => user_3.email_id,
+                 "email" => user_3.email,
                  "first_name" => user_3.first_name,
                  "gender" => to_string(user_3.gender),
                  "last_name" => user_3.last_name,
@@ -166,7 +166,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                  "postal_code" => "845789"
                },
                "phone_number" => "+4912334578912",
-               "email_id" => "random@email.de",
+               "email" => "random@email.de",
                "first_name" => "random first_name",
                "gender" => "non_binary",
                "last_name" => "random last_name",
@@ -195,7 +195,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                  "postal_code" => "457814"
                },
                "phone_number" => "+4912334578534",
-               "email_id" => "another_random@email.de",
+               "email" => "another_random@email.de",
                "first_name" => "another random first_name",
                "gender" => "female",
                "last_name" => "another random last_name",
@@ -231,7 +231,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
 
       assert json_response(conn, 200)["data"] == %{
                "id" => user.id,
-               "email_id" => user.email_id,
+               "email" => user.email,
                "first_name" => user.first_name,
                "gender" => to_string(user.gender),
                "last_name" => user.last_name,
@@ -257,7 +257,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
 
       assert json_response(conn, 200)["data"] == %{
                "id" => user.id,
-               "email_id" => user.email_id,
+               "email" => user.email,
                "first_name" => user.first_name,
                "gender" => to_string(user.gender),
                "last_name" => user.last_name,
@@ -299,7 +299,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                  "postal_code" => "789456"
                },
                "phone_number" => "+491231118912",
-               "email_id" => "updated@email.de",
+               "email" => "updated@email.de",
                "first_name" => "updated first_name",
                "gender" => "female",
                "last_name" => "updated last_name",
@@ -319,7 +319,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                  "postal_code" => "789456"
                },
                "phone_number" => "+491231118912",
-               "email_id" => "updated@email.de",
+               "email" => "updated@email.de",
                "first_name" => "updated first_name",
                "gender" => "female",
                "last_name" => "updated last_name",

@@ -4,8 +4,8 @@ defmodule FoodFromHome.Users.Services.CreateAuth0UserAndGetGeopositionAndCreateU
   alias FoodFromHome.Users.UserRepo
   alias FoodFromHome.Users.Utils
 
-  def call(attrs = %{email_id: email_id, password: encoded_password}) do
-    case Auth0Management.create_auth0_user(%{email: email_id, password: encoded_password}) do
+  def call(attrs = %{email: email, password: encoded_password}) do
+    case Auth0Management.create_auth0_user(%{email: email, password: encoded_password}) do
       {:ok, _auth0_user} ->
         attrs
         |> Map.drop([:password])

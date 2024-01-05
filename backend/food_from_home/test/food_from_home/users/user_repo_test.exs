@@ -16,7 +16,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       postal_code: "77777"
     },
     phone_number: "+4912345678912",
-    email_id: "new@email.de",
+    email: "new@email.de",
     first_name: "some first_name",
     gender: :male,
     last_name: "some last_name",
@@ -32,7 +32,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       postal_code: "666555"
     },
     phone_number: "+4912344321545",
-    email_id: "random@email.de",
+    email: "random@email.de",
     first_name: "some random first_name",
     gender: :female,
     last_name: "some random last_name",
@@ -54,7 +54,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       postal_code: "98765"
     },
     phone_number: "+4912345678934",
-    email_id: "updated@email.de"
+    email: "updated@email.de"
   }
 
   @attrs_with_invalid_user_data %{
@@ -66,7 +66,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       postal_code: "666555"
     },
     phone_number: nil,
-    email_id: nil,
+    email: nil,
     first_name: nil,
     gender: nil,
     last_name: nil,
@@ -76,7 +76,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
   @attrs_with_invalid_address_data %{
     address: %{door_number: nil, street: nil, city: nil, country: nil, postal_code: nil},
     phone_number: "+4912344321545",
-    email_id: "random@email.de",
+    email: "random@email.de",
     first_name: "some random first_name",
     gender: :female,
     last_name: "some random last_name",
@@ -93,7 +93,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       postal_code: "666555"
     },
     phone_number: "+4912344321545",
-    email_id: "random@email.de",
+    email: "random@email.de",
     first_name: "some random first_name",
     gender: :female,
     last_name: "some random last_name",
@@ -120,7 +120,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert user.address.country == "Germany"
       assert user.address.postal_code == "77777"
       assert user.phone_number == "+4912345678912"
-      assert user.email_id == "new@email.de"
+      assert user.email == "new@email.de"
       assert user.first_name == "some first_name"
       assert user.gender == :male
       assert user.last_name == "some last_name"
@@ -141,7 +141,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert user.address.country == "Germany"
       assert user.address.postal_code == "666555"
       assert user.phone_number == "+4912344321545"
-      assert user.email_id == "random@email.de"
+      assert user.email == "random@email.de"
       assert user.first_name == "some random first_name"
       assert user.gender == :female
       assert user.last_name == "some random last_name"
@@ -189,7 +189,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert updated_user.address.country == "United Kingdom"
       assert updated_user.address.postal_code == "98765"
       assert updated_user.phone_number == "+4912345678934"
-      assert updated_user.email_id == "updated@email.de"
+      assert updated_user.email == "updated@email.de"
 
       assert UserRepo.get!(user.id) == updated_user
     end

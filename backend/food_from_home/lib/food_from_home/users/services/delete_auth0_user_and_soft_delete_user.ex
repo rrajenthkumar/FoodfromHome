@@ -4,8 +4,8 @@ defmodule FoodFromHome.Users.Services.DeleteAuth0UserAndSoftDeleteUser do
   alias FoodFromHome.Users.UserRepo
   alias FoodFromHome.Users.User
 
-  def call(user = %User{email_id: email_id}) do
-    case Auth0Management.delete_auth0_user(email_id) do
+  def call(user = %User{email: email}) do
+    case Auth0Management.delete_auth0_user(email) do
       {:ok, _auth0_user} ->
         UserRepo.soft_delete_user(user)
 

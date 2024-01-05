@@ -5,9 +5,9 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
   alias FoodFromHome.Users.UserRepo
 
   @doc """
-  Generate a unique email_id.
+  Generate a unique email.
   """
-  def unique_email_id, do: "john_doe_#{System.unique_integer([:positive])}@xyz.de"
+  def unique_email, do: "john_doe_#{System.unique_integer([:positive])}@xyz.de"
 
   @doc """
   Generate a unique tax_id.
@@ -29,7 +29,7 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
           postal_code: "12345"
         },
         phone_number: "+4912345678991",
-        email_id: unique_email_id(),
+        email: unique_email(),
         first_name: "John",
         gender: :male,
         last_name: "Doe",
@@ -56,7 +56,7 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
           postal_code: "54321"
         },
         phone_number: "+4911111111111",
-        email_id: unique_email_id(),
+        email: unique_email(),
         first_name: "Jane",
         gender: :male,
         last_name: "Doe",

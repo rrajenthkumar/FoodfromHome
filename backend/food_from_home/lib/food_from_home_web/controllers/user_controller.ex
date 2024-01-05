@@ -48,17 +48,17 @@ defmodule FoodFromHomeWeb.UserController do
 
   def update(conn, %{
         "user_id" => user_id,
-        "user" => %{"email_id" => email_id} = attrs
+        "user" => %{"email" => email} = attrs
       }) do
     with {:ok, %User{} = user} <- run_preliminary_checks(conn, user_id) do
       with {:ok, _attrs} <-
              FoodFromHomeWebUtils.unallowed_attributes_check(
                conn,
                attrs,
-               [:email_id]
+               [:email]
              ) do
         with {:ok, %User{} = updated_user} <-
-               Users.update_email_in_auth0_user_and_user(user, %{email_id: email_id}) do
+               Users.update_email_in_auth0_user_and_user(user, %{email: email}) do
           render(conn, :show, user: updated_user)
         end
       end

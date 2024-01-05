@@ -5,7 +5,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateUsers do
     create table(:users) do
       add :first_name, :string
       add :last_name, :string
-      add :email_id, :string
+      add :email, :string
       add :address, :map
       add :phone_number, :string
       add :gender, :string
@@ -19,7 +19,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateUsers do
 
     create index(:users, [:deleted])
 
-    create unique_index(:users, [:email_id],
+    create unique_index(:users, [:email],
              where: "deleted is false",
              name: :unique_active_user_email_index
            )

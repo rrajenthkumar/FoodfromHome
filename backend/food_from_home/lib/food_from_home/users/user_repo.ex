@@ -89,7 +89,7 @@ defmodule FoodFromHome.Users.UserRepo do
     query =
       from user in User,
         where:
-          user.email_id == ^email and
+          user.email == ^email and
             user.deleted == false
 
     Repo.one!(query)

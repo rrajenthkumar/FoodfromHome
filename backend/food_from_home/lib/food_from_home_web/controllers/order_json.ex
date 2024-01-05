@@ -83,7 +83,7 @@ defmodule FoodFromHomeWeb.OrderJSON do
   defp data(user = %User{}) do
     %{
       id: user.id,
-      email_id: user.email_id
+      email: user.email
     }
   end
 
