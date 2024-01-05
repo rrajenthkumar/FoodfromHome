@@ -6,15 +6,23 @@ defmodule FoodFromHomeWeb.AuthController do
 
   alias FoodFromHome.Guardian
   alias FoodFromHome.Users
+  alias FoodFromHome.Users.User
   alias FoodFromHomeWeb.ErrorHandler
 
   def callback(conn = %{assigns: %{ueberauth_auth: %{info: %{email: email}}}}, _params) do
-    {:ok, jwt, _full_claims} =
-      email
-      |> Users.get_user_from_email!()
-      |> Guardian.encode_and_sign()
+    case Users.get_user_from_email(email) do
+      %User{} = user ->
+        {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
 
-    render(conn, :show, token: jwt)
+        render(conn, :show, token: jwt)
+
+      nil ->
+        ErrorHandler.handle_error(
+          conn,
+          :not_found,
+          "User corresponding to auth0 user not found"
+        )
+    end
   end
 
   def callback(

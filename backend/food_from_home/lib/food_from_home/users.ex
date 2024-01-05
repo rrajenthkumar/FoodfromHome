@@ -13,7 +13,7 @@ defmodule FoodFromHome.Users do
 
   defdelegate get_user!(user_id), to: UserRepo
   defdelegate get_user(user_id), to: UserRepo
-  defdelegate get_user_from_email!(email), to: UserRepo
+  defdelegate get_user_from_email(email), to: UserRepo
   defdelegate update_user(user, attrs), to: UserRepo
 
   def get_seller_user_from_order!(order), do: SellerUserFromOrder.get!(order)

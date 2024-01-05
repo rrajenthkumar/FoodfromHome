@@ -74,25 +74,25 @@ defmodule FoodFromHome.Users.UserRepo do
   @doc """
   Gets a single user from email.
 
-  Raises `Ecto.NoResultsError` if the User does not exist.
+  Returns 'nil' if the User does not exist.
 
   ## Examples
 
-      iex> get_user_from_email!("abc@test.de")
+      iex> get_user_from_email("abc@test.de")
       %User{}
 
-      iex> get_user_from_email!("def@test.de")
-      ** (Ecto.NoResultsError)
+      iex> get_user_from_email("def@test.de")
+      nil
 
   """
-  def get_user_from_email!(email) when is_binary(email) do
+  def get_user_from_email(email) when is_binary(email) do
     query =
       from user in User,
         where:
           user.email == ^email and
             user.deleted == false
 
-    Repo.one!(query)
+    Repo.one(query)
   end
 
   @doc """
