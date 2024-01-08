@@ -45,7 +45,7 @@ defmodule FoodFromHome.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:geo_postgis, "~> 3.5"},
-      {:kaffe, "~> 1.24"},
+      {:kafka_ex, "~> 0.13.0"},
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
       {:credo, "~> 1.7"},
       {:guardian, "~> 2.3"},

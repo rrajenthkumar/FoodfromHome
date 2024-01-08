@@ -17,11 +17,9 @@ defmodule FoodFromHome.Application do
       # Start Finch
       {Finch, name: FoodFromHome.Finch},
       # Start the Endpoint (http/https)
-      FoodFromHomeWeb.Endpoint
-      # Kaffe's Consumer module
-      # {Kaffe.Consumer, []}
-      # Start a worker by calling: FoodFromHome.Worker.start_link(arg)
-      # {FoodFromHome.Worker, arg}
+      FoodFromHomeWeb.Endpoint,
+      # Start KafkaEx application
+      {KafkaEx, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
