@@ -19,7 +19,7 @@ defmodule FoodFromHome.Users.User do
     :email,
     :first_name,
     :last_name,
-    :gender,
+    :salutation,
     :phone_number,
     :user_type,
     :profile_image,
@@ -29,7 +29,7 @@ defmodule FoodFromHome.Users.User do
     :email,
     :first_name,
     :last_name,
-    :gender,
+    :salutation,
     :phone_number,
     :profile_image,
     :geoposition
@@ -38,7 +38,7 @@ defmodule FoodFromHome.Users.User do
     :email,
     :first_name,
     :last_name,
-    :gender,
+    :salutation,
     :phone_number,
     :user_type,
     :geoposition
@@ -53,7 +53,7 @@ defmodule FoodFromHome.Users.User do
     field :email, :string
     field :first_name, :string
     field :last_name, :string
-    field :gender, Ecto.Enum, values: [:male, :female, :non_binary]
+    field :salutation, Ecto.Enum, values: [:Mr, :Mrs, :Ms]
     field :phone_number, :string
     field :user_type, Ecto.Enum, values: [:buyer, :seller, :deliverer]
     field :profile_image, :binary, default: nil

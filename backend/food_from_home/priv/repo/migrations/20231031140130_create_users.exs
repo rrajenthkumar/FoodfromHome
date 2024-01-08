@@ -8,7 +8,7 @@ defmodule FoodFromHome.Repo.Migrations.CreateUsers do
       add :email, :string
       add :address, :map
       add :phone_number, :string
-      add :gender, :string
+      add :salutation, :string
       add :profile_image, :binary, default: nil
       add :user_type, :string
       add :geoposition, :geometry

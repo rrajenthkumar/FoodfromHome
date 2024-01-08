@@ -9,15 +9,15 @@ defmodule FoodFromHomeWeb.UserController do
 
   action_fallback FoodFromHomeWeb.FallbackController
 
-  @keys_of_atom_type_fields_for_create [:gender, :user_type]
+  @keys_of_atom_type_fields_for_create [:salutation, :user_type]
 
-  @keys_of_atom_type_fields_for_update [:gender]
+  @keys_of_atom_type_fields_for_update [:salutation]
 
   # email ID field is updated separately
   @fields_for_update [
     :first_name,
     :last_name,
-    :gender,
+    :salutation,
     :phone_number,
     :profile_image,
     :geoposition

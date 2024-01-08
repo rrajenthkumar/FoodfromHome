@@ -1,0 +1,8 @@
+<h1>Payment assistance for order <strong><%= @order_id %></strong></h1>
+<br/>
+<p>Dear <%= @buyer_full_name %>,</p>
+<p>We noticed that payment for order <%= @order_id %> failed or was cancelled.</p>
+<p>If you are facing issues in completing the order kindly refer to our #payment_support_documents_link</p>
+<br/>
+<p>Best regards,</p>
+<p>FoodfromHome Team</p>

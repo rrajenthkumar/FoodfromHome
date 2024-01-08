@@ -1,0 +1,13 @@
+<h1>Order <strong><%= @order_id %></strong> cancelled</h1>
+<br/>
+<p>Dear <%= @buyer_full_name %>,</p>
+<p>We regret to inform you that the seller <strong><%= @seller_nick_name %></strong> (<%= @seller_email %>) has chosen to cancel your order with the following remark.</p>
+<strong><%= @seller_remark %></strong>
+<br/>
+<p>Refund of your payment has been initiated.</p>
+<p>#payment_details</p>
+<br/>
+<p>Please contact the seller for more information.</p>
+<br/>
+<p>Best regards,</p>
+<p>FoodfromHome Team</p>

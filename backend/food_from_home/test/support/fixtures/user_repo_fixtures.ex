@@ -31,7 +31,7 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
         phone_number: "+4912345678991",
         email: unique_email(),
         first_name: "John",
-        gender: :male,
+        salutation: :Mr,
         last_name: "Doe",
         profile_image: "some profile_image",
         user_type: :buyer
@@ -58,7 +58,7 @@ defmodule FoodFromHome.Users.UserRepoFixtures do
         phone_number: "+4911111111111",
         email: unique_email(),
         first_name: "Jane",
-        gender: :male,
+        salutation: :Mr,
         last_name: "Doe",
         profile_image: "some random profile_image",
         user_type: :seller,

@@ -4,6 +4,8 @@ defmodule FoodFromHome.Users do
   Interface to all User related methods.
   """
   alias FoodFromHome.Users.UserRepo
+  alias FoodFromHome.Users.Finders.BuyerUserFromOrder
+  alias FoodFromHome.Users.Finders.DelivererUserFromOrder
   alias FoodFromHome.Users.Finders.SellerUserFromOrder
   alias FoodFromHome.Users.Services.CreateAuth0UserAndGetGeopositionAndCreateUser
   alias FoodFromHome.Users.Services.DeleteAuth0UserAndSoftDeleteUser
@@ -16,6 +18,8 @@ defmodule FoodFromHome.Users do
   defdelegate get_user_from_email(email), to: UserRepo
   defdelegate update_user(user, attrs), to: UserRepo
 
+  def get_buyer_user_from_order!(order), do: BuyerUserFromOrder.get!(order)
+  def get_deliverer_user_from_order!(order), do: DelivererUserFromOrder.get!(order)
   def get_seller_user_from_order!(order), do: SellerUserFromOrder.get!(order)
 
   def create_auth0_user_and_get_geoposition_and_create_user(attrs),

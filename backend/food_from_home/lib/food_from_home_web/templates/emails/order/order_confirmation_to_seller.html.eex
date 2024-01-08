@@ -1,0 +1,8 @@
+<h1>Order <strong><%= @order_id %></strong> confirmed</h1>
+<br/>
+<p>Dear <%= @seller_full_name %>,</p>
+<p>This is to confirm that <strong><%= @buyer_full_name %></strong> (<%= @buyer_email %>) has made an order with you and the payment has been initiated.</p>
+<p>Let's fulfill the order.</p>
+<br/>
+<p>Best regards,</p>
+<p>FoodfromHome Team</p>

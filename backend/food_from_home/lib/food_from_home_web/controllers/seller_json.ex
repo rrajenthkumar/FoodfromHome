@@ -40,7 +40,7 @@ defmodule FoodFromHomeWeb.SellerJSON do
       phone_number: seller_user.phone_number,
       email: seller_user.email,
       first_name: seller_user.first_name,
-      gender: seller_user.gender,
+      salutation: seller_user.salutation,
       last_name: seller_user.last_name,
       profile_image: seller_user.profile_image
     }

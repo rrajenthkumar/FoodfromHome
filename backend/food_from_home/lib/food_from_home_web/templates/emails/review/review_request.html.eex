@@ -1,0 +1,8 @@
+<h1>Request to review order <strong><%= @order_id %></h1>
+<br/>
+<p>Dear <%= @buyer_full_name %>,</p>
+<p>Thanks again for your order and trust in us.</p>
+<p>We would be glad if you could spare couple of minutes to review #review_link the order and help us improve our service.</p>
+<br/>
+<p>Best regards,</p>
+<p>FoodfromHome Team</p>

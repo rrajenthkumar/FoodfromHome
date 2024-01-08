@@ -1,6 +1,6 @@
-defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
+defmodule FoodFromHome.Users.Finders.DelivererUserFromOrder do
   @moduledoc """
-  Finder to find a seller user from an order
+  Finder to find a deliverer user from an order
   """
   import Ecto.Query, warn: false
 
@@ -9,7 +9,7 @@ defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
   alias FoodFromHome.Users.User
 
   @doc """
-  Gets the user of type :seller related to an order along with seller details.
+  Gets the user of type :deliverer related to an order
 
   Raises `Ecto.NoResultsError` if user is not found.
 
@@ -22,12 +22,11 @@ defmodule FoodFromHome.Users.Finders.SellerUserFromOrder do
       ** (Ecto.NoResultsError)
 
   """
-  def get!(%Order{seller_id: seller_id}) do
+  def get!(%Order{id: order_id}) do
     query =
       from user in User,
-        join: seller in assoc(user, :seller_user),
-        where: seller.id == ^seller_id,
-        preload: [seller: seller]
+        join: delivery in assoc(user, :deliverer_user),
+        where: delivery.order_id == ^order_id
 
     Repo.one!(query)
   end

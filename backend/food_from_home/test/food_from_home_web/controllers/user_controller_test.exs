@@ -16,7 +16,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
     phone_number: "+4912334578912",
     email: "random@email.de",
     first_name: "random first_name",
-    gender: :non_binary,
+    salutation: :Mrs,
     last_name: "random last_name",
     user_type: :buyer
   }
@@ -32,7 +32,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
     phone_number: "+4912334578534",
     email: "another_random@email.de",
     first_name: "another random first_name",
-    gender: :female,
+    salutation: :Ms,
     last_name: "another random last_name",
     user_type: :seller,
     seller: %{introduction: "random introduction", tax_id: "xyz12345678"}
@@ -49,7 +49,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
     phone_number: "+491231118912",
     email: "updated@email.de",
     first_name: "updated first_name",
-    gender: :female,
+    salutation: :Ms,
     last_name: "updated last_name",
     profile_image: "updated profile image"
   }
@@ -59,7 +59,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
     phone_number: nil,
     email: nil,
     first_name: nil,
-    gender: nil,
+    salutation: nil,
     last_name: nil,
     user_type: nil
   }
@@ -81,7 +81,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                  "id" => user_1.id,
                  "email" => user_1.email,
                  "first_name" => user_1.first_name,
-                 "gender" => to_string(user_1.gender),
+                 "salutation" => to_string(user_1.salutation),
                  "last_name" => user_1.last_name,
                  "address" => %{
                    "city" => user_1.address.city,
@@ -114,7 +114,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                  "id" => user_2.id,
                  "email" => user_2.email,
                  "first_name" => user_2.first_name,
-                 "gender" => to_string(user_2.gender),
+                 "salutation" => to_string(user_2.salutation),
                  "last_name" => user_2.last_name,
                  "address" => %{
                    "city" => user_2.address.city,
@@ -131,7 +131,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                  "id" => user_3.id,
                  "email" => user_3.email,
                  "first_name" => user_3.first_name,
-                 "gender" => to_string(user_3.gender),
+                 "salutation" => to_string(user_3.salutation),
                  "last_name" => user_3.last_name,
                  "address" => %{
                    "city" => user_3.address.city,
@@ -168,7 +168,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                "phone_number" => "+4912334578912",
                "email" => "random@email.de",
                "first_name" => "random first_name",
-               "gender" => "non_binary",
+               "salutation" => "Mr",
                "last_name" => "random last_name",
                "profile_image" => nil,
                "user_type" => "buyer"
@@ -197,7 +197,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                "phone_number" => "+4912334578534",
                "email" => "another_random@email.de",
                "first_name" => "another random first_name",
-               "gender" => "female",
+               "salutation" => "Ms",
                "last_name" => "another random last_name",
                "profile_image" => nil,
                "user_type" => "seller",
@@ -233,7 +233,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                "id" => user.id,
                "email" => user.email,
                "first_name" => user.first_name,
-               "gender" => to_string(user.gender),
+               "salutation" => to_string(user.salutation),
                "last_name" => user.last_name,
                "address" => %{
                  "city" => user.address.city,
@@ -259,7 +259,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                "id" => user.id,
                "email" => user.email,
                "first_name" => user.first_name,
-               "gender" => to_string(user.gender),
+               "salutation" => to_string(user.salutation),
                "last_name" => user.last_name,
                "address" => %{
                  "city" => user.address.city,
@@ -301,7 +301,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                "phone_number" => "+491231118912",
                "email" => "updated@email.de",
                "first_name" => "updated first_name",
-               "gender" => "female",
+               "salutation" => "Ms",
                "last_name" => "updated last_name",
                "profile_image" => "updated profile image",
                "user_type" => "buyer"
@@ -321,7 +321,7 @@ defmodule FoodFromHomeWeb.UserControllerTest do
                "phone_number" => "+491231118912",
                "email" => "updated@email.de",
                "first_name" => "updated first_name",
-               "gender" => "female",
+               "salutation" => "Ms",
                "last_name" => "updated last_name",
                "profile_image" => "updated profile image",
                "user_type" => "buyer"

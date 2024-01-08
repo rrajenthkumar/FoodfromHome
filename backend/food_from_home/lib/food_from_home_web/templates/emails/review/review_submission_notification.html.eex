@@ -1,0 +1,8 @@
+<h1>Review for order <strong><%= @order_id %></strong></h1>
+<br/>
+<p>Dear <%= @seller_full_name %>,</p>
+<p><strong><%= @buyer_full_name %></strong> (<%= @buyer_email %>) has left a review for the order <strong><%= @order_id %></strong> fulfilled by you.</p>
+<p>You can now see it #review_link and add a reply if you would like to.</p>
+<br/>
+<p>Best regards,</p>
+<p>FoodfromHome Team</p>

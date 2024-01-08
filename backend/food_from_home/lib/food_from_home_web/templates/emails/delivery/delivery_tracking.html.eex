@@ -1,0 +1,11 @@
+<h1>Delivery tracking for order <strong><%= @order_id %></strong></h1>
+<br/>
+<p>Dear <%= @buyer_full_name %>,</p>
+<p>Delivery of your order has been initiated.</p>
+<p>Your delivery will arrive tentatively at #expected_delivery_time.</p>
+<br/>
+<p>Click #delivery_tracking_link to track your delivery.</p>
+<p><strong><%= @deliverer_full_name %></strong> (<%= @deliverer_phone_number %>) might contact you for delivery related questions if any.</p>
+<br/>
+<p>Best regards,</p>
+<p>FoodfromHome Team</p>

@@ -25,7 +25,7 @@ defmodule FoodFromHomeWeb.UserJSON do
       phone_number: user.phone_number,
       email: user.email,
       first_name: user.first_name,
-      gender: user.gender,
+      salutation: user.salutation,
       last_name: user.last_name,
       profile_image: user.profile_image,
       user_type: user.user_type,
@@ -41,7 +41,7 @@ defmodule FoodFromHomeWeb.UserJSON do
       phone_number: user.phone_number,
       email: user.email,
       first_name: user.first_name,
-      gender: user.gender,
+      salutation: user.salutation,
       last_name: user.last_name,
       profile_image: user.profile_image,
       user_type: user.user_type

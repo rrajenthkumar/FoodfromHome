@@ -18,7 +18,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
     phone_number: "+4912345678912",
     email: "new@email.de",
     first_name: "some first_name",
-    gender: :male,
+    salutation: :Mr,
     last_name: "some last_name",
     user_type: :buyer
   }
@@ -34,7 +34,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
     phone_number: "+4912344321545",
     email: "random@email.de",
     first_name: "some random first_name",
-    gender: :female,
+    salutation: :Ms,
     last_name: "some random last_name",
     profile_image: "some random profile image",
     user_type: :seller,
@@ -68,7 +68,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
     phone_number: nil,
     email: nil,
     first_name: nil,
-    gender: nil,
+    salutation: nil,
     last_name: nil,
     user_type: nil
   }
@@ -78,7 +78,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
     phone_number: "+4912344321545",
     email: "random@email.de",
     first_name: "some random first_name",
-    gender: :female,
+    salutation: :Ms,
     last_name: "some random last_name",
     profile_image: "some random profile image",
     user_type: :buyer
@@ -95,7 +95,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
     phone_number: "+4912344321545",
     email: "random@email.de",
     first_name: "some random first_name",
-    gender: :female,
+    salutation: :Ms,
     last_name: "some random last_name",
     profile_image: "some random profile image",
     user_type: :seller,
@@ -122,7 +122,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert user.phone_number == "+4912345678912"
       assert user.email == "new@email.de"
       assert user.first_name == "some first_name"
-      assert user.gender == :male
+      assert user.salutation == :Mr
       assert user.last_name == "some last_name"
       assert user.profile_image == nil
       assert user.user_type == :buyer
@@ -143,7 +143,7 @@ defmodule FoodFromHome.Users.UserRepoTest do
       assert user.phone_number == "+4912344321545"
       assert user.email == "random@email.de"
       assert user.first_name == "some random first_name"
-      assert user.gender == :female
+      assert user.salutation == :Ms
       assert user.last_name == "some random last_name"
       assert user.profile_image == "some random profile image"
       assert user.user_type == :seller
