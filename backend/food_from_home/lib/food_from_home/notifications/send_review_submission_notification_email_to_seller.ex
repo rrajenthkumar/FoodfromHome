@@ -1,5 +1,6 @@
 defmodule FoodFromHome.Notifications.SendReviewSubmissionNotificationEmailToSeller do
   alias FoodFromHome.Notifications.Utils
+  alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Users
   alias FoodFromHome.Users.User
@@ -8,7 +9,9 @@ defmodule FoodFromHome.Notifications.SendReviewSubmissionNotificationEmailToSell
     template_root: "lib/food_from_home_web/templates/emails",
     template_path: "review"
 
-  def call(order = %Order{id: order_id, status: :delivered}) do
+  def call(order_id) when is_integer(order_id) do
+    order = Orders.get_order!(order_id)
+
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = Utils.full_name(buyer_user)
 

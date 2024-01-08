@@ -10,31 +10,31 @@ defmodule FoodFromHome.Notifications do
   alias FoodFromHome.Notifications.SendReviewRequestEmailToBuyer
   alias FoodFromHome.Notifications.SendReviewSubmissionNotificationEmailToSeller
 
-  def notify_buyer_about_order_confirmation(order) do
-    SendOrderConfirmationEmailToBuyer.call(order)
+  def notify_buyer_about_order_confirmation(order_id) do
+    SendOrderConfirmationEmailToBuyer.call(order_id)
   end
 
-  def notify_seller_about_order_confirmation(order) do
-    SendOrderConfirmationEmailToSeller.call(order)
+  def notify_seller_about_order_confirmation(order_id) do
+    SendOrderConfirmationEmailToSeller.call(order_id)
   end
 
-  def notify_about_order_cancellation(order) do
-    SendOrderCancellationEmailToBuyer.call(order)
+  def notify_about_order_cancellation(order_id) do
+    SendOrderCancellationEmailToBuyer.call(order_id)
   end
 
-  def send_payment_assistance_info(order) do
-    SendPaymentAssistanceEmailToBuyer.call(order)
+  def send_payment_assistance_info(order_id) do
+    SendPaymentAssistanceEmailToBuyer.call(order_id)
   end
 
-  def send_delivery_tracking_info(order) do
-    SendDeliveryTrackingEmailToBuyer.call(order)
+  def send_delivery_tracking_info(order_id) do
+    SendDeliveryTrackingEmailToBuyer.call(order_id)
   end
 
-  def request_review(order) do
-    SendReviewRequestEmailToBuyer.call(order)
+  def request_review(order_id) do
+    SendReviewRequestEmailToBuyer.call(order_id)
   end
 
-  def notify_about_review_submission(order) do
-    SendReviewSubmissionNotificationEmailToSeller.call(order)
+  def notify_about_review_submission(order_id) do
+    SendReviewSubmissionNotificationEmailToSeller.call(order_id)
   end
 end

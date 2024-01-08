@@ -1,5 +1,6 @@
 defmodule FoodFromHome.Notifications.SendOrderCancellationEmailToBuyer do
   alias FoodFromHome.Notifications.Utils
+  alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Sellers.Seller
   alias FoodFromHome.Users
@@ -9,7 +10,9 @@ defmodule FoodFromHome.Notifications.SendOrderCancellationEmailToBuyer do
     template_root: "lib/food_from_home_web/templates/emails",
     template_path: "order"
 
-  def call(order = %Order{id: order_id, status: :cancelled, seller_remark: seller_remark}) do
+  def call(order_id) when is_integer(order_id) do
+    order = %Order{seller_remark: seller_remark} = Orders.get_order!(order_id)
+
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = Utils.full_name(buyer_user)
 

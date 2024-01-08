@@ -53,7 +53,8 @@ defmodule FoodFromHome.MixProject do
       {:ueberauth, "~> 0.10.5"},
       {:ueberauth_auth0, "~> 2.1"},
       {:auth0_api, "~> 1.6"},
-      {:httpoison, "~> 1.8"}
+      {:httpoison, "~> 1.8"},
+      {:oban, "~> 2.17"}
     ]
   end
 

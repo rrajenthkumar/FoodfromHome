@@ -19,7 +19,9 @@ defmodule FoodFromHome.Application do
       # Start the Endpoint (http/https)
       FoodFromHomeWeb.Endpoint,
       # Start KafkaEx application
-      {KafkaEx, []}
+      # {KafkaEx, []},
+      # Start Oban
+      {Oban, Application.fetch_env!(:food_from_home, Oban)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
