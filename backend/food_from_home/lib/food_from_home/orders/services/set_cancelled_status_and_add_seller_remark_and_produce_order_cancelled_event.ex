@@ -12,7 +12,9 @@ defmodule FoodFromHome.Orders.Services.SetCancelledStatusAndAddSellerRemarkAndPr
       {:ok, %Order{}} = result ->
         case Producer.send_message("order_cancelled", {"order_id", "#{order_id}"}) do
           :ok -> result
-          error -> error
+          {:error, kafka_error} ->
+            {:error, 500,
+             "Order updated but 'order_cancelled' Kafka event was not produced due to the following reason: #{kafka_error}"}
         end
 
       error ->

@@ -10,13 +10,10 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDelive
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Orders.OrderRepo
 
-  def call(order = %Order{id: order_id, status: :reserved_for_pickup}) do
+  def call(order = %Order{status: :reserved_for_pickup}) do
     case OrderRepo.update_order(order, %{status: :on_the_way}) do
       {:ok, %Order{} = order} ->
-        case Producer.send_message("delivery_started", {"order_id", "#{order_id}"}) do
-          :ok -> add_pickup_time_to_delivery(order)
-          error -> error
-        end
+        add_pickup_time_to_delivery(order)
 
       error ->
         error
@@ -28,7 +25,7 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDelive
      "Order in #{another_status} status. Only an order of :reserved_for_pickup status can be changed to :on_the_way status."}
   end
 
-  defp add_pickup_time_to_delivery(order = %Order{status: :on_the_way}) do
+  defp add_pickup_time_to_delivery(order = %Order{id: order_id, status: :on_the_way}) do
     result =
       order
       |> Deliveries.get_delivery_from_order!()
@@ -36,8 +33,14 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDelive
 
     case result do
       {:ok, %Delivery{}} ->
-        # KafkaAgent.produce_delivery_started_event()
-        {:ok, order}
+        case Producer.send_message("delivery_started", {"order_id", "#{order_id}"}) do
+          :ok ->
+            {:ok, order}
+
+          {:error, kafka_error} ->
+            {:error, 500,
+             "Order updated but 'delivery_started' Kafka event was not produced due to the following reason: #{kafka_error}"}
+        end
 
       {:error, pickup_time_addition_error_reason} ->
         # Rollingback status change

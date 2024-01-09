@@ -10,13 +10,10 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Orders.OrderRepo
 
-  def call(order = %Order{id: order_id, status: :on_the_way}) do
+  def call(order = %Order{status: :on_the_way}) do
     case OrderRepo.update_order(order, %{status: :delivered}) do
       {:ok, %Order{} = order} ->
-        case Producer.send_message("delivery_completed", {"order_id", "#{order_id}"}) do
-          :ok -> add_delivery_time_to_delivery(order)
-          error -> error
-        end
+        add_delivery_time_to_delivery(order)
 
       error ->
         error
@@ -28,7 +25,7 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
      "Order in #{another_status} status. Only an order of :on_the_way status can be changed to :delivered status."}
   end
 
-  defp add_delivery_time_to_delivery(order = %Order{status: :delivered}) do
+  defp add_delivery_time_to_delivery(order = %Order{id: order_id, status: :delivered}) do
     result =
       order
       |> Deliveries.get_delivery_from_order!()
@@ -36,8 +33,14 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
 
     case result do
       {:ok, %Delivery{}} ->
-        # KafkaAgent.produce_delivery_completed_event()
-        {:ok, order}
+        case Producer.send_message("delivery_completed", {"order_id", "#{order_id}"}) do
+          :ok ->
+            {:ok, order}
+
+          {:error, kafka_error} ->
+            {:error, 500,
+             "Order updated but 'delivery_completed' Kafka event was not produced due to the following reason: #{kafka_error}"}
+        end
 
       {:error, delivery_time_addition_error_reason} ->
         # Rollingback status change

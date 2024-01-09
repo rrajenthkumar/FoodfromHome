@@ -13,7 +13,9 @@ defmodule FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndPro
       {:ok, %Order{}} = result ->
         case Producer.send_message("order_confirmed", {"order_id", "#{order_id}"}) do
           :ok -> result
-          error -> error
+          {:error, kafka_error} ->
+            {:error, 500,
+             "Order updated but 'order_confirmed' Kafka event was not produced due to the following reason: #{kafka_error}"}
         end
 
       error ->

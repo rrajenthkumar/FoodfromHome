@@ -18,7 +18,7 @@ defmodule FoodFromHome.Application do
       {Finch, name: FoodFromHome.Finch},
       # Start the Endpoint (http/https)
       FoodFromHomeWeb.Endpoint,
-      # Start Kafka consumer
+      # Start Kaffe consumer
       %{
         id: Kaffe.Consumer,
         start: {Kaffe.Consumer, :start_link, []}
