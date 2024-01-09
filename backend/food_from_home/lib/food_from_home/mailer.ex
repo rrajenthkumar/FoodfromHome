@@ -1,12 +1,15 @@
 defmodule FoodFromHome.Mailer do
   use Swoosh.Mailer, otp_app: :food_from_home
 
+  use Phoenix.Swoosh,
+    template_root: "lib/food_from_home_web/templates",
+    template_path: "emails"
+
   alias FoodFromHome.Workers.EmailDelivery
 
   def add_email_to_oban_queue(
-        _email_attributes = %{
+        _email_parameters = %{
           to: to,
-          from: from,
           subject: subject,
           template: template,
           template_assigns: template_assigns
@@ -14,43 +17,21 @@ defmodule FoodFromHome.Mailer do
       ) do
     new()
     |> to(to)
-    |> from(from)
+    |> from({"FoodfromHome", "foodfromhome@xyz.com"})
     |> subject(subject)
     |> render_body(template, template_assigns)
     |> enqueue()
   end
 
-  defp enqueue(email) do
-    with email_map <- to_map(email),
-         result =
-           %{email: email_map}
-           |> EmailDelivery.new()
-           |> Oban.insert()
-
-    {:ok, _job} <-
-      result do
-        {:ok, email}
-      end
-  end
-
-  def to_map(%Swoosh.Email{to: to, from: from, subject: subject, html_body: html_body} = email) do
-    %{
-      "to" => tuple_to_map(to),
-      "from" => tuple_to_map(from),
-      "subject" => subject,
-      "html_body" => html_body
-    }
-  end
-
-  def from_map(%{
+  def to_struct(%{
         "to" => to,
         "from" => from,
         "subject" => subject,
         "html_body" => html_body
       }) do
     opts = [
-      to: map_to_tuple(to),
-      from: map_to_tuple(from),
+      to: to_tuple(to),
+      from: to_tuple(from),
       subject: subject,
       html_body: html_body
     ]
@@ -58,11 +39,31 @@ defmodule FoodFromHome.Mailer do
     Swoosh.Email.new(opts)
   end
 
-  defp tuple_to_map({name, email}) do
+  defp enqueue(email_struct = %Swoosh.Email{}) do
+    result =
+      %{email: to_map(email_struct)}
+      |> EmailDelivery.new()
+      |> Oban.insert()
+
+    with {:ok, _job} <- result do
+      {:ok, email_struct}
+    end
+  end
+
+  defp to_map(%Swoosh.Email{to: to, from: from, subject: subject, html_body: html_body}) do
+    %{
+      "to" => to_map(to),
+      "from" => to_map(from),
+      "subject" => subject,
+      "html_body" => html_body
+    }
+  end
+
+  defp to_map({name, email}) do
     %{"name" => name, "email" => email}
   end
 
-  defp map_to_tuple(%{"name" => name, "email" => email}) do
+  defp to_tuple(%{"name" => name, "email" => email}) do
     {name, email}
   end
 end
