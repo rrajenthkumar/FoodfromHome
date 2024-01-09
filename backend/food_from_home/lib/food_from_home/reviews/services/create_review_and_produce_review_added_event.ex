@@ -12,7 +12,9 @@ defmodule FoodFromHome.Reviews.Services.CreateReviewAndProduceReviewAddedEvent d
     case ReviewRepo.create_review(order, attrs) do
       {:ok, %Review{}} = result ->
         case Producer.send_message("review_added", {"order_id", "#{order_id}"}) do
-          :ok -> result
+          :ok ->
+            result
+
           {:error, kafka_error} ->
             {:error, 500,
              "Review created but 'review_added' Kafka event was not produced due to the following reason: #{kafka_error}"}
