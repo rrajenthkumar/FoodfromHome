@@ -1,6 +1,10 @@
 defmodule FoodFromHome.KafkaAgent.Producer do
   @moduledoc """
   Kafka producer module
+
+  Topics "order_confirmed", "order_cancelled", "payment_failed", "payment_cancelled", "delivery_started", "delivery_completed", "review_added" are used by the Notification module to trigger notification emails.
+
+  Topics "sellers_searched", "seller_viewed", "food_menu_viewed" are used for seller metrics.
   """
   # @permitted_topics [
   #   "sellers_searched",

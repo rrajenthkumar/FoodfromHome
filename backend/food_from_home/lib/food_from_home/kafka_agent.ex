@@ -1,6 +1,6 @@
 defmodule FoodFromHome.KafkaAgent do
   @moduledoc """
-  Module to manage interaction with Kafka
+  Module to manage interactions with Kafka
   """
   # alias FoodFromHome.KafkaAgent.Producer
 

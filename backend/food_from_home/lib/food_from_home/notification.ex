@@ -9,41 +9,16 @@ defmodule FoodFromHome.Notification do
   alias FoodFromHome.Users
   alias FoodFromHome.Users.User
 
-  def trigger(order_id, reason) when is_integer(order_id) and is_atom(reason) do
+  def trigger(order_id, type) when is_integer(order_id) and is_atom(type) do
     order_id
     |> Orders.get_order!()
-    |> get_email_parameters(reason)
+    |> get_email_parameters(type)
     |> Mailer.add_email_to_oban_queue()
   end
 
   defp get_email_parameters(
-         order = %Order{id: order_id, status: :on_the_way},
-         _reason = :delivery_tracking_to_buyer
-       ) do
-    buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
-    buyer_full_name = full_name(buyer_user)
-
-    deliverer_user =
-      %User{phone_number: deliverer_phone_number} = Users.get_deliverer_user_from_order!(order)
-
-    deliverer_full_name = full_name(deliverer_user)
-
-    %{
-      to: {buyer_full_name, buyer_email},
-      subject: "Delivery tracking for order #{order_id}",
-      template: "delivery_tracking.html",
-      template_assigns: %{
-        order_id: order_id,
-        buyer_full_name: buyer_full_name,
-        deliverer_full_name: deliverer_full_name,
-        deliverer_phone_number: deliverer_phone_number
-      }
-    }
-  end
-
-  defp get_email_parameters(
          order = %Order{id: order_id, status: :confirmed},
-         _reason = :order_confirmation_to_buyer
+         _type = :order_confirmation_to_buyer
        ) do
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = full_name(buyer_user)
@@ -66,7 +41,7 @@ defmodule FoodFromHome.Notification do
 
   defp get_email_parameters(
          order = %Order{id: order_id, status: :confirmed},
-         _reason = :order_confirmation_to_seller
+         _type = :order_confirmation_to_seller
        ) do
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = full_name(buyer_user)
@@ -89,7 +64,7 @@ defmodule FoodFromHome.Notification do
 
   defp get_email_parameters(
          order = %Order{id: order_id, seller_remark: seller_remark, status: :cancelled},
-         _reason = :order_cancellation_to_buyer
+         _type = :order_cancellation_notification_to_buyer
        ) do
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = full_name(buyer_user)
@@ -100,7 +75,7 @@ defmodule FoodFromHome.Notification do
     %{
       to: {buyer_full_name, buyer_email},
       subject: "Order #{order_id} cancelled",
-      template: "order_cancellation.html",
+      template: "order_cancellation_notification.html",
       template_assigns: %{
         order_id: order_id,
         buyer_full_name: buyer_full_name,
@@ -113,7 +88,7 @@ defmodule FoodFromHome.Notification do
 
   defp get_email_parameters(
          order = %Order{id: order_id, status: :open},
-         _reason = :payment_assistance_to_buyer
+         _type = :payment_assistance_info_to_buyer
        ) do
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = full_name(buyer_user)
@@ -121,7 +96,7 @@ defmodule FoodFromHome.Notification do
     %{
       to: {buyer_full_name, buyer_email},
       subject: "Payment assistance for Order #{order_id}",
-      template: "payment_assistance.html",
+      template: "payment_assistance_info.html",
       template_assigns: %{
         order_id: order_id,
         buyer_full_name: buyer_full_name
@@ -130,8 +105,33 @@ defmodule FoodFromHome.Notification do
   end
 
   defp get_email_parameters(
+         order = %Order{id: order_id, status: :on_the_way},
+         _type = :delivery_tracking_info_to_buyer
+       ) do
+    buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
+    buyer_full_name = full_name(buyer_user)
+
+    deliverer_user =
+      %User{phone_number: deliverer_phone_number} = Users.get_deliverer_user_from_order!(order)
+
+    deliverer_full_name = full_name(deliverer_user)
+
+    %{
+      to: {buyer_full_name, buyer_email},
+      subject: "Delivery tracking for order #{order_id}",
+      template: "delivery_tracking_info.html",
+      template_assigns: %{
+        order_id: order_id,
+        buyer_full_name: buyer_full_name,
+        deliverer_full_name: deliverer_full_name,
+        deliverer_phone_number: deliverer_phone_number
+      }
+    }
+  end
+
+  defp get_email_parameters(
          order = %Order{id: order_id, status: :delivered},
-         _reason = :review_request_to_buyer
+         _type = :review_request_to_buyer
        ) do
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = full_name(buyer_user)
@@ -149,7 +149,7 @@ defmodule FoodFromHome.Notification do
 
   defp get_email_parameters(
          order = %Order{id: order_id, status: :delivered},
-         _reason = :review_submission_notification_to_seller
+         _type = :review_addition_notification_to_seller
        ) do
     buyer_user = %User{email: buyer_email} = Users.get_buyer_user_from_order!(order)
     buyer_full_name = full_name(buyer_user)
@@ -160,7 +160,7 @@ defmodule FoodFromHome.Notification do
     %{
       to: {seller_full_name, seller_email},
       subject: "Review added for order #{order_id}",
-      template: "review_submission_notification.html",
+      template: "review_addition_notification.html",
       template_assigns: %{
         order_id: order_id,
         seller_full_name: seller_full_name,
