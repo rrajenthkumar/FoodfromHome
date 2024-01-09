@@ -38,7 +38,6 @@ defmodule FoodFromHome.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_live_dashboard, "~> 0.8.0"},
       {:swoosh, "~> 1.3"},
-      {:phoenix_swoosh, "~> 1.2"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
@@ -46,7 +45,7 @@ defmodule FoodFromHome.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:geo_postgis, "~> 3.5"},
-      # {:kafka_ex, "~> 0.13.0"},
+      {:kafka_ex, "~> 0.13.0"},
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
       {:credo, "~> 1.7"},
       {:guardian, "~> 2.3"},
@@ -54,6 +53,7 @@ defmodule FoodFromHome.MixProject do
       {:ueberauth_auth0, "~> 2.1"},
       {:auth0_api, "~> 1.6"},
       {:httpoison, "~> 1.8"},
+      {:phoenix_swoosh, "~> 1.2"},
       {:oban, "~> 2.17"}
     ]
   end
