@@ -6,14 +6,17 @@ defmodule FoodFromHome.Orders.Services.SetDeliveredStatusAndAddDeliveryTimeToDel
   """
   alias FoodFromHome.Deliveries
   alias FoodFromHome.Deliveries.Delivery
-  # alias FoodFromHome.KafkaAgent
+  alias FoodFromHome.Kaffe.Producer
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Orders.OrderRepo
 
-  def call(order = %Order{status: :on_the_way}) do
+  def call(order = %Order{id: order_id, status: :on_the_way}) do
     case OrderRepo.update_order(order, %{status: :delivered}) do
       {:ok, %Order{} = order} ->
-        add_delivery_time_to_delivery(order)
+        case Producer.send_message("delivery_completed", {"order_id", "#{order_id}"}) do
+          :ok -> add_delivery_time_to_delivery(order)
+          error -> error
+        end
 
       error ->
         error

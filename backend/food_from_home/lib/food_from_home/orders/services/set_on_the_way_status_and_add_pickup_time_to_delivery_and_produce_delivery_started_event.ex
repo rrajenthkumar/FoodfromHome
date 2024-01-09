@@ -6,14 +6,17 @@ defmodule FoodFromHome.Orders.Services.SetOnTheWayStatusAndAddPickupTimeToDelive
   """
   alias FoodFromHome.Deliveries
   alias FoodFromHome.Deliveries.Delivery
-  # alias FoodFromHome.KafkaAgent
+  alias FoodFromHome.Kaffe.Producer
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Orders.OrderRepo
 
-  def call(order = %Order{status: :reserved_for_pickup}) do
+  def call(order = %Order{id: order_id, status: :reserved_for_pickup}) do
     case OrderRepo.update_order(order, %{status: :on_the_way}) do
       {:ok, %Order{} = order} ->
-        add_pickup_time_to_delivery(order)
+        case Producer.send_message("delivery_started", {"order_id", "#{order_id}"}) do
+          :ok -> add_pickup_time_to_delivery(order)
+          error -> error
+        end
 
       error ->
         error

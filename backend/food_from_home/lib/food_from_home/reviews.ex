@@ -7,9 +7,11 @@ defmodule FoodFromHome.Reviews do
   alias FoodFromHome.Reviews.Finders.ReviewsFromSeller
   alias FoodFromHome.Reviews.Finders.AverageRatingFromSeller
   alias FoodFromHome.Reviews.ReviewRepo
+  alias FoodFromHome.Reviews.Services.CreateReviewAndProduceReviewAddedEvent
   alias FoodFromHome.Reviews.Utils
 
-  defdelegate create_review(order, attrs), to: ReviewRepo
+  def create_review(order, attrs), do: CreateReviewAndProduceReviewAddedEvent.call(order, attrs)
+
   defdelegate update_review(review, attrs), to: ReviewRepo
   defdelegate delete_review(review), to: ReviewRepo
 

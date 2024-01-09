@@ -3,15 +3,18 @@ defmodule FoodFromHome.Orders.Services.SetConfirmedStatusAndAddInvoiceLinkAndPro
   Used by payment module to change the status of an open order to :confirmed after payment is successful, add invoice link,
   and produce an order_confirmed Kafka event to be consumed by the notification module.
   """
-  # alias FoodFromHome.KafkaAgent
+  alias FoodFromHome.Kaffe.Producer
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Orders.OrderRepo
 
-  def call(order = %Order{status: :open}, invoice_link) when is_binary(invoice_link) do
+  def call(order = %Order{id: order_id, status: :open}, invoice_link)
+      when is_binary(invoice_link) do
     case OrderRepo.update_order(order, %{status: :confirmed, invoice_link: invoice_link}) do
       {:ok, %Order{}} = result ->
-        # KafkaAgent.produce_order_confirmed_event()
-        result
+        case Producer.send_message("order_confirmed", {"order_id", "#{order_id}"}) do
+          :ok -> result
+          error -> error
+        end
 
       error ->
         error

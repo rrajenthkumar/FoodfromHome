@@ -19,7 +19,7 @@ defmodule FoodFromHome.MixProject do
   def application do
     [
       mod: {FoodFromHome.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :kaffe]
     ]
   end
 
@@ -45,7 +45,7 @@ defmodule FoodFromHome.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:geo_postgis, "~> 3.5"},
-      {:kafka_ex, "~> 0.13.0"},
+      {:kaffe, "~> 1.24"},
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
       {:credo, "~> 1.7"},
       {:guardian, "~> 2.3"},

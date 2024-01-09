@@ -18,8 +18,11 @@ defmodule FoodFromHome.Application do
       {Finch, name: FoodFromHome.Finch},
       # Start the Endpoint (http/https)
       FoodFromHomeWeb.Endpoint,
-      # Start KafkaEx application
-      # {KafkaEx, []},
+      # Start Kafka consumer
+      %{
+        id: Kaffe.Consumer,
+        start: {Kaffe.Consumer, :start_link, []}
+      },
       # Start Oban
       {Oban, Application.fetch_env!(:food_from_home, Oban)}
     ]

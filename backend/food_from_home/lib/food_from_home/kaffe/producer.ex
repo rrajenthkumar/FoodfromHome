@@ -1,4 +1,4 @@
-defmodule FoodFromHome.KafkaAgent.Producer do
+defmodule FoodFromHome.Kaffe.Producer do
   @moduledoc """
   Kafka producer module
 
@@ -19,11 +19,11 @@ defmodule FoodFromHome.KafkaAgent.Producer do
     "review_added"
   ]
 
-  def call(topic, key, message) when topic in @permitted_topics and is_binary(key) do
-    KafkaEx.produce(topic, key, message)
+  def send_message(topic, {key, value}) when topic in @permitted_topics do
+    Kaffe.Producer.produce_sync(topic, [{key, value}])
   end
 
-  def call(topic, _key, _message) when topic not in @permitted_topics do
+  def send_message(topic, {_key, _value}) when topic not in @permitted_topics do
     {:error, "The topic '#{topic}' is not permitted"}
   end
 end
