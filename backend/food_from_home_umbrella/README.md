@@ -1,4 +1,3 @@
 # FoodFromHomeUmbrella
 
-**TODO: Add description**
-
+Elixir / Phoenix Umbrella project comprising of FoodfromHome and FoodfromHomeNotifications apps

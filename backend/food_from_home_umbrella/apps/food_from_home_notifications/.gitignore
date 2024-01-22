@@ -35,3 +35,6 @@ food_from_home_notifications-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Ignore configuration files
+/config/
+

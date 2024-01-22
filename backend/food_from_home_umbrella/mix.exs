@@ -23,9 +23,6 @@ defmodule FoodFromHomeUmbrella.MixProject do
   #
   # Run "mix help deps" for examples and options.
   defp deps do
-    [
-      {:food_from_home, in_umbrella: true},
-      {:food_from_home_notifications, in_umbrella: true}
-    ]
+    []
   end
 end

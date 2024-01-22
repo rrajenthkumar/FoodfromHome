@@ -1,10 +1,10 @@
-defmodule FoodFromHome.Workers.EmailDelivery do
+defmodule FoodFromHomeNotifications.Workers.EmailDelivery do
   @moduledoc """
   Oban worker module for email delivery
   """
   use Oban.Worker, queue: :mailer
 
-  alias FoodFromHome.Mailer
+  alias FoodFromHomeNotifications.Mailer
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"email" => email_args}}) do

@@ -16,7 +16,16 @@ defmodule FoodFromHomeNotifications.Application do
       # Start a worker by calling: FoodFromHomeNotifications.Worker.start_link(arg)
       # {FoodFromHomeNotifications.Worker, arg},
       # Start to serve requests, typically the last entry
-      FoodFromHomeNotificationsWeb.Endpoint
+      FoodFromHomeNotificationsWeb.Endpoint,
+       # Start Kaffe consumer
+       %{
+        id: Kaffe.Consumer,
+        start: {Kaffe.Consumer, :start_link, []}
+      },
+      # Start Oban
+      {Oban, Application.fetch_env!(:food_from_home_notifications, Oban)},
+      # Start the Ecto repository
+      FoodFromHomeNotifications.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

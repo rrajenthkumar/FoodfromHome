@@ -22,9 +22,7 @@ defmodule FoodFromHome.Application do
       %{
         id: Kaffe.Consumer,
         start: {Kaffe.Consumer, :start_link, []}
-      },
-      # Start Oban
-      {Oban, Application.fetch_env!(:food_from_home, Oban)}
+      }
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

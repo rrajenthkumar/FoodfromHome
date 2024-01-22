@@ -5,10 +5,6 @@ defmodule FoodFromHomeNotifications.MixProject do
     [
       app: :food_from_home_notifications,
       version: "0.1.0",
-      build_path: "../../_build",
-      config_path: "../../config/config.exs",
-      deps_path: "../../deps",
-      lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -23,7 +19,8 @@ defmodule FoodFromHomeNotifications.MixProject do
   def application do
     [
       mod: {FoodFromHomeNotifications.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :kaffe],
+      applications: [:food_from_home]
     ]
   end
 
@@ -37,6 +34,9 @@ defmodule FoodFromHomeNotifications.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.10"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:ecto_sql, "~> 3.10"},
+      {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20.1"},
@@ -51,7 +51,11 @@ defmodule FoodFromHomeNotifications.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:phoenix_swoosh, "~> 1.2"},
+      {:oban, "~> 2.17"},
+      {:kaffe, "~> 1.24"},
+      {:food_from_home, in_umbrella: true}
     ]
   end
 

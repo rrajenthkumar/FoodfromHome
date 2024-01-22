@@ -1,7 +1,7 @@
-defmodule FoodFromHome.Repo.Migrations.AddObanJobsTable do
+defmodule FoodFromHomeNotifications.Repo.Migrations.AddObanJobsTable do
   use Ecto.Migration
 
-  defmodule MyApp.Repo.Migrations.AddObanJobsTable do
+  defmodule FoodFromHomeNotifications.Repo.Migrations.AddObanJobsTable do
     use Ecto.Migration
 
     def up do

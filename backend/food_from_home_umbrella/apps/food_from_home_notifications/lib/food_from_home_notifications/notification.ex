@@ -1,8 +1,8 @@
-defmodule FoodFromHome.Notification do
+defmodule FoodFromHomeNotifications.Notification do
   @moduledoc """
   Module to manage notifications
   """
-  alias FoodFromHome.Mailer
+  alias FoodFromHomeNotifications.Mailer
   alias FoodFromHome.Orders
   alias FoodFromHome.Orders.Order
   alias FoodFromHome.Sellers.Seller
